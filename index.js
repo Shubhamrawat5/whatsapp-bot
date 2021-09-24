@@ -10,10 +10,6 @@ server.listen(port, () => {
   console.log("\nWeb-server running!\n");
 });
 
-//importing function files
-const { getIplScore } = require("./functions/ipl");
-const { commandList } = require("./functions/list");
-
 // LOAD Baileys
 const {
   WAConnection,
@@ -31,40 +27,14 @@ const {
   processTime,
 } = require("@adiwajshing/baileys");
 
-// LOAD DB CONNECTION
-const db = require("./database");
-
 // LOAD ADDITIONAL NPM PACKAGES
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
 const WSF = require("wa-sticker-formatter");
 
-//To see heroku postgres DB table content -> https://datazenit.com/heroku-data-explorer.html
-async function fetchauth() {
-  try {
-    auth_result = await db.query("select * from auth;");
-    console.log("Fetching login data...");
-    auth_row_count = await auth_result.rowCount;
-    if (auth_row_count == 0) {
-      console.log("No login data found!");
-    } else {
-      console.log("Login data found!");
-      auth_obj = {
-        clientID: auth_result.rows[0].clientid,
-        serverToken: auth_result.rows[0].servertoken,
-        clientToken: auth_result.rows[0].clienttoken,
-        encKey: auth_result.rows[0].enckey,
-        macKey: auth_result.rows[0].mackey,
-      };
-    }
-  } catch {
-    console.log("Creating database...");
-    await db.query(
-      "CREATE TABLE auth(clientID text, serverToken text, clientToken text, encKey text, macKey text);"
-    );
-    await fetchauth();
-  }
-}
+//importing function files
+const { getIplScore } = require("./functions/ipl");
+const { commandList } = require("./functions/list");
 
 // BASIC SETTINGS
 prefix = "!";
@@ -86,59 +56,11 @@ const getRandom = (ext) => {
 };
 
 //MAIN FUNCTION
-async function main() {
-  // LOADING SESSION
-  const conn = new WAConnection();
-  conn.logger.level = "warn";
-  conn.on("qr", () => {
-    console.log("SCAN THE ABOVE QR CODE TO LOGIN!");
-  });
-  await fetchauth(); //GET LOGIN DATA
-  if (auth_row_count == 1) {
-    conn.loadAuthInfo(auth_obj);
-  }
-  conn.on("connecting", () => {
-    console.log("Connecting...");
-  });
-  conn.on("open", () => {
-    console.clear();
-    console.log("Connected!");
-  });
-  await conn.connect({ timeoutMs: 30 * 1000 });
-  const authInfo = conn.base64EncodedAuthInfo(); // UPDATED LOGIN DATA
-  load_clientID = authInfo.clientID;
-  load_serverToken = authInfo.serverToken;
-  load_clientToken = authInfo.clientToken;
-  load_encKey = authInfo.encKey;
-  load_macKey = authInfo.macKey;
-  // INSERT / UPDATE LOGIN DATA
-  if (auth_row_count == 0) {
-    console.log("Inserting login data...");
-    db.query("INSERT INTO auth VALUES($1,$2,$3,$4,$5);", [
-      load_clientID,
-      load_serverToken,
-      load_clientToken,
-      load_encKey,
-      load_macKey,
-    ]);
-    db.query("commit;");
-    console.log("New login data inserted!");
-  } else {
-    console.log("Updating login data....");
-    db.query(
-      "UPDATE auth SET clientid = $1, servertoken = $2, clienttoken = $3, enckey = $4, mackey = $5;",
-      [
-        load_clientID,
-        load_serverToken,
-        load_clientToken,
-        load_encKey,
-        load_macKey,
-      ]
-    );
-    db.query("commit;");
-    console.log("Login data updated!");
-  }
+const main = async () => {
+  const { connectToWA } = require("./functions/database");
+  const conn = await connectToWA(WAConnection);
 
+  // member left or join
   conn.on("group-participants-update", async (anu) => {
     try {
       const mdata = await conn.groupMetadata(anu.jid);
@@ -153,6 +75,7 @@ async function main() {
     }
   });
 
+  // new message
   conn.on("chat-update", async (mek) => {
     try {
       if (!mek.hasNewMessage) return;
@@ -210,14 +133,14 @@ async function main() {
       const isBotGroupAdmins = groupAdmins.includes(botNumber) || false;
       const isGroupAdmins = groupAdmins.includes(sender) || false;
 
-      const reply = (teks) => {
-        conn.sendMessage(from, teks, text, {
+      const reply = (message) => {
+        conn.sendMessage(from, message, text, {
           quoted: mek,
         });
       };
 
-      const costum = (pesan, tipe, target, target2) => {
-        conn.sendMessage(from, pesan, tipe, {
+      const costum = (message, tipe, target, target2) => {
+        conn.sendMessage(from, message, tipe, {
           quoted: {
             key: {
               fromMe: false,
@@ -563,5 +486,5 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
       console.log("Error : %s", e);
     }
   });
-}
+};
 main();
