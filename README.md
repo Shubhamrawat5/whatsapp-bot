@@ -41,19 +41,27 @@
 
 # Features:-
 
-## Default prefix : `#`
+## Default prefix : `!`
 
 ## Commands :
 
 |  Commands   |                 Description                 |
 | :---------: | :-----------------------------------------: |
-|   `/help`   |            Display help message             |
-|   `/add`    |             Add member to group             |
-|  `/score`   |               Give IPL score                |
-| `/startipl` |           Start IPL score updated           |
-| `/stotipl`  |           Stop IPL score updated            |
-| `/sticker`  | Create a sticker from different media types |
-|  `/source`  |             Get the bot source              |
+|   `!help`   |            Display help message             |
+|   `!add`    |             Add member to group             |
+|  `!score`   |               Give IPL score                |
+| `!startipl` |           Start IPL score updated           |
+| `!stotipl`  |           Stop IPL score updated            |
+| `!sticker`  | Create a sticker from different media types |
+|  `!source`  |             Get the bot source              |
+|   `!dev`    |           Get the contact of dev            |
+
+- IPL SCORES:
+
+> Put match id in in starting of group description.
+> Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572
+
+> (currently it is using 2 apis to get ipl live scores, so there is a change of score data mismatch, will try to fix it in future.)
 
 # Note:-
 

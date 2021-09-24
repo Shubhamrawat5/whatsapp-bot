@@ -93,13 +93,14 @@ const getIplScore = async (matchID, commandName) => {
     if (batsman2 === batsman1) isInningOver = true;
 
     let message = "";
-    message += `*${title}*
-`;
-    message +=
-      firstInningRuns !== ""
-        ? `
-${firstInningTeam + " - " + firstInningRuns}`
-        : "";
+    //     message += `*${title}*
+    // `;
+    //     message +=
+    //       firstInningRuns !== ""
+    //         ? `
+    // ${firstInningTeam + " - " + firstInningRuns}`
+    //         : "";
+
     message += `
 ${score} ${runrate}
 `;
@@ -181,7 +182,7 @@ async function fetchauth() {
 }
 
 // BASIC SETTINGS
-prefix = "#";
+prefix = "!";
 
 // LOAD CUSTOM FUNCTIONS
 const getGroupAdmins = (participants) => {
@@ -192,8 +193,7 @@ const getGroupAdmins = (participants) => {
   return admins;
 };
 const adminHelp = (prefix, groupName) => {
-  return `─「 PVX BOT 」 ─
-Group: *${groupName}* 
+  return `*─ 🔥「 PVX BOT 」 🔥 ─*
 
 *${prefix}sticker*
     - _Create original size sticker from different media types!_
@@ -207,15 +207,20 @@ Group: *${groupName}*
 *${prefix}source*
     - _Get bot source code!_
     
-_*IPL COMMANDS:*_
+_*🏏 IPL COMMANDS:*_
 NOTE: Put matchID (from cricbuzz) in description starting!
 
-${prefix}score
+*${prefix}score*
     - _Give IPL match current score!_
-${prefix}startipl
+*${prefix}startipl*
     - _Start IPL match live score every 1 min!_
-${prefix}stopipl
-    - _Stop IPL match live score!_`;
+*${prefix}stopipl*
+    - _Stop IPL match live score!_
+  
+*${prefix}dev*
+    - _Get dev contact to report bug or to add new feature!_
+    
+more commands coming...`;
 };
 
 const getRandom = (ext) => {
@@ -330,6 +335,7 @@ async function main() {
       const command = body.slice(1).trim().split(/ +/).shift().toLowerCase();
       const args = body.trim().split(/ +/).slice(1);
       const isCmd = body.startsWith(prefix);
+      if (!isCmd) return;
 
       errors = {
         admin_error: "_❌ ERROR: I'm not Admin here! ❌_",
@@ -391,17 +397,19 @@ async function main() {
       /////////////// COMMANDS \\\\\\\\\\\\\\\
       let data;
       switch (command) {
-        case "check":
-          //for testing
-          console.log(groupDesc);
-          console.log(groupDesc.slice(0, 5));
-          conn.sendMessage(from, groupDesc, MessageType.text);
+        case "dev":
+          reply(`─「 PVX BOT 」 ─
+
+_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_`);
           break;
 
         //This takes match ID from group description! Put match ID in starting of group description.
         //Get match ID from cricbuzz url like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572
         case "startipl":
-          if (!isGroup) return;
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
           if (iplStartedGroups[groupName]) {
             reply("❌ ERROR: IPL SCORES already started for this group!");
             return;
@@ -428,13 +436,16 @@ async function main() {
               matchIdGroups[groupName] +
               " (taken from description)"
           );
-          lastPostedOver = "";
           console.log(
-            "✔️ Starting IPL scores for matchID: " + matchIdGroups[groupName]
+            "Starting IPL scores for matchID: " +
+              matchIdGroups[groupName] +
+              " for " +
+              groupName
           );
           data = await getIplScore(matchIdGroups[groupName], "startipl");
           if (data === 0) {
             reply("✔️ Match over! Stopping IPL scores for this group !");
+            console.log("Match over! Stopping IPL scores for " + groupName);
             clearInterval(iplsetIntervalGroups[groupName]);
             iplStartedGroups[groupName] = false;
             return;
@@ -451,6 +462,7 @@ async function main() {
             data = await getIplScore(matchIdGroups[groupName], "startipl");
             if (data === 0) {
               reply("✔️ Match over! Stopping IPL scores for this group !");
+              console.log("Match over! Stopping IPL scores for " + groupName);
               clearInterval(iplsetIntervalGroups[groupName]);
               iplStartedGroups[groupName] = false;
               return;
@@ -465,7 +477,10 @@ async function main() {
           break;
 
         case "score":
-          if (!isGroup) return;
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
 
           matchIdGroups[groupName] = groupDesc.slice(0, 5);
           data = await getIplScore(matchIdGroups[groupName], "score");
@@ -479,7 +494,10 @@ async function main() {
           break;
 
         case "stopipl":
-          if (!isGroup) return;
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
           // if (sender.split("@")[0] !== "919557666582") {
           //   reply("❌ ERROR: Permission nahi h tere pass!");
           //   return;
@@ -489,6 +507,7 @@ async function main() {
             return;
           }
           reply("✔️ Stopping IPL scores for this group !");
+          console.log("Stopping IPL scores for " + groupName);
           clearInterval(iplsetIntervalGroups[groupName]);
           iplStartedGroups[groupName] = false;
           break;
@@ -513,7 +532,10 @@ async function main() {
           break;
 
         case "sticker":
-          if (!isGroup) return;
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
 
           // Format should be <prefix>sticker pack <pack_name> author <author_name>
           var packName = "PVX BOT";
@@ -640,8 +662,14 @@ async function main() {
         /////////////// ADMIN COMMANDS \\\\\\\\\\\\\\\
 
         case "add":
-          if (!isGroup) return;
-          if (!isGroupAdmins) return;
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (!isGroupAdmins) {
+            reply("❌ ERROR: Admin command!");
+            return;
+          }
           if (!isBotGroupAdmins) return reply(errors.admin_error);
           if (args.length < 1) return;
           var num = "";
@@ -680,6 +708,7 @@ async function main() {
           break;
 
         default:
+          reply("Send !help for PVX bot commands list!");
           break;
       }
     } catch (e) {
