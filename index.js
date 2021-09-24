@@ -1,7 +1,6 @@
 // WEB SERVER
 const express = require("express");
 const server = express();
-const axios = require("axios");
 const port = process.env.PORT || 8000;
 server.get("/", (req, res) => {
   res.send("Bot is running fine... no tension :)");
@@ -11,123 +10,9 @@ server.listen(port, () => {
   console.log("\nWeb-server running!\n");
 });
 
-// let lastPostedOver = "";
-let matchIdGroups = {}; //to store every group name with its match ID
-let iplsetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
-let iplStartedGroups = {}; //to store every group name with boolean value to know if ipl score is already started or not
-
-//return 0 when match over, return -1 when error, therwise return match details
-const getIplScore = async (matchID, commandName) => {
-  try {
-    let { data } = await axios.get("https://criapi.vercel.app/live");
-    // if (commandName !== "score" && lastPostedOver == data.bowlerover) return; //to not to post same score again
-
-    // lastPostedOver = data.bowlerover;
-    let title = data.title;
-    title = title.slice(0, title.search(","));
-    let score = data.current;
-    let runrate = data.runrate;
-    let lastwicket = data.lastwicket;
-    let recentballs = data.recentballs;
-    let bowler = data.bowler;
-    let bowlerover = data.bowlerover;
-    let bowlerruns = data.bowlerruns;
-    let bowlerwickets = data.bowlerwickets;
-    if (recentballs === "Data Not Found") recentballs = data.lastwicket;
-
-    let d = await axios.get(
-      "https://cricket-scorecard-2021.herokuapp.com/scorecard/" + matchID
-    );
-    data = d.data;
-
-    //is match over?
-    if (
-      commandName !== "score" &&
-      data["result"]["winning_team"] !== "Not Completed"
-    )
-      return 0;
-
-    let batsman1 = "out ho gaya",
-      batsman2 = "out ho gaya";
-    let currentInning;
-    let alt = true;
-
-    let firstInningRuns = "";
-    let firstInningTeam = "";
-
-    if (Object.keys(data.Innings2[2]).length === 0) {
-      currentInning = "Innings1";
-    } else {
-      currentInning = "Innings2";
-      firstInningRuns = data.Innings1[2].runs + "/" + data.Innings1[2].wickets;
-      firstInningTeam = data.Innings1[2].team
-        .match(/(\b\S)?/g)
-        .join("")
-        .toUpperCase();
-    }
-
-    let update = currentInning === "Innings2" ? data["result"]["update"] : "";
-
-    data[currentInning][0]["Batsman"].forEach((batsman) => {
-      if (batsman.dismissal === "batting") {
-        if (alt) {
-          let batsmanName = batsman.name;
-          if (batsmanName.search(/\(/) !== -1) {
-            batsmanName = batsmanName.slice(0, batsmanName.search(/\(/) - 1);
-          }
-          batsman1 = `${batsmanName}: ${batsman.runs} (${batsman.balls})`;
-          alt = false;
-        } else {
-          let batsmanName = batsman.name;
-          if (batsmanName.search(/\(/) !== -1) {
-            batsmanName = batsmanName.slice(0, batsmanName.search(/\(/) - 1);
-          }
-          batsman2 = `${batsmanName}: ${batsman.runs} (${batsman.balls})`;
-        }
-      }
-    });
-
-    let isInningOver = false;
-
-    //inning over
-    if (batsman2 === batsman1) isInningOver = true;
-
-    let message = "";
-    //     message += `*${title}*
-    // `;
-    //     message +=
-    //       firstInningRuns !== ""
-    //         ? `
-    // ${firstInningTeam + " - " + firstInningRuns}`
-    //         : "";
-
-    message += `
-${score} ${runrate}
-`;
-
-    message += isInningOver
-      ? ""
-      : `
-🏏 ${batsman1}
-🏏 ${batsman2}
-
-⚾ ${bowler} ${bowlerruns}-${bowlerwickets} (${bowlerover})
-${batsman2 === "out ho gaya" ? "Last Wicket: " + lastwicket : ""}
-_recent balls_
-${recentballs}`;
-
-    message +=
-      update === "" || isInningOver
-        ? ""
-        : `
-
-${update}`;
-
-    return message;
-  } catch {
-    return -1;
-  }
-};
+//importing function files
+const { getIplScore } = require("./functions/ipl");
+const { commandList } = require("./functions/list");
 
 // LOAD Baileys
 const {
@@ -153,8 +38,8 @@ const db = require("./database");
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
 const WSF = require("wa-sticker-formatter");
-const { match } = require("assert");
 
+//To see heroku postgres DB table content -> https://datazenit.com/heroku-data-explorer.html
 async function fetchauth() {
   try {
     auth_result = await db.query("select * from auth;");
@@ -183,6 +68,9 @@ async function fetchauth() {
 
 // BASIC SETTINGS
 prefix = "!";
+let matchIdGroups = {}; //to store every group name with its match ID
+let iplsetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
+let iplStartedGroups = {}; //to store every group name with boolean value to know if ipl score is already started or not
 
 // LOAD CUSTOM FUNCTIONS
 const getGroupAdmins = (participants) => {
@@ -192,42 +80,12 @@ const getGroupAdmins = (participants) => {
   }
   return admins;
 };
-const adminHelp = (prefix, groupName) => {
-  return `*─ 🔥「 PVX BOT 」 🔥 ─*
-
-*${prefix}sticker*
-    - _Create original size sticker from different media types!_
-
-*${prefix}sticker crop*
-    - _Create full size sticker from different media types!_
-
-*${prefix}add <phone number>*
-    - _Add any new member!_
-
-*${prefix}source*
-    - _Get bot source code!_
-    
-_*🏏 IPL COMMANDS:*_
-NOTE: Put matchID (from cricbuzz) in description starting!
-
-*${prefix}score*
-    - _Give IPL match current score!_
-*${prefix}startipl*
-    - _Start IPL match live score every 1 min!_
-*${prefix}stopipl*
-    - _Stop IPL match live score!_
-  
-*${prefix}dev*
-    - _Get dev contact to report bug or to add new feature!_
-    
-more commands coming...`;
-};
 
 const getRandom = (ext) => {
   return `${Math.floor(Math.random() * 10000)}${ext}`;
 };
 
-// MAIN FUNCTION
+//MAIN FUNCTION
 async function main() {
   // LOADING SESSION
   const conn = new WAConnection();
@@ -414,10 +272,6 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             reply("❌ ERROR: IPL SCORES already started for this group!");
             return;
           }
-          if (!isGroupAdmins) {
-            reply("❌ ERROR: Admin command!");
-            return;
-          }
           if (!groupDesc) {
             reply(
               "❌ ERROR: Group description is empty, try to put cricbuzz match id of today match in starting of description !"
@@ -502,10 +356,6 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           //   reply("❌ ERROR: Permission nahi h tere pass!");
           //   return;
           // }
-          if (!isGroupAdmins) {
-            reply("❌ ERROR: Admin command!");
-            return;
-          }
           reply("✔️ Stopping IPL scores for this group !");
           console.log("Stopping IPL scores for " + groupName);
           clearInterval(iplsetIntervalGroups[groupName]);
@@ -515,7 +365,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
 
         case "help":
           if (!isGroup) return;
-          costum(adminHelp(prefix, groupName), text);
+          costum(commandList(prefix), text);
 
           break;
 
@@ -658,8 +508,6 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             }
           }
           break;
-
-        /////////////// ADMIN COMMANDS \\\\\\\\\\\\\\\
 
         case "add":
           if (!isGroup) {
