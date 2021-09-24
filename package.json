@@ -1,0 +1,34 @@
+{
+  "name": "simple-whatsapp-bot",
+  "version": "0.1.0",
+  "description": "Simple Whatsapp Bot - Node Js - Heroku - Baileys",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Karma",
+  "license": "ISC",
+  "dependencies": {
+    "@adiwajshing/baileys": "github:adiwajshing/baileys",
+    "wa-sticker-formatter": "^3.6.0",
+    "async": "^3.2.0",
+    "child_process": "^1.0.2",
+    "express": "^4.17.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs": "0.0.1-security",
+    "pg": "^8.5.1"
+  },
+  "homepage": "https://github.com/karmaisgreat/simple-whatsapp-bot#readme",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karmaisgreat/simple-whatsapp-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/karmaisgreat/simple-whatsapp-bot/issues"
+  }
+}
