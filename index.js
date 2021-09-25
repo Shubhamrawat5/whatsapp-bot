@@ -214,7 +214,6 @@ const WSF = require("wa-sticker-formatter");
 //importing function files
 const { getIplScore } = require("./functions/ipl");
 const { commandList } = require("./functions/list");
-const { response } = require("express");
 
 // BASIC SETTINGS
 prefix = "!";
@@ -349,10 +348,10 @@ const main = async () => {
       const startIplHelper = async (commandName) => {
         if (!groupDesc) {
           reply(`*❌ ERROR:* 
-Group description is empty.
-Put match ID in starting of group description. 
-Get match ID from cricbuzz today match url
-example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
+- Group description is empty.
+- Put match ID in starting of group description. 
+- Get match ID from cricbuzz today match url
+- example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
 so match ID is 37572 !`);
           return false;
         }
@@ -367,34 +366,31 @@ so match ID is 37572 !`);
         }
 
         let response = await getIplScore(matchIdGroups[groupName], commandName);
-        //if commandName is score then either "error" or "message" will come
-        //if commandName is startipl then "match over","error" or "message" will come
-        if (response === "match over") {
+        //response.info have "MO" only when command is startipl
+        if (response.info === "MO") {
+          conn.sendMessage(from, response.message, MessageType.text);
           reply("✔️ Match over! Stopping IPL scores for this group !");
           console.log("Match over! Stopping IPL scores for " + groupName);
           clearInterval(iplsetIntervalGroups[groupName]);
           iplStartedGroups[groupName] = false;
           return false;
-        } else if (response === "error") {
+        } else if (response.info === "ER") {
           reply(`*❌ ERROR:* 
-Group description starting is ${matchIdGroups[groupName]}.
-Put match ID in starting of group description. 
-Get match ID from cricbuzz today match url
-example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
+- Group description starting is ${matchIdGroups[groupName]}.
+- Put match ID in starting of group description. 
+- Get match ID from cricbuzz today match url
+- example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
 so match ID is 37572 !`);
           return false;
-        } else if (
-          commandName === "startipl" &&
-          response.slice(-11) === "Inning over"
-        ) {
-          conn.sendMessage(from, response, MessageType.text);
+        } else if (commandName === "startipl" && response.info === "IO") {
+          conn.sendMessage(from, response.message, MessageType.text);
           reply(
             "✔️ Inning over! Open again live scores later when 2nd inning will start by !startipl"
           );
           stopIplHelper();
           return false;
         }
-        conn.sendMessage(from, response, MessageType.text);
+        conn.sendMessage(from, response.message, MessageType.text);
         return true;
       };
 

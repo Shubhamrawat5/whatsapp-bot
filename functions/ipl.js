@@ -1,7 +1,10 @@
 const axios = require("axios");
 
-//return "match over" when match over, return "error" when error, otherwise return match details
+//return object {message:"", info:""} =>
+//message having score and info having extra info about game like inning over, game over etc
+//INFO KEY: "MO" when match over, "IO" when inning over, "ER" when error
 module.exports.getIplScore = async (matchID, commandName) => {
+  let obj = {};
   try {
     let { data } = await axios.get(
       "https://criapi.vercel.app/score?url=https://www.cricbuzz.com/live-cricket-scores/" +
@@ -25,13 +28,6 @@ module.exports.getIplScore = async (matchID, commandName) => {
       "https://cricket-scorecard-2021.herokuapp.com/scorecard/" + matchID
     );
     data = d.data;
-
-    //is match over?
-    if (
-      commandName !== "score" &&
-      data["result"]["winning_team"] !== "Not Completed"
-    )
-      return "match over";
 
     let batsman1 = "out ho gaya",
       batsman2 = "out ho gaya";
@@ -77,8 +73,18 @@ module.exports.getIplScore = async (matchID, commandName) => {
     let isInningOver = false;
 
     //inning over
-    if (batsman2 === batsman1) isInningOver = true;
+    if (batsman2 === batsman1) {
+      obj.info = "IO";
+      isInningOver = true;
+    }
 
+    //is match over?
+    if (
+      commandName !== "score" &&
+      data["result"]["winning_team"] !== "Not Completed"
+    ) {
+      obj.info = "MO";
+    }
     /* MESSAGE :-
     Royal Challengers Bangalore vs Chennai Super Kings
 
@@ -108,22 +114,24 @@ module.exports.getIplScore = async (matchID, commandName) => {
     //current inning info
     message += `\n${score} ${runrate}\n`;
 
-    //bowler and last wicket info
+    //bowler and last wicket info | isInningOver (when inning over) - "out of gya" , "data not found" comes!
     message += isInningOver
       ? ""
       : `\n🏏 ${batsman1} \n🏏 ${batsman2}\n
-⚾ ${bowler} ${bowlerruns}-${bowlerwickets} (${bowlerover})
-${batsman2 === "out ho gaya" ? "\nLast Wicket: " + lastwicket + "\n" : ""}
-_recent balls_ \n${recentballs}`;
+    ⚾ ${bowler} ${bowlerruns}-${bowlerwickets} (${bowlerover})
+    ${batsman2 === "out ho gaya" ? "\nLast Wicket: " + lastwicket + "\n" : ""}
+    _recent balls_ \n${recentballs}\n`;
 
     //match update
-    message += update === "" || isInningOver ? "" : `\n\n${update}`;
+    message += update ? `\n${update}` : "";
 
     //to know first inning is over
-    message += isInningOver ? `\n\n> Inning over` : "";
+    // message += isInningOver ? `\n!! Inning Over !!` : "";
 
-    return message;
+    obj.message = message;
   } catch {
-    return "error";
+    obj.message = "";
+    obj.info = "ER";
   }
+  return obj;
 };
