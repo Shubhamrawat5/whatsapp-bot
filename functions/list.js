@@ -15,6 +15,9 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}dev*
     - _Get dev contact to report bug or to add new feature!_
+
+📛 *${prefix}drive query_name*
+    - _Get direct links of files from PVX team drive!_
       
 _*🏏  IPL COMMANDS:*_
 NOTE: Put matchID (from cricbuzz) in description starting!

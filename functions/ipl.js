@@ -94,46 +94,29 @@ module.exports.getIplScore = async (matchID, commandName) => {
 
     let message = "";
     //title
-    message += `*${title}*
-    `;
+    message += `*${title}*\n`;
 
     //first inning info
     message += firstInningRuns
-      ? `
-${firstInningTeam + " - " + firstInningRuns}`
+      ? `\n${firstInningTeam + " - " + firstInningRuns}`
       : "";
 
     //current inning info
-    message += `
-${score} ${runrate}
-`;
+    message += `\n${score} ${runrate}\n`;
 
     //bowler and last wicket info
     message += isInningOver
       ? ""
-      : `
-🏏 ${batsman1}
-🏏 ${batsman2}
-
+      : `\n🏏 ${batsman1} \n🏏 ${batsman2}\n
 ⚾ ${bowler} ${bowlerruns}-${bowlerwickets} (${bowlerover})
-${batsman2 === "out ho gaya" ? "Last Wicket: " + lastwicket : ""}
-_recent balls_
-${recentballs}`;
+${batsman2 === "out ho gaya" ? "\nLast Wicket: " + lastwicket + "\n" : ""}
+_recent balls_ \n${recentballs}`;
 
     //match update
-    message +=
-      update === "" || isInningOver
-        ? ""
-        : `
-
-${update}`;
+    message += update === "" || isInningOver ? "" : `\n\n${update}`;
 
     //to know first inning is over
-    message += isInningOver
-      ? `
-
-    Inning over`
-      : "";
+    message += isInningOver ? `\n\n> Inning over` : "";
 
     return message;
   } catch {
