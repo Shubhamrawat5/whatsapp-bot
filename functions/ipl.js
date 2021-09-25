@@ -14,6 +14,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
     let runrate = data.runrate;
     let lastwicket = data.lastwicket;
     let recentballs = data.recentballs;
+    let currentBatsman = data.batsman;
     let bowler = data.bowler;
     let bowlerover = data.bowlerover;
     let bowlerruns = data.bowlerruns;
@@ -51,6 +52,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
 
     let update = currentInning === "Innings2" ? data["result"]["update"] : "";
 
+    //find playing 2 batsman
     data[currentInning][0]["Batsman"].forEach((batsman) => {
       if (batsman.dismissal === "batting") {
         if (alt) {
@@ -58,6 +60,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
           if (batsmanName.search(/\(/) !== -1) {
             batsmanName = batsmanName.slice(0, batsmanName.search(/\(/) - 1);
           }
+          batsmanName += batsmanName === currentBatsman ? "*" : ""; //add * to playing batmsan
           batsman1 = `${batsmanName}: ${batsman.runs} (${batsman.balls})`;
           alt = false;
         } else {
@@ -65,6 +68,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
           if (batsmanName.search(/\(/) !== -1) {
             batsmanName = batsmanName.slice(0, batsmanName.search(/\(/) - 1);
           }
+          batsmanName += batsmanName === currentBatsman ? "*" : ""; //add * to playing batmsan
           batsman2 = `${batsmanName}: ${batsman.runs} (${batsman.balls})`;
         }
       }
