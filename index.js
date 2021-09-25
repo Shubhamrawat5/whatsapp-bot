@@ -243,10 +243,21 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
               clearInterval(iplsetIntervalGroups[groupName]);
               iplStartedGroups[groupName] = false;
               return;
-            } else if (data == -1) {
+            } else if (data === -1) {
               reply(
                 "❌ ERROR: some error came, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
               );
+              return;
+            } else if (data.slice(-4) === "over") {
+              conn.sendMessage(from, data, MessageType.text);
+              reply(
+                "✔️ 1st Inning over! Stopping IPL scores for this group ! Start again by !startipl when 2nd inning start."
+              );
+              console.log(
+                "1st inning over, Stopping IPL scores for " + groupName
+              );
+              clearInterval(iplsetIntervalGroups[groupName]);
+              iplStartedGroups[groupName] = false;
               return;
             }
             conn.sendMessage(from, data, MessageType.text);

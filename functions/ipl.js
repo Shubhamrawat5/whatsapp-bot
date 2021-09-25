@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-//return 0 when match over, return -1 when error, therwise return match details
+//return 0 when match over, return -1 when error, otherwise return match details
 module.exports.getIplScore = async (matchID, commandName) => {
   try {
     let { data } = await axios.get(
@@ -93,18 +93,22 @@ module.exports.getIplScore = async (matchID, commandName) => {
     */
 
     let message = "";
+    //title
     message += `*${title}*
     `;
 
+    //first inning info
     message += firstInningRuns
       ? `
     ${firstInningTeam + " - " + firstInningRuns}`
       : "";
 
+    //current inning info
     message += `
 ${score} ${runrate}
 `;
 
+    //bowler and last wicket info
     message += isInningOver
       ? ""
       : `
@@ -116,12 +120,20 @@ ${batsman2 === "out ho gaya" ? "Last Wicket: " + lastwicket : ""}
 _recent balls_
 ${recentballs}`;
 
+    //match update
     message +=
       update === "" || isInningOver
         ? ""
         : `
 
 ${update}`;
+
+    //to know first inning is over
+    message += isInningOver
+      ? `
+
+    Inning over`
+      : "";
 
     return message;
   } catch {
