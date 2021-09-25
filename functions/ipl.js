@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-//return 0 when match over, return -1 when error, otherwise return match details
+//return "match over" when match over, return "error" when error, otherwise return match details
 module.exports.getIplScore = async (matchID, commandName) => {
   try {
     let { data } = await axios.get(
@@ -30,7 +30,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
       commandName !== "score" &&
       data["result"]["winning_team"] !== "Not Completed"
     )
-      return 0;
+      return "match over";
 
     let batsman1 = "out ho gaya",
       batsman2 = "out ho gaya";
@@ -100,7 +100,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
     //first inning info
     message += firstInningRuns
       ? `
-    ${firstInningTeam + " - " + firstInningRuns}`
+${firstInningTeam + " - " + firstInningRuns}`
       : "";
 
     //current inning info
@@ -137,6 +137,6 @@ ${update}`;
 
     return message;
   } catch {
-    return -1;
+    return "error";
   }
 };

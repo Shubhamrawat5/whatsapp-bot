@@ -35,6 +35,7 @@ const WSF = require("wa-sticker-formatter");
 //importing function files
 const { getIplScore } = require("./functions/ipl");
 const { commandList } = require("./functions/list");
+const { response } = require("express");
 
 // BASIC SETTINGS
 prefix = "!";
@@ -158,6 +159,60 @@ const main = async () => {
         });
       };
 
+      const stopIplHelper = () => {
+        reply("✔️ Stopping IPL scores for this group !");
+        console.log("Stopping IPL scores for " + groupName);
+        clearInterval(iplsetIntervalGroups[groupName]);
+        iplStartedGroups[groupName] = false;
+      };
+
+      //return false when stopped in middle. return true when run fully
+      const startIplHelper = async (commandName) => {
+        if (!groupDesc) {
+          reply(
+            "❌ ERROR: Group description is empty, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
+          );
+          return false;
+        }
+
+        matchIdGroups[groupName] = groupDesc.slice(0, 5);
+        if (commandName === "startipl") {
+          reply(
+            "✔️ Starting IPL scores for matchID: " +
+              matchIdGroups[groupName] +
+              " (taken from description)"
+          );
+        }
+
+        let response = await getIplScore(matchIdGroups[groupName], commandName);
+        //if commandName is score then either "error" or "message" will come
+        //if commandName is startipl then "match over","error" or "message" will come
+        if (response === "match over") {
+          reply("✔️ Match over! Stopping IPL scores for this group !");
+          console.log("Match over! Stopping IPL scores for " + groupName);
+          clearInterval(iplsetIntervalGroups[groupName]);
+          iplStartedGroups[groupName] = false;
+          return false;
+        } else if (response === "error") {
+          reply(
+            "❌ ERROR: some error came, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
+          );
+          return false;
+        } else if (
+          commandName === "startipl" &&
+          response.slice(-11) === "Inning over"
+        ) {
+          conn.sendMessage(from, response, MessageType.text);
+          reply(
+            "✔️ Inning over! Open again live scores later when 2nd inning will start by !startipl"
+          );
+          stopIplHelper();
+          return false;
+        }
+        conn.sendMessage(from, response, MessageType.text);
+        return true;
+      };
+
       const isMedia = type === "imageMessage" || type === "videoMessage";
       const isQuotedImage =
         type === "extendedTextMessage" && content.includes("imageMessage");
@@ -195,72 +250,14 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             reply("❌ ERROR: IPL SCORES already started for this group!");
             return;
           }
-          if (!groupDesc) {
-            reply(
-              "❌ ERROR: Group description is empty, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
-            );
-            return;
-          }
-          matchIdGroups[groupName] = groupDesc.slice(0, 5);
-          // let allowed = ["919557666582", "918178802088"];
-          // if (!allowed.includes(sender.split("@")[0])) {
-          //   reply("❌ ERROR: Permission nahi h tere pass!");
-          //   return;
-          // }
 
-          reply(
-            "✔️ Starting IPL scores for matchID: " +
-              matchIdGroups[groupName] +
-              " (taken from description)"
-          );
-          console.log(
-            "Starting IPL scores for matchID: " +
-              matchIdGroups[groupName] +
-              " for " +
-              groupName
-          );
-          data = await getIplScore(matchIdGroups[groupName], "startipl");
-          if (data === 0) {
-            reply("✔️ Match over! Stopping IPL scores for this group !");
-            console.log("Match over! Stopping IPL scores for " + groupName);
-            clearInterval(iplsetIntervalGroups[groupName]);
-            iplStartedGroups[groupName] = false;
-            return;
-          } else if (data == -1) {
-            reply(
-              "❌ ERROR: some error came, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
-            );
-            return;
-          }
-          conn.sendMessage(from, data, MessageType.text);
+          data = await startIplHelper("startipl");
+          if (!data) return;
+
           iplStartedGroups[groupName] = true;
-
           iplsetIntervalGroups[groupName] = setInterval(async () => {
-            data = await getIplScore(matchIdGroups[groupName], "startipl");
-            if (data === 0) {
-              reply("✔️ Match over! Stopping IPL scores for this group !");
-              console.log("Match over! Stopping IPL scores for " + groupName);
-              clearInterval(iplsetIntervalGroups[groupName]);
-              iplStartedGroups[groupName] = false;
-              return;
-            } else if (data === -1) {
-              reply(
-                "❌ ERROR: some error came, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
-              );
-              return;
-            } else if (data.slice(-4) === "over") {
-              conn.sendMessage(from, data, MessageType.text);
-              reply(
-                "✔️ 1st Inning over! Stopping IPL scores for this group ! Start again by !startipl when 2nd inning start."
-              );
-              console.log(
-                "1st inning over, Stopping IPL scores for " + groupName
-              );
-              clearInterval(iplsetIntervalGroups[groupName]);
-              iplStartedGroups[groupName] = false;
-              return;
-            }
-            conn.sendMessage(from, data, MessageType.text);
+            data = await startIplHelper("score");
+            if (!data) return;
           }, 1000 * 60 * 1);
           break;
 
@@ -270,15 +267,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             return;
           }
 
-          matchIdGroups[groupName] = groupDesc.slice(0, 5);
-          data = await getIplScore(matchIdGroups[groupName], "score");
-          if (data == -1) {
-            reply(
-              "❌ ERROR: some error came, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
-            );
-            return;
-          }
-          conn.sendMessage(from, data, MessageType.text);
+          data = await startIplHelper("score");
           break;
 
         case "stopipl":
@@ -286,16 +275,10 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             reply("❌ ERROR: Group command only!");
             return;
           }
-          // if (sender.split("@")[0] !== "919557666582") {
-          //   reply("❌ ERROR: Permission nahi h tere pass!");
-          //   return;
-          // }
-          reply("✔️ Stopping IPL scores for this group !");
-          console.log("Stopping IPL scores for " + groupName);
-          clearInterval(iplsetIntervalGroups[groupName]);
-          iplStartedGroups[groupName] = false;
+          stopIplHelper();
           break;
-        //     /////////////// HELP \\\\\\\\\\\\\\\
+
+        /////////////// HELP \\\\\\\\\\\\\\\
 
         case "help":
           if (!isGroup) return;
