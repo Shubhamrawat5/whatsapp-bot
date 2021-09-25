@@ -197,7 +197,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           }
           if (!groupDesc) {
             reply(
-              "❌ ERROR: Group description is empty, try to put cricbuzz match id of today match in starting of description !"
+              "❌ ERROR: Group description is empty, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
             );
             return;
           }
@@ -228,7 +228,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             return;
           } else if (data == -1) {
             reply(
-              "❌ ERROR: some error came, try to put correct cricbuzz match id in description !"
+              "❌ ERROR: some error came, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
             );
             return;
           }
@@ -245,7 +245,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
               return;
             } else if (data == -1) {
               reply(
-                "❌ ERROR: some error came, try to put correct cricbuzz match id in description !"
+                "❌ ERROR: some error came, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
               );
               return;
             }
@@ -263,7 +263,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           data = await getIplScore(matchIdGroups[groupName], "score");
           if (data == -1) {
             reply(
-              "❌ ERROR: some error came, try to put correct cricbuzz match id in description !"
+              "❌ ERROR: some error came, Put match id in in starting of group description. Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572 !"
             );
             return;
           }

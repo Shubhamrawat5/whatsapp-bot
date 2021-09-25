@@ -3,7 +3,10 @@ const axios = require("axios");
 //return 0 when match over, return -1 when error, therwise return match details
 module.exports.getIplScore = async (matchID, commandName) => {
   try {
-    let { data } = await axios.get("https://criapi.vercel.app/live");
+    let { data } = await axios.get(
+      "https://criapi.vercel.app/score?url=https://www.cricbuzz.com/live-cricket-scores/" +
+        matchID
+    );
 
     let title = data.title;
     title = title.slice(0, title.search(","));
@@ -33,6 +36,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
       batsman2 = "out ho gaya";
     let currentInning;
     let alt = true;
+    let firstInningRuns, firstInningTeam;
 
     if (Object.keys(data.Innings2[2]).length === 0) {
       currentInning = "Innings1";
@@ -84,7 +88,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
 
     recent balls
     ... 0 1 4 1 1 | 0 6 L1 1 2 0 | 1
-    Last Wicket: example 22 (20)
+    Last Wicket: example 22 (20) 
     chennai super kings need 134 runs
     */
 
@@ -92,11 +96,10 @@ module.exports.getIplScore = async (matchID, commandName) => {
     message += `*${title}*
     `;
 
-    message +=
-      firstInningRuns !== ""
-        ? `
+    message += firstInningRuns
+      ? `
     ${firstInningTeam + " - " + firstInningRuns}`
-        : "";
+      : "";
 
     message += `
 ${score} ${runrate}
