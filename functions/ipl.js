@@ -79,11 +79,14 @@ module.exports.getIplScore = async (matchID, commandName) => {
 
     //is match over?
     if (
-      commandName !== "score" &&
+      commandName === "startipl" &&
       data["result"]["winning_team"] !== "Not Completed"
     ) {
       obj.info = "MO";
     }
+
+    if (batsman1 === batsman2) batsman1 = batsman2 = "";
+
     /* MESSAGE :-
     Royal Challengers Bangalore vs Chennai Super Kings
 
@@ -134,7 +137,8 @@ _recent balls_ \n${recentballs}`;
     // message += isInningOver ? `\n!! Inning Over !!` : "";
 
     obj.message = message;
-  } catch {
+  } catch (err) {
+    console.log(err);
     obj.message = "";
     obj.info = "ER";
   }

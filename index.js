@@ -374,7 +374,7 @@ const main = async () => {
       };
 
       //return false when stopped in middle. return true when run fully
-      const startIplHelper = async (commandName) => {
+      const startIplHelper = async (commandName, isFromSetInterval = false) => {
         if (!groupDesc) {
           reply(`*❌ ERROR:* 
 - Group description is empty.
@@ -388,7 +388,7 @@ const main = async () => {
         }
 
         matchIdGroups[groupName] = groupDesc.slice(0, 5);
-        if (commandName === "startipl") {
+        if (commandName === "startipl" && !isFromSetInterval) {
           reply(
             "✔️ Starting IPL scores for matchID: " +
               matchIdGroups[groupName] +
@@ -397,6 +397,7 @@ const main = async () => {
         }
 
         let response = await getIplScore(matchIdGroups[groupName], commandName);
+
         //response.info have "MO" only when command is startipl
         if (commandName === "startipl" && response.info === "MO") {
           conn.sendMessage(from, response.message, MessageType.text);
@@ -453,7 +454,7 @@ const main = async () => {
             return;
           }
 
-          if (type === "imageMessage" || isTaggedImage) {
+          if ((isMedia && !mek.message.videoMessage) || isTaggedImage) {
             // console.log("T-mek: ", mek);
             const encmedia = isTaggedImage
               ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
@@ -499,7 +500,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
 
           iplStartedGroups[groupName] = true;
           iplsetIntervalGroups[groupName] = setInterval(async () => {
-            data = await startIplHelper("score");
+            data = await startIplHelper("startipl", true);
             if (!data) return;
           }, 1000 * 60 * 1.5);
           break;
@@ -577,7 +578,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             ];
           }
 
-          if (type === "imageMessage" || isTaggedImage) {
+          if ((isMedia && !mek.message.videoMessage) || isTaggedImage) {
             const encmedia = isTaggedImage
               ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
                   .extendedTextMessage.contextInfo
@@ -618,8 +619,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
               }
             }
           } else if (
-            (type === "videoMessage" &&
-              mek.message.videoMessage.seconds < 11) ||
+            (isMedia && mek.message.videoMessage.seconds < 11) ||
             (isTaggedVideo &&
               mek.message.extendedTextMessage.contextInfo.quotedMessage
                 .videoMessage.seconds < 11)
