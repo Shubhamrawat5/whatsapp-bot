@@ -25,10 +25,13 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 
 let drive; //will hold our shared gdrive object
-let ourTeamDriveId = "0AIHchxZOKWruUk9PVA"; // ADI drive id
+//open in desktop to see team drive id
+let ourTeamDriveId = [
+  { name: "Adi", id: "0AIHchxZOKWruUk9PVA" },
+  { name: "Adi 3", id: "0AD7cWi12pRrHUk9PVA" },
+]; // PVX - ADI drive id
 let extraData = {
   corpora: "drive",
-  driveId: ourTeamDriveId,
   includeItemsFromAllDrives: true,
   supportsAllDrives: true,
 };
@@ -117,63 +120,73 @@ https://drive.google.com/folderview?id=${url.id}`;
 
   try {
     console.log("QUERY TO SEARCH: ", query);
-    let message = `💾 PVX GDRIVE 💾\n\n`;
+    let message = `*💾 PVX GDRIVE 💾*\n`;
     message += `🔍 Query: ${query} 🔍`;
 
-    /* ------------------------------ FOLDER SEARCH ----------------------------- */
-    let queryData = {
-      ...extraData,
-      q: `mimeType = 'application/vnd.google-apps.folder' and name contains '${query}'`,
-    };
+    //for mulitple drive search
+    for (let i = 0; i < ourTeamDriveId.length; ++i) {
+      message += `\n\n##################\n`;
+      message += `*📛 GDrive: ${ourTeamDriveId[i].name} 📛*`;
+      /* ------------------------------ FOLDER SEARCH ----------------------------- */
+      let queryData = {
+        ...extraData,
+        driveId: ourTeamDriveId[i].id,
+        q: `mimeType = 'application/vnd.google-apps.folder' and name contains '${query}'`,
+      };
 
-    let response = await drive.files.list(queryData);
-    message += generateMessage("FOLDERS (TOP 10)", 10, response.data.files);
+      let response = await drive.files.list(queryData);
+      message += generateMessage("FOLDERS (TOP 10)", 10, response.data.files);
 
-    /* ------------------------------- MP4 SEARCH ------------------------------- */
-    queryData = {
-      ...extraData,
-      q: `mimeType = 'video/mp4' and name contains '${query}'`,
-    };
-    response = await drive.files.list(queryData);
-    message += generateMessage("MP4 (TOP 2)", 2, response.data.files);
+      /* ------------------------------- MP4 SEARCH ------------------------------- */
+      queryData = {
+        ...extraData,
+        driveId: ourTeamDriveId[i].id,
+        q: `mimeType = 'video/mp4' and name contains '${query}'`,
+      };
+      response = await drive.files.list(queryData);
+      message += generateMessage("MP4 (TOP 2)", 2, response.data.files);
 
-    /* ------------------------------- MKV SEARCH ------------------------------- */
-    queryData = {
-      ...extraData,
-      q: `mimeType = 'video/x-matroska' and name contains '${query}'`,
-    };
-    response = await drive.files.list(queryData);
-    message += generateMessage("MKV (TOP 2)", 2, response.data.files);
+      /* ------------------------------- MKV SEARCH ------------------------------- */
+      queryData = {
+        ...extraData,
+        driveId: ourTeamDriveId[i].id,
+        q: `mimeType = 'video/x-matroska' and name contains '${query}'`,
+      };
+      response = await drive.files.list(queryData);
+      message += generateMessage("MKV (TOP 2)", 2, response.data.files);
 
-    /* ------------------------------- TAR SEARCH ------------------------------- */
-    queryData = {
-      ...extraData,
-      q: `mimeType = 'application/x-tar' and name contains '${query}'`,
-    };
-    response = await drive.files.list(queryData);
-    message += generateMessage("TAR (TOP 10)", 10, response.data.files);
+      /* ------------------------------- TAR SEARCH ------------------------------- */
+      queryData = {
+        ...extraData,
+        driveId: ourTeamDriveId[i].id,
+        q: `mimeType = 'application/x-tar' and name contains '${query}'`,
+      };
+      response = await drive.files.list(queryData);
+      message += generateMessage("TAR (TOP 10)", 10, response.data.files);
 
-    /* ------------------------------- ZIP SEARCH ------------------------------- */
-    queryData = {
-      ...extraData,
-      q: `mimeType = 'application/zip' and name contains '${query}'`,
-    };
-    response = await drive.files.list(queryData);
-    message += generateMessage("ZIP (TOP 10)", 10, response.data.files);
+      /* ------------------------------- ZIP SEARCH ------------------------------- */
+      queryData = {
+        ...extraData,
+        driveId: ourTeamDriveId[i].id,
+        q: `mimeType = 'application/zip' and name contains '${query}'`,
+      };
+      response = await drive.files.list(queryData);
+      message += generateMessage("ZIP (TOP 10)", 10, response.data.files);
 
-    /* ------------------------------- PDF SEARCH ------------------------------- */
-    queryData = {
-      ...extraData,
-      q: `mimeType = 'application/pdf' and name contains '${query}'`,
-    };
-    response = await drive.files.list(queryData);
-    message += generateMessage("PDF (TOP 10)", 10, response.data.files);
+      /* ------------------------------- PDF SEARCH ------------------------------- */
+      queryData = {
+        ...extraData,
+        driveId: ourTeamDriveId[i].id,
+        q: `mimeType = 'application/pdf' and name contains '${query}'`,
+      };
+      response = await drive.files.list(queryData);
+      message += generateMessage("PDF (TOP 10)", 10, response.data.files);
+
+      // no data found!
+      if (!/-/g.test(message)) message += `\nno data found!`;
+    }
 
     /* -------------------------------- message ------------------------------- */
-
-    // no data found!
-    if (!/-/g.test(message)) message += `\nno data found!`;
-
     message = message.slice(0, 4096); // tg message limit is 4096
     return message;
     // send a message to the chat acknowledging receipt of their message
@@ -454,16 +467,13 @@ const main = async () => {
             return;
           }
 
-          if ((isMedia && !mek.message.videoMessage) || isTaggedImage) {
-            // console.log("T-mek: ", mek);
+          if (type === "imageMessage" || isTaggedImage) {
             const encmedia = isTaggedImage
               ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
                   .extendedTextMessage.contextInfo
               : mek;
 
-            // console.log("T-encmedia: ", encmedia);
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
-            console.log("T-media: ", media);
             let message = await tesseract.recognize(`./${media}`, {
               lang: "eng",
               oem: 1,
@@ -480,7 +490,7 @@ const main = async () => {
 
         case "dev":
           reply(`─「 PVX BOT 」 ─\n
-_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_`);
+_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_ `);
           break;
 
         //This takes match ID from group description! Put match ID in starting of group description.
@@ -674,7 +684,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             return;
           }
           if (args.length === 0) {
-            reply("❌ ERROR: Query is empty! Send !drive query_name");
+            reply(`❌ ERROR: Query is empty! \nSend !drive query_name`);
             return;
           }
           let query = args.join(" ");
