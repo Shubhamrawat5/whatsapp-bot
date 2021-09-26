@@ -215,6 +215,8 @@ const WSF = require("wa-sticker-formatter");
 const { getIplScore } = require("./functions/ipl");
 const { commandList } = require("./functions/list");
 
+const tesseract = require("node-tesseract-ocr");
+
 // BASIC SETTINGS
 prefix = "!";
 let matchIdGroups = {}; //to store every group name with its match ID
@@ -266,6 +268,7 @@ const main = async () => {
       global.prefix;
       const from = mek.key.remoteJid;
       const type = Object.keys(mek.message)[0];
+
       const {
         text,
         extendedText,
@@ -279,23 +282,49 @@ const main = async () => {
         audio,
         product,
       } = MessageType;
+
+      //body will have the text message
       body =
         type === "conversation" && mek.message.conversation.startsWith(prefix)
           ? mek.message.conversation
           : type == "imageMessage" &&
+            mek.message.imageMessage.caption &&
             mek.message.imageMessage.caption.startsWith(prefix)
           ? mek.message.imageMessage.caption
           : type == "videoMessage" &&
+            mek.message.videoMessage.caption &&
             mek.message.videoMessage.caption.startsWith(prefix)
           ? mek.message.videoMessage.caption
           : type == "extendedTextMessage" &&
+            mek.message.extendedTextMessage.text &&
             mek.message.extendedTextMessage.text.startsWith(prefix)
           ? mek.message.extendedTextMessage.text
           : "";
+
       const command = body.slice(1).trim().split(/ +/).shift().toLowerCase();
       const args = body.trim().split(/ +/).slice(1);
       const isCmd = body.startsWith(prefix);
       if (!isCmd) return;
+
+      /* [INFO] 
+      1) quoted == tagged messages 
+      
+      2) when normal text received
+      mek = {
+        key: {
+          remoteJid: "91955782-1559476348@g.us",
+          fromMe: false,
+          id: "B98FBDD5A762DEA9F4DD733",
+        },
+        message: { conversation: "!help" },
+        messageTimestamp: "1632654425",
+        participant: "919836014@s.whatsapp.net",
+        ephemeralOutOfSync: false,
+      };
+
+      3) type = "conversation" , "imageMessage" , "videoMessage" , "extendedTextMessage"
+        -> extendedTextMessage are tagged messages
+      */
 
       errors = {
         admin_error: "_❌ ERROR: I'm not Admin here! ❌_",
@@ -350,9 +379,11 @@ const main = async () => {
           reply(`*❌ ERROR:* 
 - Group description is empty.
 - Put match ID in starting of group description. 
-- Get match ID from cricbuzz today match url
+- Get match ID from cricbuzz today match url.
 - example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
-so match ID is 37572 !`);
+- so match ID is 37572 !
+
+# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
           return false;
         }
 
@@ -367,20 +398,12 @@ so match ID is 37572 !`);
 
         let response = await getIplScore(matchIdGroups[groupName], commandName);
         //response.info have "MO" only when command is startipl
-        if (response.info === "MO") {
+        if (commandName === "startipl" && response.info === "MO") {
           conn.sendMessage(from, response.message, MessageType.text);
           reply("✔️ Match over! Stopping IPL scores for this group !");
           console.log("Match over! Stopping IPL scores for " + groupName);
           clearInterval(iplsetIntervalGroups[groupName]);
           iplStartedGroups[groupName] = false;
-          return false;
-        } else if (response.info === "ER") {
-          reply(`*❌ ERROR:* 
-- Group description starting is ${matchIdGroups[groupName]}.
-- Put match ID in starting of group description. 
-- Get match ID from cricbuzz today match url
-- example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
-so match ID is 37572 !`);
           return false;
         } else if (commandName === "startipl" && response.info === "IO") {
           conn.sendMessage(from, response.message, MessageType.text);
@@ -389,17 +412,27 @@ so match ID is 37572 !`);
           );
           stopIplHelper();
           return false;
+        } else if (response.info === "ER") {
+          reply(`*❌ ERROR:* 
+- Group description starting is "${matchIdGroups[groupName]}"
+- Put match ID in starting of group description. 
+- Get match ID from cricbuzz today match url.
+- example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
+- so match ID is 37572 !
+
+# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
+          return false;
         }
         conn.sendMessage(from, response.message, MessageType.text);
         return true;
       };
 
-      const isMedia = type === "imageMessage" || type === "videoMessage";
-      const isQuotedImage =
+      const isMedia = type === "imageMessage" || type === "videoMessage"; //image or video
+      const isTaggedImage =
         type === "extendedTextMessage" && content.includes("imageMessage");
-      const isQuotedVideo =
+      const isTaggedVideo =
         type === "extendedTextMessage" && content.includes("videoMessage");
-      const isQuotedSticker =
+      const isTaggedSticker =
         type === "extendedTextMessage" && content.includes("stickerMessage");
       if (isCmd && isGroup)
         console.log(
@@ -411,9 +444,39 @@ so match ID is 37572 !`);
           groupName
         );
 
-      /////////////// COMMANDS \\\\\\\\\\\\\\\
+      /* -------------------------------- COMMANDS -------------------------------- */
       let data;
       switch (command) {
+        case "text":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+
+          if (type === "imageMessage" || isTaggedImage) {
+            // console.log("T-mek: ", mek);
+            const encmedia = isTaggedImage
+              ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
+                  .extendedTextMessage.contextInfo
+              : mek;
+
+            // console.log("T-encmedia: ", encmedia);
+            const media = await conn.downloadAndSaveMediaMessage(encmedia);
+            console.log("T-media: ", media);
+            let message = await tesseract.recognize(`./${media}`, {
+              lang: "eng",
+              oem: 1,
+              psm: 3,
+            });
+            message = message.replace(/\s{2,}/g, " ").trim(); //remove multiple spaces
+            message = message.replace(/(\n){2,}/g, "\n").trim(); //remove multiple \n
+
+            reply(message);
+          } else {
+            reply("❌ ERROR: Give image having text!");
+          }
+          break;
+
         case "dev":
           reply(`─「 PVX BOT 」 ─\n
 _Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_`);
@@ -461,8 +524,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
         /////////////// HELP \\\\\\\\\\\\\\\
         case "help":
           if (!isGroup) return;
-          costum(commandList(prefix), MessageType.text);
-
+          reply(commandList(prefix));
           break;
 
         case "source":
@@ -515,14 +577,14 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             ];
           }
 
-          if ((isMedia && !mek.message.videoMessage) || isQuotedImage) {
-            const encmedia = isQuotedImage
+          if (type === "imageMessage" || isTaggedImage) {
+            const encmedia = isTaggedImage
               ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
                   .extendedTextMessage.contextInfo
               : mek;
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
             ran = getRandom(".webp");
-            reply("⌛ Processing image... ⏳");
+            // reply("⌛ Processing image wait... ⏳");
             await ffmpeg(`./${media}`)
               .input(media)
               .on("error", function (err) {
@@ -556,18 +618,19 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
               }
             }
           } else if (
-            (isMedia && mek.message.videoMessage.seconds < 11) ||
-            (isQuotedVideo &&
+            (type === "videoMessage" &&
+              mek.message.videoMessage.seconds < 11) ||
+            (isTaggedVideo &&
               mek.message.extendedTextMessage.contextInfo.quotedMessage
                 .videoMessage.seconds < 11)
           ) {
-            const encmedia = isQuotedVideo
+            const encmedia = isTaggedVideo
               ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
                   .extendedTextMessage.contextInfo
               : mek;
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
             ran = getRandom(".webp");
-            reply("⌛ Processing animation... ⏳");
+            // reply("⌛ Processing animation... ⏳");
             await ffmpeg(`./${media}`)
               .inputFormat(media.split(".")[1])
               .on("error", function (err) {

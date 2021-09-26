@@ -17,7 +17,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
     let runrate = data.runrate;
     let lastwicket = data.lastwicket;
     let recentballs = data.recentballs;
-    let currentBatsman = data.batsman;
+    let currentBatsman = data.batsman.slice(0, -1);
     let bowler = data.bowler;
     let bowlerover = data.bowlerover;
     let bowlerruns = data.bowlerruns;
@@ -46,7 +46,14 @@ module.exports.getIplScore = async (matchID, commandName) => {
         .toUpperCase();
     }
 
-    let update = currentInning === "Innings2" ? data["result"]["update"] : "";
+    let update = data["result"]["update"];
+    let isInningOver = false;
+
+    //inning over or not
+    if (update === "innings break") {
+      obj.info = "IO";
+      isInningOver = true;
+    }
 
     //find playing 2 batsman
     data[currentInning][0]["Batsman"].forEach((batsman) => {
@@ -69,14 +76,6 @@ module.exports.getIplScore = async (matchID, commandName) => {
         }
       }
     });
-
-    let isInningOver = false;
-
-    //inning over
-    if (batsman2 === batsman1) {
-      obj.info = "IO";
-      isInningOver = true;
-    }
 
     //is match over?
     if (
@@ -102,6 +101,8 @@ module.exports.getIplScore = async (matchID, commandName) => {
     chennai super kings need 134 runs
     */
 
+    //TODO: current batsman with *
+
     let message = "";
     //title
     message += `*${title}*\n`;
@@ -112,18 +113,22 @@ module.exports.getIplScore = async (matchID, commandName) => {
       : "";
 
     //current inning info
-    message += `\n${score} ${runrate}\n`;
+    message += `\n${score} ${runrate}`;
 
     //bowler and last wicket info | isInningOver (when inning over) - "out of gya" , "data not found" comes!
     message += isInningOver
       ? ""
-      : `\n🏏 ${batsman1} \n🏏 ${batsman2}\n
-    ⚾ ${bowler} ${bowlerruns}-${bowlerwickets} (${bowlerover})
-    ${batsman2 === "out ho gaya" ? "\nLast Wicket: " + lastwicket + "\n" : ""}
-    _recent balls_ \n${recentballs}\n`;
+      : `\n\n🏏 ${batsman1} \n🏏 ${batsman2}\n
+⚾ ${bowler} ${bowlerruns}-${bowlerwickets} (${bowlerover})
+${batsman2 === "out ho gaya" ? "\nLast Wicket: " + lastwicket + "\n" : ""}
+_recent balls_ \n${recentballs}`;
 
     //match update
-    message += update ? `\n${update}` : "";
+    let isMatchStarted = score === "Data Not Found" ? false : true;
+    message +=
+      currentInning === "Innings2" || isInningOver || !isMatchStarted
+        ? `\n\n${update}`
+        : "";
 
     //to know first inning is over
     // message += isInningOver ? `\n!! Inning Over !!` : "";

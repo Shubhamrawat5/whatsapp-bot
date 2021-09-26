@@ -21,6 +21,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "fs": "0.0.1-security",
     "googleapis": "^87.0.0",
+    "node-tesseract-ocr": "^2.2.1",
     "pg": "^8.5.1",
     "wa-sticker-formatter": "^3.6.0"
   },

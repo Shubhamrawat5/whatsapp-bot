@@ -27,17 +27,18 @@
 1. After downloading and installing Heroku CLI in your system login to heroku cli using `heroku login` in command prompt or powershell.
 2. Add ffmpeg (_for sticker support_) in your heroku app using `heroku buildpacks:add https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git -a <your-app-name>`
 3. After adding ffmpeg now add 'Heroku Buildpack for Node.js' using `heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nodejs.git -a <your-app-name>`
-4. Now download or clone the `simple-whatsapp-bot` repo from (https://github.com/karmaisgreat/simple-whatsapp-bot)
-5. Now enter in `simple-whatsapp-bot` directory using `cd simple-whatsapp-bot` in command prompt or terminal.
-6. Now init the git using `git init`
-7. Create the remote region using `heroku git:remote -a <your-app-name>`
-8. Now deploy the repo in your heroku app using :
+4. Now add 'Heroku Buildpack for tesseract' using `heroku buildpacks:add https://github.com/pathwaysmedical/heroku-buildpack-tesseract`
+5. Now download or clone the `simple-whatsapp-bot` repo from (https://github.com/karmaisgreat/simple-whatsapp-bot)
+6. Now enter in `simple-whatsapp-bot` directory using `cd simple-whatsapp-bot` in command prompt or terminal.
+7. Now init the git using `git init`
+8. Create the remote region using `heroku git:remote -a <your-app-name>`
+9. Now deploy the repo in your heroku app using :
    - `git add .`
    - `git commit -am "first commit"`
    - `git push heroku master`
-9. Now after the deploy process is completed use `heroku logs -a <your-app-name> --tail` to get real time logs from heroku app.
-10. In real time logs it will automatically ask you for login using qr code just simple scan the qr code using your whatsapp web section, and you are done.
-11. Scan QR code with you phone. done!
+10. Now after the deploy process is completed use `heroku logs -a <your-app-name> --tail` to get real time logs from heroku app.
+11. In real time logs it will automatically ask you for login using qr code just simple scan the qr code using your whatsapp web section, and you are done.
+12. Scan QR code with you phone. done!
 
 # Features:-
 
@@ -49,6 +50,8 @@
 | :---------: | :-----------------------------------------: |
 |   `!help`   |            Display help message             |
 |   `!add`    |             Add member to group             |
+|   `!text`   |         Get text extract from image         |
+|  `!drive`   |        Get GDrive files direct link         |
 |  `!score`   |               Give IPL score                |
 | `!startipl` |           Start IPL score updated           |
 | `!stotipl`  |           Stop IPL score updated            |
