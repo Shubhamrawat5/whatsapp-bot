@@ -649,6 +649,15 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
               }
             }
           } else if (
+            (isMedia && mek.message.videoMessage.seconds > 10) ||
+            (isTaggedVideo &&
+              mek.message.extendedTextMessage.contextInfo.quotedMessage
+                .videoMessage.seconds > 10)
+          ) {
+            reply(
+              "❌ ERROR: Only video with length less than 11 seconds are accepted!"
+            );
+          } else if (
             (isMedia && mek.message.videoMessage.seconds < 11) ||
             (isTaggedVideo &&
               mek.message.extendedTextMessage.contextInfo.quotedMessage
