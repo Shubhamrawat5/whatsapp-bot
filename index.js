@@ -260,8 +260,17 @@ const main = async () => {
       const mdata = await conn.groupMetadata(anu.jid);
       console.log(anu);
       if (anu.action == "add") {
+        let from = anu.remoteJid;
         num = anu.participants[0];
         num_split = `${num.split("@s.whatsapp.net")[0]}`;
+        //bot added in new group
+        if (String(num) == "919720391303@s.whatsapp.net") {
+          conn.sendMessage(
+            from,
+            `*─「 🔥 PVX BOT 🔥 」─\n\nSEND !help FOR BOT COMMANDS`,
+            MessageType.text
+          );
+        }
         console.log("Joined: ", num);
       }
     } catch (e) {
