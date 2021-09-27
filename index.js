@@ -227,6 +227,7 @@ const WSF = require("wa-sticker-formatter");
 //importing function files
 const { getIplScore } = require("./functions/ipl");
 const { commandList } = require("./functions/list");
+const { getNews } = require("./functions/news");
 
 const tesseract = require("node-tesseract-ocr");
 
@@ -260,11 +261,12 @@ const main = async () => {
       const mdata = await conn.groupMetadata(anu.jid);
       console.log(anu);
       if (anu.action == "add") {
-        let from = anu.remoteJid;
-        num = anu.participants[0];
-        num_split = `${num.split("@s.whatsapp.net")[0]}`;
-        //bot added in new group
-        if (String(num) == "919720391303@s.whatsapp.net") {
+        let num = anu.participants[0];
+        let from = anu.jid;
+        let num_split = `${num.split("@s.whatsapp.net")[0]}`;
+        if (num_split === "919720391303") {
+          console.log("Bot is add to new group!");
+          console.log("From: ", from);
           conn.sendMessage(
             from,
             `*─「 🔥 PVX BOT 🔥 」─\n\nSEND !help FOR BOT COMMANDS`,
@@ -470,6 +472,15 @@ const main = async () => {
       /* -------------------------------- COMMANDS -------------------------------- */
       let data;
       switch (command) {
+        case "technews":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          let news = await getNews();
+          conn.sendMessage(from, news, MessageType.text);
+          break;
+
         case "text":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");

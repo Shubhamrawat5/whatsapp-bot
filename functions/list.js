@@ -12,6 +12,9 @@ module.exports.commandList = (prefix) => {
   
 📛 *${prefix}drive query_name*
     - _Get direct links of files from PVX team drive!_
+      
+📛 *${prefix}technews*
+- _Get latest Tech news from inshorts !_
   
 📛 *${prefix}source*
     - _Get bot source code!_

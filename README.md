@@ -52,6 +52,7 @@
 |   `!add`    |             Add member to group             |
 |   `!text`   |         Get text extract from image         |
 |  `!drive`   |        Get GDrive files direct link         |
+| `!technews` |            Get latest Tech news             |
 |  `!score`   |               Give IPL score                |
 | `!startipl` |           Start IPL score updated           |
 | `!stotipl`  |           Stop IPL score updated            |
