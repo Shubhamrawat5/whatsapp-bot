@@ -28,8 +28,8 @@
 2. Add ffmpeg (_for sticker support_) in your heroku app using `heroku buildpacks:add https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git -a <your-app-name>`
 3. After adding ffmpeg now add 'Heroku Buildpack for Node.js' using `heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nodejs.git -a <your-app-name>`
 4. Now add 'Heroku Buildpack for tesseract' using `heroku buildpacks:add https://github.com/pathwaysmedical/heroku-buildpack-tesseract`
-5. Now download or clone the `simple-whatsapp-bot` repo from (https://github.com/karmaisgreat/simple-whatsapp-bot)
-6. Now enter in `simple-whatsapp-bot` directory using `cd simple-whatsapp-bot` in command prompt or terminal.
+5. Now download or clone the `whatsapp-bot` repo from (https://github.com/shubhamrawat5/whatsapp-bot)
+6. Now enter in `whatsapp-bot` directory using `cd whatsapp-bot` in command prompt or terminal.
 7. Now init the git using `git init`
 8. Create the remote region using `heroku git:remote -a <your-app-name>`
 9. Now deploy the repo in your heroku app using :
@@ -57,6 +57,7 @@
 | `!startipl` |           Start IPL score updated           |
 | `!stotipl`  |           Stop IPL score updated            |
 | `!sticker`  | Create a sticker from different media types |
+| `!pvxlink`  |           Get group links of PVX            |
 |  `!source`  |             Get the bot source              |
 |   `!dev`    |           Get the contact of dev            |
 
@@ -76,5 +77,4 @@ You can use (http://kaffeine.herokuapp.com) to ping the heroku app every 30 minu
 
 - [@Baileys](https://github.com/adiwajshing/Baileys)
 - [@WA-STICKER-FORMATTER](https://github.com/Alensaito1/wa-sticker-formatter)
-
-Starter code taken from [Karma](https://github.com/karmaisgreat/simple-whatsapp-bot).
+- Starter code taken from [Karma](https://github.com/karmaisgreat/simple-whatsapp-bot).

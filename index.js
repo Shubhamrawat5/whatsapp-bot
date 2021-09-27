@@ -195,8 +195,23 @@ https://drive.google.com/folderview?id=${url.id}`;
   }
 };
 
-/* ------------------------------------ - ----------------------------------- */
+/* ------------------------------------ INSTA -----------------------------------  */
+const saveInstaVideo = async (randomName, videoDirectLink) => {
+  const path = `./${randomName}`;
+  const writer = fs.createWriteStream(path);
+  const response = await axios({
+    url: videoDirectLink,
+    method: "GET",
+    responseType: "stream",
+  });
+  response.data.pipe(writer);
+  return new Promise((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
+};
 
+/* ------------------------------------ - ----------------------------------- */
 app.listen(port, () => {
   console.clear();
   console.log("\nWeb-server running!\n");
@@ -228,8 +243,10 @@ const WSF = require("wa-sticker-formatter");
 const { getIplScore } = require("./functions/ipl");
 const { commandList } = require("./functions/list");
 const { getNews } = require("./functions/news");
+const { getInstaVideo } = require("./functions/insta");
 
 const tesseract = require("node-tesseract-ocr");
+const axios = require("axios");
 
 // BASIC SETTINGS
 prefix = "!";
@@ -266,7 +283,6 @@ const main = async () => {
         let num_split = `${num.split("@s.whatsapp.net")[0]}`;
         if (num_split === "919720391303") {
           console.log("Bot is add to new group!");
-          console.log("From: ", from);
           conn.sendMessage(
             from,
             `*─「 🔥 PVX BOT 🔥 」─\n\nSEND !help FOR BOT COMMANDS`,
@@ -472,6 +488,68 @@ const main = async () => {
       /* -------------------------------- COMMANDS -------------------------------- */
       let data;
       switch (command) {
+        case "pvxlink":
+          reply(
+            "*─「 🔥 JOIN PVX FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
+          );
+          break;
+
+        case "insta":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (args.length === 0) {
+            reply(`❌ ERROR: URL is empty! \nSend !insta url`);
+            return;
+          }
+          let urlInsta = args[0];
+          if (urlInsta.includes("reel")) {
+            reply(
+              `❌ ERROR: Reels are not supported yet! \nSend insta post videos.`
+            );
+            return;
+          }
+          if (!urlInsta.includes("instagram.com/p/")) {
+            reply(`❌ ERROR: wrong insta url!`);
+            return;
+          }
+
+          let instaObj = await getInstaVideo(urlInsta);
+          console.log(instaObj);
+          let videoDirectLink = instaObj.videoDirectLink;
+          if (!videoDirectLink) {
+            reply(`❌ ERROR: some problem!`);
+            // let videoDirectLink =
+            //   "https://scontent.cdninstagram.com/v/t50.2886-16/198278682_327509235426898_9019585109266794402_n.mp4?efg=eyJ2ZW5jb2RlX3RhZyI6InZ0c192b2RfdXJsZ2VuLjk2MC5mZWVkLmRlZmF1bHQiLCJxZV9ncm91cHMiOiJbXCJpZ193ZWJfZGVsaXZlcnlfdnRzX290ZlwiXSJ9&_nc_ht=instagram.fbek1-2.fna.fbcdn.net&_nc_cat=110&_nc_ohc=Jlken760wo4AX-9Z5gE&edm=AABBvjUBAAAA&vs=17914106128729063_378362713&_nc_vs=HBksFQAYJEdCcF8wUXRTWnFNdjNpa0JBS0lIUUh2ZUFDeDlia1lMQUFBRhUAAsgBABUAGCRHQWlkMFF0b3NzbG9lTUVCQU4wTTVBMjFOd3BYYmtZTEFBQUYVAgLIAQAoABgAGwAVAAAmrobc0qKUvz8VAigCQzMsF0AmZmZmZmZmGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHXqBwA%3D&ccb=7-4&oe=61543E61&oh=0a7febec19cecfc85d9571c0a8149d54&_nc_sid=83d603&_nc_vts_prog=1&vts=1";
+            // let randomName = getRandom(".mp4");
+            // await saveInstaVideo(randomName, videoDirectLink);
+            // console.log("video saved!");
+            // await conn.sendMessage(
+            //   from,
+            //   `./${randomName}'`, // can send mp3, mp4, & ogg
+            //   MessageType.audio,
+            //   { mimetype: Mimetype.mp4Audio } // some metadata (can't have caption in audio)
+            // );
+            return;
+          }
+          console.log("Got direct link!");
+          try {
+            let randomName = getRandom(".mp4");
+            await saveInstaVideo(randomName, videoDirectLink);
+            console.log("video saved!");
+            await conn.sendMessage(
+              from,
+              `./${randomName}'`, // can send mp3, mp4, & ogg
+              MessageType.audio,
+              { mimetype: Mimetype.mp4Audio } // some metadata (can't have caption in audio)
+            );
+          } catch (err) {
+            console.log(err);
+            reply(`❌ ERROR: There is some problem.`);
+          }
+          break;
+
         case "technews":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");

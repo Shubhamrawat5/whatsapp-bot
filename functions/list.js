@@ -7,6 +7,9 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}sticker crop*
     - _Create full size sticker from different media types!_
 
+📛 *${prefix}pvxlink*
+    - _Get links for all PVX groups!_
+
 📛 *${prefix}text*
     - _Get text extractor from image!_
   
