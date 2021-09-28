@@ -10,8 +10,15 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}add <phone number>*
     - _Add any new member!
     
+📛 *${prefix}kick <mention>*
+    - _Kick any member from group!
+    - Alias: !ban , !remove 
+    
 _📛 *${prefix}insta url*
-    - _Instagram post videos / reels downloader!_
+    - _Instagram post videos / reels downloader!
+    
+__📛 *${prefix}song name*
+    - _Get songs in good quality!_
 
 📛 *${prefix}text*
     - _Get text extractor from image!_

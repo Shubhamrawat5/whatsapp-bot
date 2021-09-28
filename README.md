@@ -50,10 +50,12 @@
 | :---------: | :-----------------------------------------: |
 |   `!help`   |            Display help message             |
 |   `!add`    |             Add member to group             |
+|   `!kick`   |           kick member from group            |
 |   `!text`   |         Get text extract from image         |
-|  `!drive`   |        Get GDrive files direct link         |
+|   `!song`   |        Get any song in good quality         |
 |  `!insta`   |       Get insta reels or post videos        |
 | `!technews` |            Get latest Tech news             |
+|  `!drive`   |        Get GDrive files direct link         |
 |  `!score`   |               Give IPL score                |
 | `!startipl` |           Start IPL score updated           |
 | `!stotipl`  |           Stop IPL score updated            |

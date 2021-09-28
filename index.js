@@ -197,58 +197,65 @@ https://drive.google.com/folderview?id=${url.id}`;
 
 /* ---------------------------------- SONG ---------------------------------- */
 
-const downloadSong = async (name, query) => {
-  const { data } = await axios.get(INFO_URL + query);
+const downloadSong = async (randomName, query) => {
+  try {
+    const INFO_URL = "https://slider.kz/vk_auth.php?q=";
+    const DOWNLOAD_URL = "https://slider.kz/download/";
+    let { data } = await axios.get(INFO_URL + query);
 
-  if (data["audios"][""].length <= 1) {
-    console.log("==[ SONG NOT FOUND! ]== : " + song);
-    return false;
-  }
+    if (data["audios"][""].length <= 1) {
+      console.log("==[ SONG NOT FOUND! ]==");
+      return "NOT";
+    }
 
-  //avoid remix,revisited,mix
-  let i = 0;
-  let track = data["audios"][""][i];
-  while (/remix|revisited|mix/i.test(track.tit_art)) {
-    i += 1;
-    track = data["audios"][""][i];
-  }
-  //if reach the end then select the first song
-  if (!track) {
-    track = data["audios"][""][0];
-  }
+    //avoid remix,revisited,mix
+    let i = 0;
+    let track = data["audios"][""][i];
+    while (/remix|revisited|mix/i.test(track.tit_art)) {
+      i += 1;
+      track = data["audios"][""][i];
+    }
+    //if reach the end then select the first song
+    if (!track) {
+      track = data["audios"][""][0];
+    }
 
-  let link = DOWNLOAD_URL + track.id + "/";
-  link = link + track.duration + "/";
-  link = link + track.url + "/";
-  link = link + track.tit_art + ".mp3" + "?extra=";
-  link = link + track.extra;
-  link = encodeURI(link); //to replace unescaped characters from link
+    let link = DOWNLOAD_URL + track.id + "/";
+    link = link + track.duration + "/";
+    link = link + track.url + "/";
+    link = link + track.tit_art + ".mp3" + "?extra=";
+    link = link + track.extra;
+    link = encodeURI(link); //to replace unescaped characters from link
 
-  let songName = track.tit_art;
-  songName =
+    let songName = track.tit_art;
     songName =
-    songName =
-      songName.replace(/\?|<|>|\*|"|:|\||\/|\\/g, ""); //removing special characters which are not allowed in file name
-  // console.log(link);
-  // download(songName, link);
-  const res = await axios({
-    method: "GET",
-    url: url,
-    responseType: "stream",
-  });
-  data = res.data;
-  const path = `./${name}`;
-  const writer = fs.createWriteStream(path);
-  data.pipe(fs.createWriteStream(writer));
-  return new Promise((resolve, reject) => {
-    writer.on("finish", resolve);
-    writer.on("error", reject);
-  });
+      songName =
+      songName =
+        songName.replace(/\?|<|>|\*|"|:|\||\/|\\/g, ""); //removing special characters which are not allowed in file name
+    // console.log(link);
+    // download(songName, link);
+    const res = await axios({
+      method: "GET",
+      url: link,
+      responseType: "stream",
+    });
+    data = res.data;
+    const path = `./${randomName}`;
+    const writer = fs.createWriteStream(path);
+    data.pipe(writer);
+    return new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
+  } catch (err) {
+    console.log(err);
+    return "ERROR";
+  }
 };
 
 /* ------------------------------------ INSTA -----------------------------------  */
 const saveInstaVideo = async (randomName, videoDirectLink) => {
-  const { data } = await axios({
+  const response = await axios({
     url: videoDirectLink,
     method: "GET",
     responseType: "stream",
@@ -271,9 +278,10 @@ const saveInstaVideo = async (randomName, videoDirectLink) => {
     method: "GET",
     mode: "cors",
   });
+
   const path = `./${randomName}`;
   const writer = fs.createWriteStream(path);
-  data.pipe(writer);
+  response.data.pipe(writer);
   return new Promise((resolve, reject) => {
     writer.on("finish", resolve);
     writer.on("error", reject);
@@ -574,11 +582,15 @@ const main = async () => {
           try {
             let randomName = getRandom(".mp3");
             let query = args.join("%20");
-            await downloadSong(randomName, query);
+            let response = await downloadSong(randomName, query);
+            if (response == "NOT") {
+              reply("❌ ERROR: Song not found!");
+              return;
+            }
             console.log(`song saved-> ./${randomName}`);
             await conn.sendMessage(
               from,
-              fs.readFileSync(`./${randomName}`), // can send mp3, mp4, & ogg
+              { url: `./${randomName}` },
               MessageType.audio,
               { mimetype: Mimetype.mp4Audio }
             );
@@ -632,7 +644,6 @@ const main = async () => {
             reply(`❌ ERROR: There is some problem.`);
           }
           break;
-
         case "technews":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -919,13 +930,40 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
             reply("_❌ ERROR: Number has left the group recently!_");
           }
           if (get_status == 409) {
-            reply("_❌ ERROR: Number is already exists!_");
+            reply("_❌ ERROR: Number is already in group!_");
           }
           if (get_status == 500) {
             reply("_❌ ERROR: Group is currently full!_");
           }
           if (get_status == 200) {
             reply("_✔ SUCCESS: Number added to group!_");
+          }
+          break;
+
+        case "kick":
+        case "ban":
+        case "remove":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (!isGroupAdmins) {
+            reply("❌ ERROR: Admin command!");
+            return;
+          }
+          if (!isBotGroupAdmins) return reply(errors.admin_error);
+          if (
+            mek.message.extendedTextMessage === undefined ||
+            mek.message.extendedTextMessage === null
+          )
+            return;
+          mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid;
+          // if (groupAdmins.includes(`${mentioned}`) == true) return;
+          if (mentioned.length > 1) {
+            reply("❌ ERROR: Mention member with command!");
+            return;
+          } else {
+            conn.groupRemove(from, mentioned);
           }
           break;
 
