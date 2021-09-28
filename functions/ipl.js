@@ -34,6 +34,18 @@ module.exports.getIplScore = async (matchID, commandName) => {
     let currentInning;
     let alt = true;
     let firstInningRuns, firstInningTeam;
+    let update = data["result"]["update"];
+    let message = "";
+
+    let isMatchStarted = false;
+    if (Object.keys(data.Innings1[2]).length !== 0) isMatchStarted = true;
+    if (!isMatchStarted) {
+      //title and update only
+      message += `*${title}*\n`;
+      message += `\n${update}`;
+      obj.message = message;
+      return obj;
+    }
 
     if (Object.keys(data.Innings2[2]).length === 0) {
       currentInning = "Innings1";
@@ -46,7 +58,6 @@ module.exports.getIplScore = async (matchID, commandName) => {
         .toUpperCase();
     }
 
-    let update = data["result"]["update"];
     let isInningOver = false;
 
     //inning over or not
@@ -106,7 +117,6 @@ module.exports.getIplScore = async (matchID, commandName) => {
 
     //TODO: current batsman with *
 
-    let message = "";
     //title
     message += `*${title}*\n`;
 
@@ -127,14 +137,8 @@ ${batsman2 === "out ho gaya" ? "\nLast Wicket: " + lastwicket + "\n" : ""}
 _recent balls_ \n${recentballs}`;
 
     //match update
-    let isMatchStarted = score === "Data Not Found" ? false : true;
     message +=
-      currentInning === "Innings2" || isInningOver || !isMatchStarted
-        ? `\n\n${update}`
-        : "";
-
-    //to know first inning is over
-    // message += isInningOver ? `\n!! Inning Over !!` : "";
+      currentInning === "Innings2" || isInningOver ? `\n\n${update}` : "";
 
     obj.message = message;
   } catch (err) {

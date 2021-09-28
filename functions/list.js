@@ -7,8 +7,8 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}sticker crop*
     - _Create full size sticker from different media types!_
 
-📛 *${prefix}pvxlink*
-    - _Get links for all PVX groups!_
+📛 *${prefix}add <phone number>*
+    - _Add any new member!_
 
 📛 *${prefix}text*
     - _Get text extractor from image!_
@@ -25,8 +25,8 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}dev*
     - _Get dev contact to report bug or to add new feature!_
 
-📛 *${prefix}add <phone number>*
-- _Add any new member!_
+📛 *${prefix}pvxlink*
+    - _Get links for all PVX groups!_
 
 _*🏏  IPL COMMANDS:*_
 NOTE: Put matchID (from cricbuzz) in description starting!
