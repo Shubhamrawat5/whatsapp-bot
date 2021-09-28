@@ -8,7 +8,10 @@ module.exports.commandList = (prefix) => {
     - _Create full size sticker from different media types!_
 
 📛 *${prefix}add <phone number>*
-    - _Add any new member!_
+    - _Add any new member!
+    
+_📛 *${prefix}insta url*
+    - _Instagram post videos / reels downloader!_
 
 📛 *${prefix}text*
     - _Get text extractor from image!_

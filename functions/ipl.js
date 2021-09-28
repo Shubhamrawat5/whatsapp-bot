@@ -89,10 +89,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
     });
 
     //is match over?
-    if (
-      commandName === "startipl" &&
-      data["result"]["winning_team"] !== "Not Completed"
-    ) {
+    if (data["result"]["winning_team"] !== "Not Completed") {
       obj.info = "MO";
     }
 
@@ -129,9 +126,10 @@ module.exports.getIplScore = async (matchID, commandName) => {
     message += `\n${score} ${runrate}`;
 
     //bowler and last wicket info | isInningOver (when inning over) - "out of gya" , "data not found" comes!
-    message += isInningOver
-      ? ""
-      : `\n\n🏏 ${batsman1} \n🏏 ${batsman2}\n
+    message +=
+      isInningOver || obj.info === "MO"
+        ? ""
+        : `\n\n🏏 ${batsman1} \n🏏 ${batsman2}\n
 ⚾ ${bowler} ${bowlerruns}-${bowlerwickets} (${bowlerover})
 ${batsman2 === "out ho gaya" ? "\nLast Wicket: " + lastwicket + "\n" : ""}
 _recent balls_ \n${recentballs}`;

@@ -1,12 +1,13 @@
-const cheerio = require("cheerio");
 const axios = require("axios");
 
 module.exports.getInstaVideo = async (url) => {
+  let imgDirectLink = "",
+    videoDirectLink = "";
   try {
-    const res = await axios.get(url, {
+    const res = await axios.get(url + "?__a=1", {
       headers: {
         accept:
-          "text/res,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,/;q=0.8,application/signed-exchange;v=b3;q=0.9",
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,/;q=0.8,application/signed-exchange;v=b3;q=0.9",
         "accept-language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
         "cache-control": "max-age=0",
         "sec-ch-ua":
@@ -25,17 +26,15 @@ module.exports.getInstaVideo = async (url) => {
       method: "GET",
       mode: "cors",
     });
-    console.log(res.status);
-    // calls cheerio to process the res received
-    const $ = cheerio.load(res.data);
-    // searches the res for the videoString
-    const videoString = $("meta[property='og:video']").attr("content");
-    let videoDirectLink = $('meta[property="og:video"]').attr("content");
-    let title = $('meta[property="og:title"]').attr("content");
+    // console.log(res.data);
 
-    return { title, videoDirectLink };
+    if (res.status == 200 && res.data.graphql.shortcode_media.is_video) {
+      videoDirectLink = res.data.graphql.shortcode_media.video_url;
+      imgDirectLink = res.data.graphql.shortcode_media.display_url;
+    }
   } catch (err) {
     console.log(err);
-    return { title: "", videoDirectLink: "" };
   }
+  console.log({ imgDirectLink, videoDirectLink });
+  return { imgDirectLink, videoDirectLink };
 };
