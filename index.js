@@ -537,7 +537,6 @@ const main = async () => {
             let instaObj = await getInstaVideo(urlInsta);
             let videoDirectLink = instaObj.videoDirectLink;
             if (videoDirectLink) {
-              console.log("Got direct link!");
               let randomName = getRandom(".mp4");
               await saveInstaVideo(randomName, videoDirectLink);
               console.log(`video saved-> ./${randomName}`);

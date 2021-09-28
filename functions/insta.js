@@ -4,6 +4,7 @@ module.exports.getInstaVideo = async (url) => {
   let imgDirectLink = "",
     videoDirectLink = "";
   try {
+    if (url.includes("?")) url = url.slice(0, url.search("\\?"));
     const res = await axios.get(url + "?__a=1", {
       headers: {
         accept:
