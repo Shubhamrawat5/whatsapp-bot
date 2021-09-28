@@ -967,6 +967,30 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           }
           break;
 
+        case "mute":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          await conn.groupSettingChange(
+            from,
+            GroupSettingChange.messageSend,
+            true
+          );
+          break;
+
+        case "unmute":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          await conn.groupSettingChange(
+            from,
+            GroupSettingChange.messageSend,
+            false
+          );
+          break;
+
         default:
           reply("Send !help for PVX bot commands list!");
           break;

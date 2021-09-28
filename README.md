@@ -51,6 +51,8 @@
 |   `!help`   |            Display help message             |
 |   `!add`    |             Add member to group             |
 |   `!kick`   |           kick member from group            |
+|   `!mute`   |               Mute the group                |
+|  `!unmute`  |              Unmute the group               |
 |   `!text`   |         Get text extract from image         |
 |   `!song`   |        Get any song in good quality         |
 |  `!insta`   |       Get insta reels or post videos        |

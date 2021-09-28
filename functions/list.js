@@ -13,6 +13,9 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}kick <mention>*
     - _Kick any member from group!
     - Alias: !ban , !remove 
+
+📛 *${prefix}mute | ${prefix}unmute*
+    - _Mute and Unmute the group!
     
 _📛 *${prefix}insta url*
     - _Instagram post videos / reels downloader!
