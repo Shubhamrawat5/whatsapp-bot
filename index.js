@@ -195,11 +195,60 @@ https://drive.google.com/folderview?id=${url.id}`;
   }
 };
 
+/* ---------------------------------- SONG ---------------------------------- */
+
+const downloadSong = async (name, query) => {
+  const { data } = await axios.get(INFO_URL + query);
+
+  if (data["audios"][""].length <= 1) {
+    console.log("==[ SONG NOT FOUND! ]== : " + song);
+    return false;
+  }
+
+  //avoid remix,revisited,mix
+  let i = 0;
+  let track = data["audios"][""][i];
+  while (/remix|revisited|mix/i.test(track.tit_art)) {
+    i += 1;
+    track = data["audios"][""][i];
+  }
+  //if reach the end then select the first song
+  if (!track) {
+    track = data["audios"][""][0];
+  }
+
+  let link = DOWNLOAD_URL + track.id + "/";
+  link = link + track.duration + "/";
+  link = link + track.url + "/";
+  link = link + track.tit_art + ".mp3" + "?extra=";
+  link = link + track.extra;
+  link = encodeURI(link); //to replace unescaped characters from link
+
+  let songName = track.tit_art;
+  songName =
+    songName =
+    songName =
+      songName.replace(/\?|<|>|\*|"|:|\||\/|\\/g, ""); //removing special characters which are not allowed in file name
+  // console.log(link);
+  // download(songName, link);
+  const res = await axios({
+    method: "GET",
+    url: url,
+    responseType: "stream",
+  });
+  data = res.data;
+  const path = `./${name}`;
+  const writer = fs.createWriteStream(path);
+  data.pipe(fs.createWriteStream(writer));
+  return new Promise((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
+};
+
 /* ------------------------------------ INSTA -----------------------------------  */
 const saveInstaVideo = async (randomName, videoDirectLink) => {
-  const path = `./${randomName}`;
-  const writer = fs.createWriteStream(path);
-  const response = await axios({
+  const { data } = await axios({
     url: videoDirectLink,
     method: "GET",
     responseType: "stream",
@@ -222,7 +271,9 @@ const saveInstaVideo = async (randomName, videoDirectLink) => {
     method: "GET",
     mode: "cors",
   });
-  response.data.pipe(writer);
+  const path = `./${randomName}`;
+  const writer = fs.createWriteStream(path);
+  data.pipe(writer);
   return new Promise((resolve, reject) => {
     writer.on("finish", resolve);
     writer.on("error", reject);
@@ -509,6 +560,32 @@ const main = async () => {
           reply(
             "*─「 🔥 JOIN PVX FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
           );
+          break;
+
+        case "song":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (args.length === 0) {
+            reply(`❌ ERROR: query is empty! \nSend !song query`);
+            return;
+          }
+          try {
+            let randomName = getRandom(".mp3");
+            let query = args.join("%20");
+            await downloadSong(randomName, query);
+            console.log(`song saved-> ./${randomName}`);
+            await conn.sendMessage(
+              from,
+              fs.readFileSync(`./${randomName}`), // can send mp3, mp4, & ogg
+              MessageType.audio,
+              { mimetype: Mimetype.mp4Audio }
+            );
+          } catch (err) {
+            console.log(err);
+            reply(`❌ ERROR: There is some problem.`);
+          }
           break;
 
         case "insta":
@@ -833,22 +910,22 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           get_status = `${num.split("@s.whatsapp.net")[0]}`;
           get_status = response[`${get_status}@c.us`];
           if (get_status == 400) {
-            reply("_❌ ERROR: Invalid number! ❌_");
+            reply("_❌ ERROR: Invalid number, include 91 also!_");
           }
           if (get_status == 403) {
-            reply("_❌ ERROR: Number has privacy on adding group! ❌_");
+            reply("_❌ ERROR: Number has privacy on adding group!_");
           }
           if (get_status == 408) {
-            reply("_❌ ERROR: Number has left the group recently! ❌_");
+            reply("_❌ ERROR: Number has left the group recently!_");
           }
           if (get_status == 409) {
-            reply("_❌ ERROR: Number is already exists! ❌_");
+            reply("_❌ ERROR: Number is already exists!_");
           }
           if (get_status == 500) {
-            reply("_❌ ERROR: Group is currently full! ❌_");
+            reply("_❌ ERROR: Group is currently full!_");
           }
           if (get_status == 200) {
-            reply("_✔ SUCCESS: Number added to group! ✔_");
+            reply("_✔ SUCCESS: Number added to group!_");
           }
           break;
 
