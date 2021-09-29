@@ -12,6 +12,6 @@ module.exports.getNews = async () => {
     if (count === 15) break;
     msg += `\n\n🌐 ${inshorts[i]}`;
   }
-  msg += `\n\njoin TG@pvxtechnews for daily tech news!`;
+  // msg += `\n\njoin TG@pvxtechnews for daily tech news!`;
   return msg;
 };

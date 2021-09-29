@@ -1,4 +1,4 @@
-// WEB SERVER
+/* --------------------------------- SERVER --------------------------------- */
 const express = require("express");
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -9,7 +9,6 @@ app.get("/", (req, res) => {
 
 /* ------------------------------- DRIVE Authorization -------------------------------- */
 // Drive TG bot : https://github.com/Shubhamrawat5/shared-gdrive-bot
-
 app.use(express.urlencoded({ extended: true }));
 const authHiddenPath = process.env.authHiddenPath; //to have a hidden path for gmail authorization
 
@@ -100,6 +99,11 @@ app.get("/getToken", async (req, res) => {
   console.log("TOKEN ACCEPTED");
   isDriveAuthorized = true;
   res.send("TOKEN ACCEPTED");
+});
+
+app.listen(port, () => {
+  console.clear();
+  console.log("\nWeb-server running!\n");
 });
 
 /* ---------------------------------- Drive Query ----------------------------------- */
@@ -196,7 +200,6 @@ https://drive.google.com/folderview?id=${url.id}`;
 };
 
 /* ---------------------------------- SONG ---------------------------------- */
-
 const downloadSong = async (randomName, query) => {
   try {
     const INFO_URL = "https://slider.kz/vk_auth.php?q=";
@@ -288,13 +291,7 @@ const saveInstaVideo = async (randomName, videoDirectLink) => {
   });
 };
 
-/* ------------------------------------ - ----------------------------------- */
-app.listen(port, () => {
-  console.clear();
-  console.log("\nWeb-server running!\n");
-});
-
-// LOAD Baileys
+/* ------------------------------------ Baiileys ----------------------------------- */
 const {
   WAConnection,
   MessageType,
@@ -339,8 +336,8 @@ const getGroupAdmins = (participants) => {
   return admins;
 };
 
-const getRandom = (ext) => {
-  return `${Math.floor(Math.random() * 10000)}${ext}`;
+const getRandom = (text) => {
+  return `${Math.floor(Math.random() * 10000)}${text}`;
 };
 
 //MAIN FUNCTION
@@ -457,31 +454,30 @@ const main = async () => {
       const isBotGroupAdmins = groupAdmins.includes(botNumber) || false;
       const isGroupAdmins = groupAdmins.includes(sender) || false;
 
+      const isMedia = type === "imageMessage" || type === "videoMessage"; //image or video
+      const isTaggedImage =
+        type === "extendedTextMessage" && content.includes("imageMessage");
+      const isTaggedVideo =
+        type === "extendedTextMessage" && content.includes("videoMessage");
+      const isTaggedSticker =
+        type === "extendedTextMessage" && content.includes("stickerMessage");
+      if (isCmd && isGroup)
+        console.log(
+          "[COMMAND]",
+          command,
+          "[FROM]",
+          sender.split("@")[0],
+          "[IN]",
+          groupName
+        );
+
       const reply = (message) => {
         conn.sendMessage(from, message, MessageType.text, {
           quoted: mek,
         });
       };
 
-      const costum = (message, tipe, target, target2) => {
-        conn.sendMessage(from, message, tipe, {
-          quoted: {
-            key: {
-              fromMe: false,
-              participant: `${target}`,
-              ...(from
-                ? {
-                    remoteJid: from,
-                  }
-                : {}),
-            },
-            message: {
-              conversation: `${target2}`,
-            },
-          },
-        });
-      };
-
+      /* -------------------------- IPL HELPING FUNCTIONS ------------------------- */
       const stopIplHelper = () => {
         reply("✔️ Stopping IPL scores for this group !");
         console.log("Stopping IPL scores for " + groupName);
@@ -544,32 +540,17 @@ const main = async () => {
         return true;
       };
 
-      const isMedia = type === "imageMessage" || type === "videoMessage"; //image or video
-      const isTaggedImage =
-        type === "extendedTextMessage" && content.includes("imageMessage");
-      const isTaggedVideo =
-        type === "extendedTextMessage" && content.includes("videoMessage");
-      const isTaggedSticker =
-        type === "extendedTextMessage" && content.includes("stickerMessage");
-      if (isCmd && isGroup)
-        console.log(
-          "[COMMAND]",
-          command,
-          "[FROM]",
-          sender.split("@")[0],
-          "[IN]",
-          groupName
-        );
-
       /* -------------------------------- COMMANDS -------------------------------- */
       let data;
       switch (command) {
+        /* ------------------------------- CASE: PVXLINK ------------------------------ */
         case "pvxlink":
           reply(
             "*─「 🔥 JOIN PVX FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
           );
           break;
 
+        /* ------------------------------- CASE: SONG ------------------------------ */
         case "song":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -592,7 +573,7 @@ const main = async () => {
               from,
               { url: `./${randomName}` },
               MessageType.audio,
-              { mimetype: Mimetype.mp4Audio }
+              { mimetype: Mimetype.mp4Audio, quoted: mek }
             );
           } catch (err) {
             console.log(err);
@@ -600,6 +581,7 @@ const main = async () => {
           }
           break;
 
+        /* ------------------------------- CASE: INSTA ------------------------------ */
         case "insta":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -630,11 +612,13 @@ const main = async () => {
               await saveInstaVideo(randomName, videoDirectLink);
               console.log(`video saved-> ./${randomName}`);
 
+              //  { caption: "hello there!", mimetype: Mimetype.mp4 }
+              // quoted: mek for tagged
               await conn.sendMessage(
                 from,
                 fs.readFileSync(`./${randomName}`), // can send mp3, mp4, & ogg
                 MessageType.video,
-                { mimetype: Mimetype.mp4 }
+                { mimetype: Mimetype.mp4, quoted: mek }
               );
             } else {
               reply(`❌ ERROR: There is some problem.`);
@@ -644,6 +628,8 @@ const main = async () => {
             reply(`❌ ERROR: There is some problem.`);
           }
           break;
+
+        /* ------------------------------- CASE: TECHNEWS ------------------------------ */
         case "technews":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -653,6 +639,7 @@ const main = async () => {
           conn.sendMessage(from, news, MessageType.text);
           break;
 
+        /* ------------------------------- CASE: TEXT ------------------------------ */
         case "text":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -680,13 +667,14 @@ const main = async () => {
           }
           break;
 
+        /* ------------------------------- CASE: DEV ------------------------------ */
         case "dev":
-          reply(`─「 PVX BOT 」 ─\n
-_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_ `);
+          reply(
+            `─「 PVX BOT 」 ─\n\n_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_ `
+          );
           break;
 
-        //This takes match ID from group description! Put match ID in starting of group description.
-        //Get match ID from cricbuzz url like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572
+        /* ------------------------------- CASE: STARTIPL ------------------------------ */
         case "startipl":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -707,6 +695,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           }, 1000 * 60 * 1.5);
           break;
 
+        /* ------------------------------- CASE: SCORE ------------------------------ */
         case "score":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -716,6 +705,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           data = await startIplHelper("score");
           break;
 
+        /* ------------------------------- CASE: STOPIPL ------------------------------ */
         case "stopipl":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -724,16 +714,17 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           stopIplHelper();
           break;
 
-        /////////////// HELP \\\\\\\\\\\\\\\
+        /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
           if (!isGroup) return;
           reply(commandList(prefix));
           break;
 
+        /* ------------------------------- CASE: SOURCE ------------------------------ */
         case "source":
           conn.sendMessage(
             from,
-            "https://github.com/Shubhamrawat5/whatsapp-bot",
+            `https://github.com/Shubhamrawat5/whatsapp-bot \n\nGive a star if you like or using this. Many new cool helpful commands will be keep on adding.`,
             MessageType.text,
             {
               quoted: mek,
@@ -742,6 +733,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           );
           break;
 
+        /* ------------------------------- CASE: STICKER ------------------------------ */
         case "sticker":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -879,6 +871,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           }
           break;
 
+        /* ------------------------------- CASE: DRIVE ------------------------------ */
         case "drive":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -894,6 +887,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
 
           break;
 
+        /* ------------------------------- CASE: ADD ------------------------------ */
         case "add":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -940,6 +934,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           }
           break;
 
+        /* ------------------------------- CASE: KICK ------------------------------ */
         case "kick":
         case "ban":
         case "remove":
@@ -967,6 +962,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           }
           break;
 
+        /* ------------------------------- CASE: MUTE ------------------------------ */
         case "mute":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -979,6 +975,7 @@ _Message wa.me/919557666582 to report any bug or to give new ideas/features for 
           );
           break;
 
+        /* ------------------------------- CASE: UNMUTE ------------------------------ */
         case "unmute":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");

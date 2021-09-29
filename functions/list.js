@@ -15,12 +15,12 @@ module.exports.commandList = (prefix) => {
     - Alias: !ban , !remove 
 
 📛 *${prefix}mute | ${prefix}unmute*
-    - _Mute and Unmute the group!
+    - _Mute and Unmute the group!_
     
-_📛 *${prefix}insta url*
-    - _Instagram post videos / reels downloader!
+📛 *${prefix}insta url*
+    - _Instagram post videos / reels downloader!_
     
-__📛 *${prefix}song name*
+📛 *${prefix}song name*
     - _Get songs in good quality!_
 
 📛 *${prefix}text*
@@ -30,7 +30,7 @@ __📛 *${prefix}song name*
     - _Get direct links of files from PVX team drive!_
       
 📛 *${prefix}technews*
-- _Get latest Tech news from inshorts !_
+    - _Get latest Tech news from inshorts !_
   
 📛 *${prefix}source*
     - _Get bot source code!_
