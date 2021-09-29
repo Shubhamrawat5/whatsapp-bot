@@ -36,6 +36,6 @@ module.exports.getInstaVideo = async (url) => {
   } catch (err) {
     console.log(err);
   }
-  console.log({ imgDirectLink, videoDirectLink });
+  // console.log({ imgDirectLink, videoDirectLink });
   return { imgDirectLink, videoDirectLink };
 };

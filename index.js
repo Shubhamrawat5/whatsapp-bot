@@ -543,6 +543,12 @@ const main = async () => {
       /* -------------------------------- COMMANDS -------------------------------- */
       let data;
       switch (command) {
+        case "test":
+          //not working yet, maybe of whatsapp business
+          let { button } = require("./functions/button");
+          await conn.sendMessage(from, button, MessageType.listMessage);
+          break;
+
         /* ------------------------------- CASE: PVXLINK ------------------------------ */
         case "pvxlink":
           reply(
@@ -604,7 +610,7 @@ const main = async () => {
           }
 
           try {
-            console.log("Trying saving", urlInsta);
+            // console.log("Trying saving", urlInsta);
             let instaObj = await getInstaVideo(urlInsta);
             let videoDirectLink = instaObj.videoDirectLink;
             if (videoDirectLink) {
