@@ -46,25 +46,25 @@
 
 ## Commands :
 
-|  Commands   |                 Description                 |
-| :---------: | :-----------------------------------------: |
-|   `!help`   |            Display help message             |
-|   `!add`    |             Add member to group             |
-|   `!kick`   |           kick member from group            |
-|   `!mute`   |               Mute the group                |
-|  `!unmute`  |              Unmute the group               |
-|   `!text`   |         Get text extract from image         |
-|   `!song`   |        Get any song in good quality         |
-|  `!insta`   |       Get insta reels or post videos        |
-| `!technews` |            Get latest Tech news             |
-|  `!drive`   |        Get GDrive files direct link         |
-|  `!score`   |               Give IPL score                |
-| `!startipl` |           Start IPL score updated           |
-| `!stotipl`  |           Stop IPL score updated            |
-| `!sticker`  | Create a sticker from different media types |
-| `!pvxlink`  |           Get group links of PVX            |
-|  `!source`  |             Get the bot source              |
-|   `!dev`    |           Get the contact of dev            |
+|  Commands   |                Description                |
+| :---------: | :---------------------------------------: |
+|   `!help`   |           Display help message            |
+|   `!add`    |            Add member to group            |
+|   `!kick`   |          kick member from group           |
+|   `!mute`   |              Mute the group               |
+|  `!unmute`  |             Unmute the group              |
+|   `!text`   |        Get text extract from image        |
+|   `!song`   |       Get any song in good quality        |
+|  `!insta`   |      Get insta reels or post videos       |
+| `!technews` |           Get latest Tech news            |
+|  `!drive`   |       Get GDrive files direct link        |
+|  `!score`   |              Give IPL score               |
+| `!startipl` |          Start IPL score updated          |
+| `!stotipl`  |          Stop IPL score updated           |
+| `!sticker`  | Create sticker from different media types |
+| `!pvxlink`  |          Get group links of PVX           |
+|  `!source`  |            Get the bot source             |
+|   `!dev`    |          Get the contact of dev           |
 
 - IPL SCORES:
 

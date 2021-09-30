@@ -1,5 +1,5 @@
 module.exports.commandList = (prefix) => {
-  return `*─「 🔥 PVX BOT 🔥 」─*
+  return `*─「 🔥 <{PVX}> BOT 🔥 」─*
   
 📛 *${prefix}sticker*
     - _Create original size sticker from different media types!_

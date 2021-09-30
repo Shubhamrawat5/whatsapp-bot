@@ -124,7 +124,7 @@ https://drive.google.com/folderview?id=${url.id}`;
 
   try {
     console.log("QUERY TO SEARCH: ", query);
-    let message = `*💾 PVX GDRIVE 💾*\n`;
+    let message = `*💾 <{PVX}> GDRIVE 💾*\n`;
     message += `🔍 Query: ${query} 🔍`;
 
     //for mulitple drive search
@@ -358,7 +358,7 @@ const main = async () => {
           console.log("Bot is add to new group!");
           conn.sendMessage(
             from,
-            `*─「 🔥 PVX BOT 🔥 」─\n\nSEND !help FOR BOT COMMANDS`,
+            `*─「 🔥 <{PVX}> BOT 🔥 」─\n\nSEND !help FOR BOT COMMANDS`,
             MessageType.text
           );
         }
@@ -552,7 +552,7 @@ const main = async () => {
         /* ------------------------------- CASE: PVXLINK ------------------------------ */
         case "pvxlink":
           reply(
-            "*─「 🔥 JOIN PVX FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
+            "*─「 🔥 JOIN <{PVX}> FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
           );
           break;
 
@@ -676,7 +676,7 @@ const main = async () => {
         /* ------------------------------- CASE: DEV ------------------------------ */
         case "dev":
           reply(
-            `─「 PVX BOT 」 ─\n\n_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_ `
+            `─「 <{PVX}> BOT 」 ─\n\n_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_ `
           );
           break;
 
@@ -722,7 +722,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
-          if (!isGroup) return;
           reply(commandList(prefix));
           break;
 
@@ -747,7 +746,7 @@ const main = async () => {
           }
 
           // Format should be <prefix>sticker pack <pack_name> author <author_name>
-          var packName = "PVX BOT";
+          var packName = "<{PVX}> BOT";
           var authorName = "";
 
           outputOptions = [
@@ -995,7 +994,7 @@ const main = async () => {
           break;
 
         default:
-          reply("Send !help for PVX bot commands list!");
+          reply("Send !help for <{PVX}> bot commands list!");
           break;
       }
     } catch (e) {
