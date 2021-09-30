@@ -25,6 +25,9 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}text*
     - _Get text extractor from image!_
+
+📛 *${prefix}quote*
+    - _Give a random quote!_
   
 📛 *${prefix}drive query_name*
     - _Get direct links of files from PVX team drive!_

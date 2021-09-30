@@ -645,6 +645,17 @@ const main = async () => {
           conn.sendMessage(from, news, MessageType.text);
           break;
 
+        /* ------------------------------- CASE: QUOTES ------------------------------ */
+        case "quote":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          let { getQuote } = require("./functions/quote");
+          let quote = await getQuote();
+          reply(quote);
+          break;
+
         /* ------------------------------- CASE: TEXT ------------------------------ */
         case "text":
           if (!isGroup) {

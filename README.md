@@ -58,6 +58,7 @@
 |  `!insta`   |      Get insta reels or post videos       |
 | `!technews` |           Get latest Tech news            |
 |  `!drive`   |       Get GDrive files direct link        |
+|  `!quote`   |            Give a random quote            |
 |  `!score`   |              Give IPL score               |
 | `!startipl` |          Start IPL score updated          |
 | `!stotipl`  |          Stop IPL score updated           |
