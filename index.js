@@ -656,6 +656,26 @@ const main = async () => {
           reply(quote);
           break;
 
+        /* ------------------------------- CASE: GENDER ------------------------------ */
+        case "gender":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (args.length === 0) {
+            reply(`❌ ERROR: Name is not given! \nSend !gender firstname`);
+            return;
+          }
+          let namePerson = args[0];
+          if (namePerson.includes("@")) {
+            reply(`❌ ERROR: Don't tag! \nSend !gender firstname`);
+            return;
+          }
+          let { getGender } = require("./functions/gender");
+          let genderText = await getGender(namePerson);
+          reply(genderText);
+          break;
+
         /* ------------------------------- CASE: TEXT ------------------------------ */
         case "text":
           if (!isGroup) {
@@ -766,7 +786,7 @@ const main = async () => {
             `-vf`,
             `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`,
           ];
-          if (args.includes("crop") == true) {
+          if (args.includes("crop")) {
             outputOptions = [
               `-vcodec`,
               `libwebp`,

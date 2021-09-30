@@ -59,6 +59,7 @@
 | `!technews` |           Get latest Tech news            |
 |  `!drive`   |       Get GDrive files direct link        |
 |  `!quote`   |            Give a random quote            |
+|  `!gender`  |        Get gender from first name         |
 |  `!score`   |              Give IPL score               |
 | `!startipl` |          Start IPL score updated          |
 | `!stotipl`  |          Stop IPL score updated           |

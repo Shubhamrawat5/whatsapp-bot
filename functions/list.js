@@ -28,6 +28,9 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}quote*
     - _Give a random quote!_
+
+📛 *${prefix}gender firstname*
+    - _Get gender from person first name!_
   
 📛 *${prefix}drive query_name*
     - _Get direct links of files from PVX team drive!_
