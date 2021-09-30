@@ -364,8 +364,8 @@ const main = async () => {
         }
         console.log("Joined: ", num);
       }
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      console.log(err);
     }
   });
 
@@ -1028,8 +1028,8 @@ const main = async () => {
           reply("Send !help for <{PVX}> bot commands list!");
           break;
       }
-    } catch (e) {
-      console.log("Error : %s", e);
+    } catch (err) {
+      console.log(err);
     }
   });
 };

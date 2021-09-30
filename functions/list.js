@@ -31,9 +31,6 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}gender firstname*
     - _Get gender from person first name!_
-  
-📛 *${prefix}drive query_name*
-    - _Get direct links of files from PVX team drive!_
       
 📛 *${prefix}technews*
     - _Get latest Tech news from inshorts !_
@@ -59,3 +56,6 @@ NOTE: Put matchID (from cricbuzz) in description starting!
       
  ✔️ more cool commands coming...`;
 };
+
+// 📛 *${prefix}drive query_name*
+//     - _Get direct links of files from PVX team drive!_
