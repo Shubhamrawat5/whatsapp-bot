@@ -166,6 +166,18 @@ const main = async () => {
         let num = anu.participants[0];
         let from = anu.jid;
         let num_split = `${num.split("@s.whatsapp.net")[0]}`;
+
+        // other than 91 are blocked from joining
+        if (!num_split.startsWith(91)) {
+          conn.sendMessage(
+            from,
+            `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nOnly 91 numbers are allowed !!!!`,
+            MessageType.text
+          );
+          console.log("#", anu.participants);
+          conn.groupRemove(from, anu.participants);
+        }
+
         if (num_split === "919720391303") {
           console.log("Bot is add to new group!");
           conn.sendMessage(
@@ -417,7 +429,9 @@ const main = async () => {
               urlInsta.includes("instagram.com/reel/")
             )
           ) {
-            reply(`❌ ERROR: Wrong Instagram URL!`);
+            reply(
+              `❌ ERROR: Wrong URL! Only Instagram posted videos and reels can be downloaded.`
+            );
             return;
           }
 
@@ -806,6 +820,7 @@ const main = async () => {
             reply("❌ ERROR: Mention member with command!");
             return;
           } else {
+            console.log("#", mentioned);
             conn.groupRemove(from, mentioned);
           }
           break;
