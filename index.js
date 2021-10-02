@@ -59,7 +59,7 @@ const downloadSong = async (randomName, query) => {
     const writer = fs.createWriteStream(path);
     data.pipe(writer);
     return new Promise((resolve, reject) => {
-      writer.on("finish", resolve);
+      writer.on("finish", () => resolve(songName));
       writer.on("error", reject);
     });
   } catch (err) {
@@ -398,12 +398,17 @@ const main = async () => {
               reply("❌ ERROR: Song not found!");
               return;
             }
-            console.log(`song saved-> ./${randomName}`);
+            console.log(`song saved-> ./${randomName}`, response);
+
             await conn.sendMessage(
               from,
-              { url: `./${randomName}` },
-              MessageType.audio,
-              { mimetype: Mimetype.mp4Audio, quoted: mek }
+              fs.readFileSync(`./${randomName}`),
+              MessageType.document,
+              {
+                mimetype: "audio/mpeg",
+                filename: response + ".mp3",
+                quoted: mek,
+              }
             );
           } catch (err) {
             console.log(err);
