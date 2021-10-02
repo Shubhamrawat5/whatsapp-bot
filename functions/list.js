@@ -16,6 +16,9 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}mute | ${prefix}unmute*
     - _Mute and Unmute the group!_
+
+📛 *${prefix}block*
+    - _To block particular commands for this group!_
     
 📛 *${prefix}insta url*
     - _Instagram post videos / reels downloader!_

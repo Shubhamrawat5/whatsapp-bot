@@ -364,6 +364,8 @@ const main = async () => {
         return true;
       };
 
+      // give command name with comma seperated to be blocked for particular group in first line of description like (82132 is matchid for ipl scores)
+      //82132,score,add,remove
       let blockCommandsInDesc = []; //commands to be blocked
       if (groupDesc) {
         let firstLineDesc = groupDesc.split("\n")[0];
@@ -373,7 +375,7 @@ const main = async () => {
       /* -------------------------------- COMMANDS -------------------------------- */
       let data;
       switch (command) {
-        case "test":
+        case "testt":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -381,13 +383,25 @@ const main = async () => {
           if (!groupDesc) {
             reply(`*❌ ERROR:* EMPTY!`);
           }
-          let firstLineDesc = groupDesc.split("\n")[0];
-          let commandsInDesc = firstLineDesc.split(",");
-          reply(firstLineDesc);
+
+          reply(groupDesc);
 
           break;
 
+        case "block":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+
+          reply(
+            `*─「 <{PVX}> BOT 」 ─*\n\n_Give command name (with comma seperated and without spaces) to be blocked for particular group in first line of group description, like_\nscore,add,quote\n\n_If matchId is to be added in description also then add in starting, like_\n82621,score,add,quote`
+          );
+          break;
+
         case "button":
+          if (blockCommandsInDesc.includes(command)) return;
+
           //not working yet, maybe of whatsapp business
           let { button } = require("./functions/button");
           await conn.sendMessage(from, button, MessageType.listMessage);
@@ -395,6 +409,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: PVXLINK ------------------------------ */
         case "pvxlink":
+          if (blockCommandsInDesc.includes(command)) return;
+
           reply(
             "*─「 🔥 JOIN <{PVX}> FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
           );
@@ -403,6 +419,7 @@ const main = async () => {
         /* ------------------------------- CASE: SONG ------------------------------ */
         case "song":
           if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -538,6 +555,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: TEXT ------------------------------ */
         case "text":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -566,13 +585,17 @@ const main = async () => {
 
         /* ------------------------------- CASE: DEV ------------------------------ */
         case "dev":
+          if (blockCommandsInDesc.includes(command)) return;
+
           reply(
-            `─「 <{PVX}> BOT 」 ─\n\n_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_ `
+            `*─「 <{PVX}> BOT 」 ─*\n\n_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_ `
           );
           break;
 
         /* ------------------------------- CASE: STARTIPL ------------------------------ */
         case "startipl":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -594,6 +617,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: SCORE ------------------------------ */
         case "score":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -604,6 +629,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: STOPIPL ------------------------------ */
         case "stopipl":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -613,14 +640,18 @@ const main = async () => {
 
         /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
+          if (blockCommandsInDesc.includes(command)) return;
+
           reply(commandList(prefix));
           break;
 
         /* ------------------------------- CASE: SOURCE ------------------------------ */
         case "source":
+          if (blockCommandsInDesc.includes(command)) return;
+
           conn.sendMessage(
             from,
-            `https://github.com/Shubhamrawat5/whatsapp-bot \n\nGive a star if you like or using this. Many new cool helpful commands will be keep on adding.`,
+            `*─「 <{PVX}> BOT 」 ─*\n\nhttps://github.com/Shubhamrawat5/whatsapp-bot \n\nGive a star if you like or using this. Many new cool helpful commands will be keep on adding.`,
             MessageType.text,
             {
               quoted: mek,
@@ -631,6 +662,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: STICKER ------------------------------ */
         case "sticker":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -769,6 +802,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: DRIVE ------------------------------ */
         // case "drive":
+        // if (blockCommandsInDesc.includes(command)) return;
+
         //   if (!isGroup) {
         //     reply("❌ ERROR: Group command only!");
         //     return;
@@ -785,6 +820,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: ADD ------------------------------ */
         case "add":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -834,6 +871,8 @@ const main = async () => {
         case "kick":
         case "ban":
         case "remove":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -861,6 +900,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: MUTE ------------------------------ */
         case "mute":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -874,6 +915,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: UNMUTE ------------------------------ */
         case "unmute":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;

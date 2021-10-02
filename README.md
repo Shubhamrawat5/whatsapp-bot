@@ -53,6 +53,7 @@
 |   `!kick`   |          kick member from group           |
 |   `!mute`   |              Mute the group               |
 |  `!unmute`  |             Unmute the group              |
+|  `!block`   |  To block particular commands for group   |
 |   `!text`   |        Get text extract from image        |
 |   `!song`   |       Get any song in good quality        |
 |  `!insta`   |      Get insta reels or post videos       |
