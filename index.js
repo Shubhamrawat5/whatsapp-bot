@@ -60,7 +60,7 @@ const downloadSong = async (randomName, query) => {
     data.pipe(writer);
     return new Promise((resolve, reject) => {
       writer.on("finish", () => resolve(songName));
-      writer.on("error", reject);
+      writer.on("error", () => reject);
     });
   } catch (err) {
     console.log(err);
@@ -364,10 +364,30 @@ const main = async () => {
         return true;
       };
 
+      let blockCommandsInDesc = []; //commands to be blocked
+      if (groupDesc) {
+        let firstLineDesc = groupDesc.split("\n")[0];
+        blockCommandsInDesc = firstLineDesc.split(",");
+      }
+
       /* -------------------------------- COMMANDS -------------------------------- */
       let data;
       switch (command) {
         case "test":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (!groupDesc) {
+            reply(`*❌ ERROR:* EMPTY!`);
+          }
+          let firstLineDesc = groupDesc.split("\n")[0];
+          let commandsInDesc = firstLineDesc.split(",");
+          reply(firstLineDesc);
+
+          break;
+
+        case "button":
           //not working yet, maybe of whatsapp business
           let { button } = require("./functions/button");
           await conn.sendMessage(from, button, MessageType.listMessage);
@@ -382,6 +402,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: SONG ------------------------------ */
         case "song":
+          if (blockCommandsInDesc.includes(command)) return;
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -418,6 +439,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: INSTA ------------------------------ */
         case "insta":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -468,6 +491,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: TECHNEWS ------------------------------ */
         case "technews":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -478,6 +503,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: QUOTES ------------------------------ */
         case "quote":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
@@ -489,6 +516,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: GENDER ------------------------------ */
         case "gender":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;
