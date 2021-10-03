@@ -135,6 +135,9 @@ const { getInstaVideo } = require("./functions/insta");
 
 // BASIC SETTINGS
 prefix = "!";
+const botNumber = process.env.botNumber || "919720391303";
+const myNumber = process.env.myNumber;
+
 let matchIdGroups = {}; //to store every group name with its match ID
 let iplsetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
 let iplStartedGroups = {}; //to store every group name with boolean value to know if ipl score is already started or not
@@ -178,7 +181,7 @@ const main = async () => {
           conn.groupRemove(from, anu.participants);
         }
 
-        if (num_split === "919720391303") {
+        if (num_split === botNumber) {
           console.log("Bot is add to new group!");
           conn.sendMessage(
             from,
@@ -285,15 +288,25 @@ const main = async () => {
         type === "extendedTextMessage" && content.includes("videoMessage");
       const isTaggedSticker =
         type === "extendedTextMessage" && content.includes("stickerMessage");
-      if (isCmd && isGroup)
-        console.log(
-          "[COMMAND]",
-          command,
-          "[FROM]",
-          sender.split("@")[0],
-          "[IN]",
-          groupName
+
+      // Display every command info
+      console.log(
+        "[COMMAND]",
+        command,
+        "[FROM]",
+        sender.split("@")[0],
+        "[IN]",
+        groupName
+      );
+
+      // send every command info to my whatsapp
+      if (myNumber) {
+        await conn.sendMessage(
+          myNumber + "@s.whatsapp.net",
+          `[${prefix}${command}] - [${sender.split("@")[0]}]\n${groupName}`,
+          MessageType.text
         );
+      }
 
       const reply = (message) => {
         conn.sendMessage(from, message, MessageType.text, {
@@ -386,6 +399,10 @@ const main = async () => {
 
           reply(groupDesc);
 
+          break;
+
+        case "alive":
+          reply(`*─「 <{PVX}> BOT 」 ─*\n\nYES! BOT IS ALIVE !!!`);
           break;
 
         case "block":

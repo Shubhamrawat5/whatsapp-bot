@@ -61,6 +61,7 @@
 |  `!drive`   |       Get GDrive files direct link        |
 |  `!quote`   |            Give a random quote            |
 |  `!gender`  |        Get gender from first name         |
+|  `!alive`   |          Check bot is ON or OFF           |
 |  `!score`   |              Give IPL score               |
 | `!startipl` |          Start IPL score updated          |
 | `!stotipl`  |          Stop IPL score updated           |

@@ -38,6 +38,9 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}technews*
     - _Get latest Tech news from inshorts !_
   
+📛 *${prefix}alive*
+    - _Check if bot is ON or OFF!_
+
 📛 *${prefix}source*
     - _Get bot source code!_
 
