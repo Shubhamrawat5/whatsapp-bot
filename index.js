@@ -854,38 +854,36 @@ const main = async () => {
             reply("❌ ERROR: I'm not Admin here!");
             return;
           }
-          if (args.length < 1) return;
-          var num = "";
-          if (args.length > 1) {
-            for (let j = 0; j < args.length; j++) {
-              num = num + args[j];
-            }
-            num = `${num.replace(/ /g, "")}@s.whatsapp.net`;
+
+          let num;
+          if (mek.message.extendedTextMessage) {
+            //member's message is tagged to add
+            num = mek.message.extendedTextMessage.contextInfo.participant;
           } else {
-            num = `${args[0].replace(/ /g, "")}@s.whatsapp.net`;
-          }
-          if (num.startsWith("+")) {
-            num = `${num.split("+")[1]}`;
+            //number is given like !add 919557---82
+            if (args.length === 0) {
+              reply("❌ ERROR: Give number to add!");
+              return;
+            }
+            num = `${args[0].replace(/ /g, "")}@s.whatsapp.net`; //remove spaces
+            if (num.startsWith("+")) {
+              num = num.slice(1);
+            }
           }
           const response = await conn.groupAdd(from, [num]);
-          get_status = `${num.split("@s.whatsapp.net")[0]}`;
-          get_status = response[`${get_status}@c.us`];
+          let number = `${num.split("@s.whatsapp.net")[0]}`;
+          let get_status = response[`${number}@c.us`];
           if (get_status == 400) {
             reply("_❌ ERROR: Invalid number, include 91 also!_");
-          }
-          if (get_status == 403) {
+          } else if (get_status == 403) {
             reply("_❌ ERROR: Number has privacy on adding group!_");
-          }
-          if (get_status == 408) {
+          } else if (get_status == 408) {
             reply("_❌ ERROR: Number has left the group recently!_");
-          }
-          if (get_status == 409) {
+          } else if (get_status == 409) {
             reply("_❌ ERROR: Number is already in group!_");
-          }
-          if (get_status == 500) {
+          } else if (get_status == 500) {
             reply("_❌ ERROR: Group is currently full!_");
-          }
-          if (get_status == 200) {
+          } else if (get_status == 200) {
             reply("_✔ SUCCESS: Number added to group!_");
           }
           break;

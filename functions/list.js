@@ -9,9 +9,11 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}add <phone number>*
     - _Add any new member!
+    [or tag message of removed member with !add]
     
 📛 *${prefix}kick <mention>*
     - _Kick any member from group!
+    [or tag message of member with !kick]
     - Alias: !ban , !remove 
 
 📛 *${prefix}mute | ${prefix}unmute*
