@@ -13,7 +13,6 @@ const pool = new Pool(proConfig);
 let auth_row_count;
 let auth_obj;
 
-//To see heroku postgres pool table content ->  https://datazenit.com/heroku-data-explorer.html
 const fetchauth = async () => {
   try {
     let auth_result = await pool.query("select * from auth;");

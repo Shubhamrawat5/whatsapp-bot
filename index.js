@@ -267,7 +267,7 @@ const main = async () => {
       */
 
       errors = {
-        admin_error: "_❌ ERROR: I'm not Admin here! ❌_",
+        admin_error: "_❌ ERROR: I'm not Admin here!_",
       };
 
       const botNumber = conn.user.jid;
@@ -398,13 +398,14 @@ const main = async () => {
           }
 
           reply(groupDesc);
-
           break;
 
+        /* ------------------------------- CASE: ALIVE ------------------------------ */
         case "alive":
           reply(`*─「 <{PVX}> BOT 」 ─*\n\nYES! BOT IS ALIVE !!!`);
           break;
 
+        /* ------------------------------- CASE: BLOCK ------------------------------ */
         case "block":
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
@@ -416,6 +417,7 @@ const main = async () => {
           );
           break;
 
+        /* ------------------------------- CASE: BUTTON ------------------------------ */
         case "button":
           if (blockCommandsInDesc.includes(command)) return;
 
@@ -730,6 +732,7 @@ const main = async () => {
               .input(media)
               .on("error", function (err) {
                 fs.unlinkSync(media);
+                //unlinkSync remove the given file
                 console.log(`Error : ${err}`);
                 reply("_❌ ERROR: Failed to convert image into sticker! ❌_");
               })
@@ -847,7 +850,10 @@ const main = async () => {
             reply("❌ ERROR: Admin command!");
             return;
           }
-          if (!isBotGroupAdmins) return reply(errors.admin_error);
+          if (!isBotGroupAdmins) {
+            reply("❌ ERROR: I'm not Admin here!");
+            return;
+          }
           if (args.length < 1) return;
           var num = "";
           if (args.length > 1) {
@@ -898,20 +904,69 @@ const main = async () => {
             reply("❌ ERROR: Admin command!");
             return;
           }
-          if (!isBotGroupAdmins) return reply(errors.admin_error);
-          if (
-            mek.message.extendedTextMessage === undefined ||
-            mek.message.extendedTextMessage === null
-          )
+          if (!isBotGroupAdmins) {
+            reply("❌ ERROR: I'm not Admin here!");
             return;
-          mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid;
-          // if (groupAdmins.includes(`${mentioned}`) == true) return;
-          if (mentioned.length > 1) {
-            reply("❌ ERROR: Mention member with command!");
+          }
+          if (!mek.message.extendedTextMessage) {
+            reply("❌ ERROR: Tag someone!");
             return;
+          }
+
+          /*
+          1) when !ban OR !ban xyz
+          { conversation: '!ban' }
+
+          2) when !ban tagMember
+          {
+            extendedTextMessage: {
+              text: '!ban @91885---7364',
+              previewType: 'NONE',
+              contextInfo: { mentionedJid: [Array] }
+            }
+          }
+
+          3) when !ban tagMessage
+          {
+            extendedTextMessage: {
+              text: '!ban',
+              previewType: 'NONE',
+              contextInfo: {
+                stanzaId: '3C2B0F3CE0-----D970A0C648B4BC3',
+                participant: '919675---959@s.whatsapp.net',
+                quotedMessage: [Object]
+              }
+            }
+          }
+          */
+          let mentioned =
+            mek.message.extendedTextMessage.contextInfo.mentionedJid;
+          if (mentioned) {
+            //when member are mentioned with command
+            if (mentioned.length === 1) {
+              if (groupAdmins.includes(mentioned[0])) {
+                //if admin then don't remove
+                reply("❌ ERROR: Cannot remove admin!");
+                return;
+              }
+              conn.groupRemove(from, mentioned);
+              reply("_✔ SUCCESS: Number removed from group!_");
+            } else {
+              //if multiple members are tagged
+              reply("❌ ERROR: Mention only 1 member!");
+            }
           } else {
-            console.log("#", mentioned);
-            conn.groupRemove(from, mentioned);
+            //when message is tagged with command
+            let taggedMessageUser = [
+              mek.message.extendedTextMessage.contextInfo.participant,
+            ];
+            if (groupAdmins.includes(taggedMessageUser[0])) {
+              //if admin then don't remove
+              reply("❌ ERROR: Cannot remove admin!");
+              return;
+            }
+            conn.groupRemove(from, taggedMessageUser);
+            reply("_✔ SUCCESS: Number removed from group!_");
           }
           break;
 
