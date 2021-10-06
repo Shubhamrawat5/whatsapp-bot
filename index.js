@@ -165,7 +165,6 @@ const main = async () => {
     try {
       const groupMetadata = await conn.groupMetadata(anu.jid);
       let groupDesc = groupMetadata.desc;
-      console.log(groupDesc);
       let blockCommandsInDesc = []; //commands to be blocked
       if (groupDesc) {
         let firstLineDesc = groupDesc.split("\n")[0];
@@ -177,10 +176,10 @@ const main = async () => {
         let from = anu.jid;
         let num_split = `${num.split("@s.whatsapp.net")[0]}`;
 
-        // other than 91 are blocked from joining when description have written in first line -> 91only
+        // other than 91 are blocked from joining when description have written in first line -> only91
         if (
           !num_split.startsWith(91) &&
-          blockCommandsInDesc.includes("91only")
+          blockCommandsInDesc.includes("only91")
         ) {
           conn.sendMessage(
             from,
@@ -425,7 +424,7 @@ const main = async () => {
           }
 
           reply(
-            `*─「 <{PVX}> BOT 」 ─*\n\n_Give text "91only" (without quotes) in first line of group description_\n\n_If other commands is to be added in description also like of matchID or blocked commands then add in starting of description, like_\n82621,score,quote,91only`
+            `*─「 <{PVX}> BOT 」 ─*\n\n_To instant ban all the numbers other than 91 when added to group_\n\n_Give text "only91" (without quotes) in first line of group description_\n\n_If other commands is to be added in description also like of matchID or blocked commands then add in starting of group description, like_\n82621,score,quote,only91`
           );
           break;
 

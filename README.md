@@ -6,7 +6,7 @@
 - Heroku CLI
 - Git
 
-# Instructions:-
+# Instructions:- :rocket:
 
 ## Git Setup
 
@@ -40,7 +40,7 @@
 11. In real time logs it will automatically ask you for login using qr code just simple scan the qr code using your whatsapp web section, and you are done.
 12. Scan QR code with you phone. done!
 
-# Features:-
+# Features:- :rocket:
 
 ## Default prefix : `!`
 
@@ -72,18 +72,35 @@
 
 - IPL SCORES:
 
-> Put match id in in starting of group description.
-> Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is 37572
+  > Put match id in starting of group description.
 
-> (currently it is using 2 apis to get ipl live scores, so there is a change of score data mismatch, will try to fix it in future.)
+  > Get match ID from cricbuzz url, like https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 so match ID is `37572`
 
-# Note:-
+- Block any command for particular group
+
+  > Give command name (with comma seperated and without spaces) to be blocked in first line of group description like `score,add,quote`
+
+  > If matchId is to be added in description along with blocked commands then add in starting of first line, like `82621,score,add,quote`
+
+- Other than 91 numbers are not allowed
+
+  > Put `only91` text in first line of description of group to instant ban every number joined other than 91 indian numbers
+
+- GROUP DESCRIPTION EXAMPLE:
+
+   <img src="https://i.ibb.co/2Z8t9Qm/IMG-20211006-154704.jpg" width="400"/>
+
+  > Always put match ID in starting of first line!
+
+  > `91only` is command name and `only91` is to ban
+
+# Note:- :rocket:
 
 Since heroku uses:- Dyno sleeping in which if an app has a free web dyno, and that dyno receives no web traffic in a 30-minute period, it will sleep. In addition to the web dyno sleeping, the worker dyno (if present) will also sleep. and if a sleeping web dyno receives web traffic, it will become active again after a short delay (assuming your account has free dyno hours available)
 You can use (http://kaffeine.herokuapp.com) to ping the heroku app every 30 minutes to prevent it from sleeping.
 
-# References:-
+# References:- :rocket:
 
 - [@Baileys](https://github.com/adiwajshing/Baileys)
 - [@WA-STICKER-FORMATTER](https://github.com/Alensaito1/wa-sticker-formatter)
-- Starter code taken from [Karma](https://github.com/karmaisgreat/simple-whatsapp-bot).
+- Initial code taken from [Karma](https://github.com/karmaisgreat/simple-whatsapp-bot).
