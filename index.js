@@ -135,7 +135,6 @@ const { getInstaVideo } = require("./functions/insta");
 
 // BASIC SETTINGS
 prefix = "!";
-const botNumber = process.env.botNumber || "919720391303";
 const myNumber = process.env.myNumber;
 
 let matchIdGroups = {}; //to store every group name with its match ID
@@ -160,6 +159,7 @@ const main = async () => {
   const { connectToWA } = require("./functions/database");
 
   const conn = await connectToWA(WAConnection);
+  let botNumberJid = conn.user.jid;
 
   // member left or join
   conn.on("group-participants-update", async (anu) => {
@@ -173,9 +173,10 @@ const main = async () => {
       }
 
       if (anu.action == "add") {
-        let num = anu.participants[0];
         let from = anu.jid;
-        let num_split = `${num.split("@s.whatsapp.net")[0]}`;
+        let botNumberJid = conn.user.jid;
+        let numJid = anu.participants[0];
+        let num_split = `${numJid.split("@s.whatsapp.net")[0]}`;
 
         // other than 91 are blocked from joining when description have written in first line -> only91
         if (
@@ -190,7 +191,7 @@ const main = async () => {
           conn.groupRemove(from, anu.participants);
         }
 
-        if (num_split === botNumber) {
+        if (numJid === botNumberJid) {
           console.log("Bot is add to new group!");
           conn.sendMessage(
             from,
@@ -198,7 +199,7 @@ const main = async () => {
             MessageType.text
           );
         }
-        console.log("Joined: ", num);
+        console.log("Joined: ", numJid);
       }
     } catch (err) {
       console.log(err);
@@ -279,7 +280,6 @@ const main = async () => {
         admin_error: "_❌ ERROR: I'm not Admin here!_",
       };
 
-      const botNumber = conn.user.jid;
       const isGroup = from.endsWith("@g.us");
       const sender = isGroup ? mek.participant : mek.key.remoteJid;
       const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
@@ -287,7 +287,7 @@ const main = async () => {
       const groupDesc = isGroup ? groupMetadata.desc : "";
       const groupMembers = isGroup ? groupMetadata.participants : "";
       const groupAdmins = isGroup ? getGroupAdmins(groupMembers) : "";
-      const isBotGroupAdmins = groupAdmins.includes(botNumber) || false;
+      const isBotGroupAdmins = groupAdmins.includes(botNumberJid) || false;
       const isGroupAdmins = groupAdmins.includes(sender) || false;
 
       const isMedia = type === "imageMessage" || type === "videoMessage"; //image or video
