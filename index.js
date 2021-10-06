@@ -714,8 +714,9 @@ const main = async () => {
           }
 
           // Format should be <prefix>sticker pack <pack_name> author <author_name>
-          var packName = "<{PVX}> BOT";
-          var authorName = "";
+          let packName = "<{PVX}> BOT";
+          let authorName = "";
+          let ran = getRandom(".webp");
 
           outputOptions = [
             `-vcodec`,
@@ -744,14 +745,24 @@ const main = async () => {
               `512:512`,
             ];
           }
+          async function buildSticker(media, ran) {
+            const webpWithMetadata = await WSF.setMetadata(
+              packName,
+              authorName,
+              ran
+            );
+            await conn.sendMessage(from, webpWithMetadata, MessageType.sticker);
+            fs.unlinkSync(media);
+            fs.unlinkSync(ran);
+          }
 
           if ((isMedia && !mek.message.videoMessage) || isTaggedImage) {
+            //IMAGE TO STICKER
             const encmedia = isTaggedImage
               ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
                   .extendedTextMessage.contextInfo
               : mek;
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
-            ran = getRandom(".webp");
             // reply("⌛ Processing image wait... ⏳");
             await ffmpeg(`./${media}`)
               .input(media)
@@ -762,36 +773,18 @@ const main = async () => {
                 reply("_❌ ERROR: Failed to convert image into sticker! ❌_");
               })
               .on("end", function () {
-                buildSticker();
+                buildSticker(media, ran);
               })
               .addOutputOptions(outputOptions)
               .toFormat("webp")
               .save(ran);
-
-            async function buildSticker() {
-              if (args.includes("nometadata") == true) {
-                conn.sendMessage(from, fs.readFileSync(ran), sticker, {
-                  quoted: mek,
-                });
-                fs.unlinkSync(media);
-                fs.unlinkSync(ran);
-              } else {
-                const webpWithMetadata = await WSF.setMetadata(
-                  packName,
-                  authorName,
-                  ran
-                );
-                conn.sendMessage(from, webpWithMetadata, MessageType.sticker);
-                fs.unlinkSync(media);
-                fs.unlinkSync(ran);
-              }
-            }
           } else if (
             (isMedia && mek.message.videoMessage.seconds > 10) ||
             (isTaggedVideo &&
               mek.message.extendedTextMessage.contextInfo.quotedMessage
                 .videoMessage.seconds > 10)
           ) {
+            //VIDEO/GIF TO STICKER, BUT INVALID LENGTH
             reply(
               "❌ ERROR: Only video with length less than 11 seconds are accepted!"
             );
@@ -801,12 +794,12 @@ const main = async () => {
               mek.message.extendedTextMessage.contextInfo.quotedMessage
                 .videoMessage.seconds < 11)
           ) {
+            //VIDEO/GIF TO STICKER
             const encmedia = isTaggedVideo
               ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
                   .extendedTextMessage.contextInfo
               : mek;
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
-            ran = getRandom(".webp");
             // reply("⌛ Processing animation... ⏳");
             await ffmpeg(`./${media}`)
               .inputFormat(media.split(".")[1])
@@ -818,30 +811,11 @@ const main = async () => {
                 );
               })
               .on("end", function () {
-                buildSticker();
+                buildSticker(media, ran);
               })
               .addOutputOptions(outputOptions)
               .toFormat("webp")
               .save(ran);
-
-            async function buildSticker() {
-              if (args.includes("nometadata") == true) {
-                conn.sendMessage(from, fs.readFileSync(ran), sticker, {
-                  quoted: mek,
-                });
-                fs.unlinkSync(media);
-                fs.unlinkSync(ran);
-              } else {
-                const webpWithMetadata = await WSF.setMetadata(
-                  packName,
-                  authorName,
-                  ran
-                );
-                conn.sendMessage(from, webpWithMetadata, MessageType.sticker);
-                fs.unlinkSync(media);
-                fs.unlinkSync(ran);
-              }
-            }
           }
           break;
 
