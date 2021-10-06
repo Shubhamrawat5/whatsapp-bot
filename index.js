@@ -158,6 +158,7 @@ const getRandom = (text) => {
 //MAIN FUNCTION
 const main = async () => {
   const { connectToWA } = require("./functions/database");
+
   const conn = await connectToWA(WAConnection);
 
   // member left or join
@@ -186,7 +187,6 @@ const main = async () => {
             `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nOnly 91 numbers are allowed !!!!`,
             MessageType.text
           );
-          console.log("#", anu.participants);
           conn.groupRemove(from, anu.participants);
         }
 
@@ -890,8 +890,9 @@ const main = async () => {
               reply("❌ ERROR: Give number to add!");
               return;
             }
-            num = `${args[0].replace(/ /g, "")}@s.whatsapp.net`; //remove spaces
+            num = `${args.join("").replace(/ |-|\(|\)/g, "")}@s.whatsapp.net`; //remove spaces , ( , ) and -
             if (num.startsWith("+")) {
+              //remove + sign from starting if given
               num = num.slice(1);
             }
           }
