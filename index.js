@@ -163,15 +163,25 @@ const main = async () => {
   // member left or join
   conn.on("group-participants-update", async (anu) => {
     try {
-      const mdata = await conn.groupMetadata(anu.jid);
-      console.log(anu);
+      const groupMetadata = await conn.groupMetadata(anu.jid);
+      let groupDesc = groupMetadata.desc;
+      console.log(groupDesc);
+      let blockCommandsInDesc = []; //commands to be blocked
+      if (groupDesc) {
+        let firstLineDesc = groupDesc.split("\n")[0];
+        blockCommandsInDesc = firstLineDesc.split(",");
+      }
+
       if (anu.action == "add") {
         let num = anu.participants[0];
         let from = anu.jid;
         let num_split = `${num.split("@s.whatsapp.net")[0]}`;
 
-        // other than 91 are blocked from joining
-        if (!num_split.startsWith(91)) {
+        // other than 91 are blocked from joining when description have written in first line -> 91only
+        if (
+          !num_split.startsWith(91) &&
+          blockCommandsInDesc.includes("91only")
+        ) {
           conn.sendMessage(
             from,
             `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nOnly 91 numbers are allowed !!!!`,
@@ -405,8 +415,24 @@ const main = async () => {
           reply(`*─「 <{PVX}> BOT 」 ─*\n\nYES! BOT IS ALIVE !!!`);
           break;
 
+        /* ------------------------------- CASE: 91only ------------------------------ */
+        case "91only":
+          if (blockCommandsInDesc.includes(command)) return;
+
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+
+          reply(
+            `*─「 <{PVX}> BOT 」 ─*\n\n_Give text "91only" (without quotes) in first line of group description_\n\n_If other commands is to be added in description also like of matchID or blocked commands then add in starting of description, like_\n82621,score,quote,91only`
+          );
+          break;
+
         /* ------------------------------- CASE: BLOCK ------------------------------ */
         case "block":
+          if (blockCommandsInDesc.includes(command)) return;
+
           if (!isGroup) {
             reply("❌ ERROR: Group command only!");
             return;

@@ -21,6 +21,9 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}block*
     - _To block particular commands for this group!_
+
+📛 *${prefix}91only*
+    - _To instant ban all numbers other than 91 when joined for this group!_
     
 📛 *${prefix}insta url*
     - _Instagram post videos / reels downloader!_
