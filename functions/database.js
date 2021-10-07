@@ -15,9 +15,10 @@ let auth_obj;
 
 const fetchauth = async () => {
   try {
-    let auth_result = await pool.query("select * from auth;");
+    let auth_result = await pool.query("select * from auth;"); //if auth table is not there, error will be throw
     console.log("Fetching login data...");
     auth_row_count = await auth_result.rowCount;
+    //if auth table is there but no row is there
     if (auth_row_count == 0) {
       console.log("No login data found!");
     } else {
@@ -31,7 +32,7 @@ const fetchauth = async () => {
       };
     }
   } catch {
-    console.log("Creating database...");
+    console.log("Creating database AUTH...");
     await pool.query(
       "CREATE TABLE auth(clientID text, serverToken text, clientToken text, encKey text, macKey text);"
     );

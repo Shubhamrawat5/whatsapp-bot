@@ -310,9 +310,13 @@ const main = async () => {
 
       // send every command info to my whatsapp
       if (myNumber) {
+        let { countToday } = require("./functions/countDB");
+        let count = await countToday();
         await conn.sendMessage(
           myNumber + "@s.whatsapp.net",
-          `[${prefix}${command}] - [${sender.split("@")[0]}]\n${groupName}`,
+          `${count}) [${prefix}${command}] - [${
+            sender.split("@")[0]
+          }]\n${groupName}`,
           MessageType.text
         );
       }
@@ -656,7 +660,7 @@ const main = async () => {
           iplsetIntervalGroups[groupName] = setInterval(async () => {
             data = await startIplHelper("startipl", true);
             if (!data) return;
-          }, 1000 * 60 * 1.5);
+          }, 1000 * 60); //1 min
           break;
 
         /* ------------------------------- CASE: SCORE ------------------------------ */
@@ -681,7 +685,7 @@ const main = async () => {
           }
 
           if (iplStartedGroups[groupName]) stopIplHelper();
-          else reply("❌ ERROR: IPL scores was never started!");
+          else reply("❌ ERROR: IPL scores was never started for this group!");
           break;
 
         /* ------------------------------- CASE: HELP ------------------------------ */
