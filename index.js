@@ -671,7 +671,7 @@ const main = async () => {
           data = await startIplHelper("score");
           break;
 
-        /* ------------------------------- CASE: STOPIPL ------------------------------ */
+        /* ------------------------------- CASE: STOPIPL ------------------------------  */
         case "stopipl":
           if (blockCommandsInDesc.includes(command)) return;
 
@@ -679,7 +679,9 @@ const main = async () => {
             reply("❌ ERROR: Group command only!");
             return;
           }
-          stopIplHelper();
+
+          if (iplStartedGroups[groupName]) stopIplHelper();
+          else reply("❌ ERROR: IPL scores was never started!");
           break;
 
         /* ------------------------------- CASE: HELP ------------------------------ */
