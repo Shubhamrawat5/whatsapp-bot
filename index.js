@@ -718,11 +718,11 @@ const main = async () => {
           let authorName = "";
           let ran = getRandom(".webp");
 
-          outputOptions = [
+          let outputOptions = [
             `-vcodec`,
             `libwebp`,
             `-vf`,
-            `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`,
+            `scale=600:600:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=600:600:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1`,
           ];
           if (args.includes("crop")) {
             outputOptions = [
