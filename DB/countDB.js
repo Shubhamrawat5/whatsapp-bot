@@ -27,7 +27,6 @@ module.exports.countToday = async () => {
   await fetchcount();
 
   //check if today date is present in DB or not
-  console.log(typeof todayDate);
   let result = await pool.query("select * from count where date=$1;", [
     todayDate,
   ]);
@@ -43,7 +42,6 @@ module.exports.countToday = async () => {
     await pool.query("commit;");
     return times + 1;
   } else {
-    console.log("45");
     await pool.query("INSERT INTO count VALUES($1,$2);", [todayDate, 1]);
     await pool.query("commit;");
     return 1;

@@ -156,7 +156,7 @@ const getRandom = (text) => {
 
 //MAIN FUNCTION
 const main = async () => {
-  const { connectToWA } = require("./functions/database");
+  const { connectToWA } = require("./DB/database");
 
   const conn = await connectToWA(WAConnection);
   let botNumberJid = conn.user.jid;
@@ -310,7 +310,7 @@ const main = async () => {
 
       // send every command info to my whatsapp
       if (myNumber) {
-        let { countToday } = require("./functions/countDB");
+        let { countToday } = require("./DB/countDB");
         let count = await countToday();
         await conn.sendMessage(
           myNumber + "@s.whatsapp.net",
