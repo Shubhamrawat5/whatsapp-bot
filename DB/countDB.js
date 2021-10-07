@@ -21,7 +21,7 @@ const fetchcount = async () => {
 
 module.exports.countToday = async () => {
   let todayDate = new Date()
-    .toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+    .toLocaleString("en-GB", { timeZone: "Asia/kolkata" })
     .split(",")[0];
 
   await fetchcount();

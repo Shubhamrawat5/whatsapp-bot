@@ -64,7 +64,8 @@ NOTE: Put matchID (from cricbuzz) in description starting!
     - _Start IPL match live score every 1 min!_
 📛 *${prefix}stopipl*
     - _Stop IPL match live score!_
-      
+
+ _To add this bot in your group, simply send group link in my inbox!_
  ✔️ more cool commands coming...`;
 };
 
