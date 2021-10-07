@@ -13,17 +13,11 @@ module.exports.commandList = (prefix) => {
     
 📛 *${prefix}kick <mention>*
     - _Kick any member from group!
-    [or tag message of member with !kick]
-    - Alias: !ban , !remove 
+    [or tag message of member with *${prefix}kick]
+    - Alias: *${prefix}ban , *${prefix}remove 
 
 📛 *${prefix}mute | ${prefix}unmute*
     - _Mute and Unmute the group!_
-
-📛 *${prefix}block*
-    - _To block particular commands for this group!_
-
-📛 *${prefix}91only*
-    - _To instant ban all numbers other than 91 when joined for this group!_
     
 📛 *${prefix}insta url*
     - _Instagram post videos / reels downloader!_
@@ -49,11 +43,17 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}source*
     - _Get bot source code!_
 
+📛 *${prefix}pvxlink*
+    - _Get links for all PVX groups!_
+
 📛 *${prefix}dev*
     - _Get dev contact to report bug or to add new feature!_
 
-📛 *${prefix}pvxlink*
-    - _Get links for all PVX groups!_
+📛 *${prefix}block*
+    - _To block particular commands for this group!_
+
+📛 *${prefix}91only*
+    - _To instant ban all numbers other than 91 when joined for this group!_
 
 _*🏏  IPL COMMANDS:*_
 NOTE: Put matchID (from cricbuzz) in description starting!

@@ -816,6 +816,10 @@ const main = async () => {
               .addOutputOptions(outputOptions)
               .toFormat("webp")
               .save(ran);
+          } else {
+            reply(
+              "_❌ ERROR: Give a media (image/gif/video) to convert into sticker! ❌_"
+            );
           }
           break;
 
