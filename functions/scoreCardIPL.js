@@ -11,7 +11,7 @@ module.exports.getScoreCard = async (matchID) => {
       secondInningTeamScore = "";
     firstInningTeam = data.Innings1[2].team;
     firstInningTeamScore = data.Innings1[2].score;
-    let message = `🏏 ${firstInningTeam}\nscore: ${firstInningTeamScore}\n`;
+    let message = `*${firstInningTeam} 🏏*\nscore: ${firstInningTeamScore}\n`;
     if (Object.keys(data.Innings2[2]).length) {
       secondInningTeam = data.Innings2[2].team;
       secondInningTeamScore = data.Innings2[2].score;
@@ -19,12 +19,14 @@ module.exports.getScoreCard = async (matchID) => {
 
     data.Innings1[0].Batsman.forEach((player) => {
       message += `\n${player.runs} (${player.balls}) : ${player.name}`;
+      if (player.dismissal == "batting") message += `*`;
     });
 
     if (secondInningTeam) {
-      message = `\n\n🏏 ${secondInningTeam}\nscore: ${secondInningTeamScore}\n`;
+      message += `\n\n*${secondInningTeam} 🏏*\nscore: ${secondInningTeamScore}\n`;
       data.Innings2[0].Batsman.forEach((player) => {
         message += `\n${player.runs} (${player.balls}) : ${player.name}`;
+        if (player.dismissal == "batting") message += `*`;
       });
     }
     return message;
