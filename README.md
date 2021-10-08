@@ -43,29 +43,30 @@ Now Bot will start working!!
 
 ## Commands :
 
-|  Commands   |                Description                |
-| :---------: | :---------------------------------------: |
-|   `!help`   |           Display help message            |
-|   `!add`    |            Add member to group            |
-|   `!kick`   |          kick member from group           |
-|   `!mute`   |              Mute the group               |
-|  `!unmute`  |             Unmute the group              |
-|  `!block`   |  To block particular commands for group   |
-|   `!text`   |        Get text extract from image        |
-|   `!song`   |       Get any song in good quality        |
-|  `!insta`   |      Get insta reels or post videos       |
-| `!technews` |           Get latest Tech news            |
-|  `!drive`   |       Get GDrive files direct link        |
-|  `!quote`   |            Give a random quote            |
-|  `!gender`  |        Get gender from first name         |
-|  `!alive`   |          Check bot is ON or OFF           |
-|  `!score`   |              Give IPL score               |
-| `!startipl` |          Start IPL score updated          |
-| `!stotipl`  |          Stop IPL score updated           |
-| `!sticker`  | Create sticker from different media types |
-| `!pvxlink`  |          Get group links of PVX           |
-|  `!source`  |            Get the bot source             |
-|   `!dev`    |          Get the contact of dev           |
+|   Commands   |                Description                |
+| :----------: | :---------------------------------------: |
+|   `!help`    |           Display help message            |
+|    `!add`    |            Add member to group            |
+|   `!kick`    |          kick member from group           |
+|   `!mute`    |              Mute the group               |
+|  `!unmute`   |             Unmute the group              |
+|  `!sticker`  | Create sticker from different media types |
+|   `!block`   |  To block particular commands for group   |
+|   `!text`    |        Get text extract from image        |
+|   `!song`    |       Get any song in good quality        |
+|   `!insta`   |      Get insta reels or post videos       |
+| `!technews`  |           Get latest Tech news            |
+|  `!pvxlink`  |          Get group links of PVX           |
+|   `!drive`   |       Get GDrive files direct link        |
+|   `!quote`   |            Give a random quote            |
+|  `!gender`   |        Get gender from first name         |
+|   `!alive`   |          Check bot is ON or OFF           |
+|   `!score`   |              Give IPL score               |
+| `!scorecard` |            Give IPL scorecard             |
+| `!startipl`  |          Start IPL score updated          |
+|  `!stotipl`  |          Stop IPL score updated           |
+|  `!source`   |            Get the bot source             |
+|    `!dev`    |          Get the contact of dev           |
 
 - IPL SCORES:
 

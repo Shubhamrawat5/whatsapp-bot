@@ -308,24 +308,28 @@ const main = async () => {
         groupName
       );
 
+      const reply = (message) => {
+        conn.sendMessage(from, message, MessageType.text, {
+          quoted: mek,
+        });
+      };
+
+      const sendText = (message) => {
+        conn.sendMessage(from, message, MessageType.text);
+      };
+
       // send every command info to my whatsapp
       if (myNumber) {
         let { countToday } = require("./DB/countDB");
         let count = await countToday();
         await conn.sendMessage(
           myNumber + "@s.whatsapp.net",
-          `${count}) [${prefix}${command}] - [${
+          `${count}) [${prefix}${command}] by [${
             sender.split("@")[0]
-          }]\n${groupName}`,
+          }]\n      in [${groupName}]`,
           MessageType.text
         );
       }
-
-      const reply = (message) => {
-        conn.sendMessage(from, message, MessageType.text, {
-          quoted: mek,
-        });
-      };
 
       /* -------------------------- IPL HELPING FUNCTIONS ------------------------- */
       const stopIplHelper = () => {
@@ -362,14 +366,14 @@ const main = async () => {
 
         //response.info have "MO" only when command is startipl
         if (commandName === "startipl" && response.info === "MO") {
-          conn.sendMessage(from, response.message, MessageType.text);
+          sendText(response.message);
           reply("✔️ Match over! Stopping IPL scores for this group !");
           console.log("Match over! Stopping IPL scores for " + groupName);
           clearInterval(iplsetIntervalGroups[groupName]);
           iplStartedGroups[groupName] = false;
           return false;
         } else if (commandName === "startipl" && response.info === "IO") {
-          conn.sendMessage(from, response.message, MessageType.text);
+          sendText(response.message);
           reply(
             "✔️ Inning over! Open again live scores later when 2nd inning will start by !startipl"
           );
@@ -386,7 +390,7 @@ const main = async () => {
 # If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
           return false;
         }
-        conn.sendMessage(from, response.message, MessageType.text);
+        sendText(response.message);
         return true;
       };
 
@@ -563,7 +567,7 @@ const main = async () => {
             return;
           }
           let news = await getNews();
-          conn.sendMessage(from, news, MessageType.text);
+          sendText(news);
           break;
 
         /* ------------------------------- CASE: QUOTES ------------------------------ */
@@ -636,7 +640,7 @@ const main = async () => {
           if (blockCommandsInDesc.includes(command)) return;
 
           reply(
-            `*─「 <{PVX}> BOT 」 ─*\n\n_Message wa.me/919557666582 to report any bug or to give new ideas/features for this bot!_ `
+            `*─「 <{PVX}> BOT 」 ─*\n\n_Message t.me/KryptonPVX in telegram to report any bug or to give new ideas/features for this bot!_ `
           );
           break;
 
@@ -688,6 +692,41 @@ const main = async () => {
           else reply("❌ ERROR: IPL scores was never started for this group!");
           break;
 
+        /* ------------------------------- CASE: SCORECARD ------------------------------  */
+        case "scorecard":
+          if (blockCommandsInDesc.includes(command)) return;
+
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (!groupDesc) {
+            reply(`*❌ ERROR:* 
+- Group description is empty.
+- Put match ID in starting of group description. 
+- Get match ID from cricbuzz today match url.
+- example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
+- so match ID is 37572 !
+  
+  # If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
+            return false;
+          }
+
+          let { getScoreCard } = require("./functions/scoreCardIPL");
+          let scoreCardMessage = await getScoreCard(groupDesc.slice(0, 5));
+          if (scoreCardMessage) sendText(scoreCardMessage);
+          else
+            reply(`*❌ ERROR:* 
+- Group description starting is "${matchIdGroups[groupName]}"
+- Put match ID in starting of group description. 
+- Get match ID from cricbuzz today match url.
+- example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
+- so match ID is 37572 !
+
+# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
+
+          break;
+
         /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
           if (blockCommandsInDesc.includes(command)) return;
@@ -720,7 +759,7 @@ const main = async () => {
           }
 
           // Format should be <prefix>sticker pack <pack_name> author <author_name>
-          let packName = "<{PVX}> BOT";
+          let packName = "<{PVX}> BOT 🤖";
           let authorName = "";
           let ran = getRandom(".webp");
 
@@ -770,13 +809,15 @@ const main = async () => {
               : mek;
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
             // reply("⌛ Processing image wait... ⏳");
+            console.log("MEDIA", media);
+            console.log("RAN", ran);
             await ffmpeg(`./${media}`)
               .input(media)
               .on("error", function (err) {
                 fs.unlinkSync(media);
                 //unlinkSync remove the given file
                 console.log(`Error : ${err}`);
-                reply("_❌ ERROR: Failed to convert image into sticker! ❌_");
+                reply("_❌ ERROR: Failed to convert image into sticker!_");
               })
               .on("end", function () {
                 buildSticker(media, ran);
@@ -1009,7 +1050,7 @@ const main = async () => {
           break;
 
         default:
-          reply("Send !help for <{PVX}> bot commands list!");
+          reply("Send !help for <{PVX}> BOT commands list!");
           break;
       }
     } catch (err) {

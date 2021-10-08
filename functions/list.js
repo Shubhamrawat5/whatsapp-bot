@@ -60,6 +60,8 @@ NOTE: Put matchID (from cricbuzz) in description starting!
   
 📛 *${prefix}score*
     - _Give IPL match current score!_
+📛 *${prefix}scorecard*
+    - _Give IPL match current scorecard of players!_
 📛 *${prefix}startipl*
     - _Start IPL match live score every 1 min!_
 📛 *${prefix}stopipl*
