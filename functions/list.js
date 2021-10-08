@@ -14,7 +14,7 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}kick <mention>*
     - _Kick any member from group!
     [or tag message of member with *${prefix}kick]
-    - Alias: *${prefix}ban , *${prefix}remove 
+    - Alias: *${prefix}ban* , *${prefix}remove* 
 
 📛 *${prefix}mute | ${prefix}unmute*
     - _Mute and Unmute the group!_

@@ -10,13 +10,10 @@ const proConfig = {
 const pool = new Pool(proConfig);
 
 //create count table if not there
-const fetchcount = async () => {
-  try {
-    await pool.query("select * from count;");
-  } catch {
-    console.log("Creating database COUNT...");
-    await pool.query("CREATE TABLE count(date text, times integer);");
-  }
+const createCountTable = async () => {
+  await pool.query(
+    "CREATE TABLE IF NOT EXISTS count(date text, times integer);"
+  );
 };
 
 module.exports.countToday = async () => {
@@ -24,7 +21,7 @@ module.exports.countToday = async () => {
     .toLocaleString("en-GB", { timeZone: "Asia/kolkata" })
     .split(",")[0];
 
-  await fetchcount();
+  await createCountTable();
 
   //check if today date is present in DB or not
   let result = await pool.query("select * from count where date=$1;", [
