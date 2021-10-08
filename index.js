@@ -318,15 +318,20 @@ const main = async () => {
         conn.sendMessage(from, message, MessageType.text);
       };
 
-      // send every command info to my whatsapp
-      if (myNumber) {
+      // send every command info to my whatsapp, won't work when i send something for bot
+      if (myNumber && myNumber + "@s.whatsapp.net" !== sender) {
         let { countToday } = require("./DB/countDB");
         let count = await countToday();
+        // await conn.sendMessage(
+        //   myNumber + "@s.whatsapp.net",
+        //   `${count}) [${prefix}${command}] by ${
+        //     sender.split("@")[0]
+        //   }\n      [${groupName}]`,
+        //   MessageType.text
+        // );
         await conn.sendMessage(
           myNumber + "@s.whatsapp.net",
-          `${count}) [${prefix}${command}] by [${
-            sender.split("@")[0]
-          }]\n      in [${groupName}]`,
+          `${count}) [${prefix}${command}] [${groupName}]`,
           MessageType.text
         );
       }
@@ -405,16 +410,21 @@ const main = async () => {
       /* -------------------------------- COMMANDS -------------------------------- */
       let data;
       switch (command) {
-        case "testt":
-          if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
-            return;
-          }
-          if (!groupDesc) {
+        /* ------------------------------- CASE: TEST ------------------------------ */
+        case "test":
+          if (args.length === 0) {
             reply(`*❌ ERROR:* EMPTY!`);
           }
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(
+              `*❌ ERROR:* command only for developer for bot testing purpose!`
+            );
+            return;
+          }
 
-          reply(groupDesc);
+          let resultTest = eval(args[0]);
+          if (typeof resultTest === "object") reply(JSON.stringify(resultTest));
+          else reply(resultTest.toString());
           break;
 
         /* ------------------------------- CASE: ALIVE ------------------------------ */
@@ -809,8 +819,9 @@ const main = async () => {
               : mek;
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
             // reply("⌛ Processing image wait... ⏳");
-            console.log("MEDIA", media);
-            console.log("RAN", ran);
+            // console.log("MEDIA", media); // MEDIA undefined.jpeg
+            // console.log("RAN", ran); //RAN 1126.webp
+
             await ffmpeg(`./${media}`)
               .input(media)
               .on("error", function (err) {
