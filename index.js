@@ -141,6 +141,11 @@ let matchIdGroups = {}; //to store every group name with its match ID
 let iplsetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
 let iplStartedGroups = {}; //to store every group name with boolean value to know if ipl score is already started or not
 
+// voting command
+let votingStartedGroups = {};
+let votingInfoGroups = {};
+let votingMemberGroup = {};
+
 // LOAD CUSTOM FUNCTIONS
 const getGroupAdmins = (participants) => {
   admins = [];
@@ -251,6 +256,7 @@ const main = async () => {
           ? mek.message.extendedTextMessage.text
           : "";
 
+      if (body[1] == " ") body = body[0] + body.slice(2); //remove space when space btw prefix and commandName like "! help"
       const command = body.slice(1).trim().split(/ +/).shift().toLowerCase();
       const args = body.trim().split(/ +/).slice(1);
       const isCmd = body.startsWith(prefix);
@@ -444,6 +450,114 @@ const main = async () => {
           reply(
             `*─「 <{PVX}> BOT 」 ─*\n\n_To instant ban all the numbers other than 91 when added to group_\n\n_Give text "only91" (without quotes) in first line of group description_\n\n_If other commands is to be added in description also like of matchID or blocked commands then add in starting of group description, like_\n82621,score,quote,only91`
           );
+          break;
+
+        /* ------------------------------- CASE: VOTE ------------------------------ */
+        case "startvote":
+          if (blockCommandsInDesc.includes(command)) return;
+
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (args.length === 0) {
+            reply(
+              "❌ ERROR: Give some values with comma seperated and without spaces to vote on by !vote name1,name2"
+            );
+            return;
+          }
+          if (votingStartedGroups[groupName]) {
+            reply(
+              "❌ ERROR: voting already going on, Stop by !stopvote command"
+            );
+            return;
+          }
+
+          let voteListName = args
+            .join(",")
+            .replace(/ /g, "")
+            .replace(/,{2,}/, ",")
+            .split(","); //[a,b,c]
+          let voteListCount = new Array(voteListName.length).fill(0); //[0,0,0]
+          votingStartedGroups[groupName] = true;
+          votingMemberGroup[groupName] = {}; //those who voted
+          votingInfoGroups[groupName] = { voteListName, voteListCount };
+          let voteMsg = `Voting started!\n\nsend "!vote number" to vote`;
+
+          votingInfoGroups[groupName].voteListName.forEach((name, index) => {
+            voteMsg += `\n${index + 1} for ${name}`;
+          });
+
+          voteMsg += `\n\nsend !stopvote to stop voting and see the result.`;
+          reply(voteMsg);
+
+          break;
+
+        case "vote":
+          if (blockCommandsInDesc.includes(command)) return;
+
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          if (!votingStartedGroups[groupName]) {
+            reply(
+              "❌ ERROR: voting is not started here, Start by !startvote name1,name2"
+            );
+            return;
+          }
+          if (votingMemberGroup[groupName][sender]) {
+            reply("❌ ERROR: You already voted.");
+            return;
+          }
+          if (args.length === 0) {
+            reply("❌ ERROR: Give value to vote on!");
+            return;
+          }
+
+          let voteNumber = Math.floor(Number(args[0]));
+          if (!voteNumber) {
+            reply("❌ ERROR: Give a number!");
+            return;
+          }
+
+          if (voteNumber > votingInfoGroups[groupName].voteListCount.length) {
+            reply("❌ ERROR: Number out of range!");
+            return;
+          }
+          votingInfoGroups[groupName].voteListCount[voteNumber - 1] += 1;
+
+          //member voted
+          votingMemberGroup[groupName][sender] = true;
+
+          reply(
+            `Voted for ${
+              votingInfoGroups[groupName].voteListName[voteNumber - 1]
+            }`
+          );
+          break;
+
+        case "stopvote":
+          if (blockCommandsInDesc.includes(command)) return;
+
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+
+          if (!votingStartedGroups[groupName]) {
+            reply(
+              "❌ ERROR: voting is not started here, Start by !startvote name1,name2"
+            );
+            return;
+          }
+
+          votingStartedGroups[groupName] = false;
+          let resultVote = `Voting Result:\n`;
+          votingInfoGroups[groupName].voteListName.forEach((name, index) => {
+            resultVote += `\n${votingInfoGroups[groupName].voteListCount[index]} : ${name}`;
+          });
+          sendText(resultVote);
           break;
 
         /* ------------------------------- CASE: BLOCK ------------------------------ */
