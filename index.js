@@ -135,6 +135,7 @@ const { getInstaVideo } = require("./functions/insta");
 
 // BASIC SETTINGS
 prefix = "!";
+require("dotenv").config();
 const myNumber = process.env.myNumber;
 
 let matchIdGroups = {}; //to store every group name with its match ID
@@ -161,6 +162,7 @@ const getRandom = (text) => {
 
 //MAIN FUNCTION
 const main = async () => {
+  // const { connectToWA } = require("./DB/localdatabase");
   const { connectToWA } = require("./DB/database");
 
   const conn = await connectToWA(WAConnection);
@@ -462,7 +464,7 @@ const main = async () => {
           }
           if (args.length === 0) {
             reply(
-              "❌ ERROR: Give some values with comma seperated and without spaces to vote on by !startvote name1,name2"
+              "❌ ERROR: Give some values with comma seperated to vote on by !startvote name1,name2"
             );
             return;
           }
@@ -474,6 +476,9 @@ const main = async () => {
           }
           let voteListName = body.trim().replace(/ +/, ",").split(/,/).slice(1);
           if (voteListName.length < 2) {
+            // console.log(body);
+            // console.log(args);
+            // console.log(voteListName);
             reply("❌ ERROR: Give more than 1 voting choices!");
             return;
           }
@@ -484,16 +489,25 @@ const main = async () => {
           //   .replace(/,{2,}/, ",")
           //   .split(","); //[a,b,c]
           let voteListCount = new Array(voteListName.length).fill(0); //[0,0,0]
+          let voteListMember = [];
+          for (let i = 0; i < voteListName.length; ++i) voteListMember.push([]);
           votingStartedGroups[groupName] = true;
           votingMemberGroup[groupName] = {}; //those who voted
-          votingInfoGroups[groupName] = { voteListName, voteListCount };
-          let voteMsg = `Voting started!\n\nsend "!vote number" to vote`;
+          let voteTitle = "title example";
+          votingInfoGroups[groupName] = {
+            voteTitle,
+            voteListName,
+            voteListCount,
+            voteListMember,
+            voteStartBy: sender,
+          };
+          let voteMsg = `*Voting started!*\nsend "!vote number" to vote\n\n${voteTitle}`;
 
           votingInfoGroups[groupName].voteListName.forEach((name, index) => {
             voteMsg += `\n${index + 1} for [${name.trim()}]`;
           });
 
-          voteMsg += `\n\nsend !checkvote to see current status and !stopvote to stop voting and see the result.`;
+          voteMsg += `\n\n_send !checkvote to see current status and !stopvote to stop voting and see the result._`;
           reply(voteMsg);
 
           break;
@@ -521,7 +535,7 @@ const main = async () => {
           }
 
           let voteNumber = Math.floor(Number(args[0]));
-          if (!voteNumber) {
+          if (isNaN(voteNumber)) {
             reply("❌ ERROR: Give a number!");
             return;
           }
@@ -533,15 +547,21 @@ const main = async () => {
             reply("❌ ERROR: Number out of range!");
             return;
           }
-          votingInfoGroups[groupName].voteListCount[voteNumber - 1] += 1;
 
-          //member voted
-          votingMemberGroup[groupName][sender] = true;
+          votingInfoGroups[groupName].voteListCount[voteNumber - 1] += 1; //increase vote
+
+          let user = conn.contacts[sender];
+          let username = user.notify || user.vname || "unknown";
+          votingInfoGroups[groupName].voteListMember[voteNumber - 1].push(
+            username
+          ); // save who voted
+
+          votingMemberGroup[groupName][sender] = true; //member voted
 
           reply(
-            `✔ Voted for [${votingInfoGroups[groupName].voteListName[
+            `_✔ Voted for [${votingInfoGroups[groupName].voteListName[
               voteNumber - 1
-            ].trim()}]`
+            ].trim()}]_`
           );
           break;
 
@@ -563,15 +583,30 @@ const main = async () => {
 
           let resultVote = "";
           if (command === "stopvote") {
-            votingStartedGroups[groupName] = false;
-            resultVote += `Voting Result:\n`;
+            if (
+              votingInfoGroups[groupName].voteStartBy === sender ||
+              isGroupAdmins
+            ) {
+              votingStartedGroups[groupName] = false;
+              resultVote += `*Voting Result:*\n${votingInfoGroups[groupName].voteTitle}`;
+            } else {
+              reply(
+                "❌ ERROR: only admin or that member who started the voting, can stop current voting!"
+              );
+              return;
+            }
           } else {
-            resultVote += `Voting Status:\n`;
+            resultVote += `*Voting Status:*\n${votingInfoGroups[groupName].voteTitle}`;
           }
           votingInfoGroups[groupName].voteListName.forEach((name, index) => {
-            resultVote += `\n${
+            resultVote += `\n\n*[${name.trim()}] : ${
               votingInfoGroups[groupName].voteListCount[index]
-            } : [${name.trim()}]`;
+            }*`;
+
+            //add voted members username
+            votingInfoGroups[groupName].voteListMember[index].forEach((mem) => {
+              resultVote += `\n  _${mem}_`;
+            });
           });
           sendText(resultVote);
           break;
