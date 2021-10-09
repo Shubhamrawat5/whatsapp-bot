@@ -462,7 +462,7 @@ const main = async () => {
           }
           if (args.length === 0) {
             reply(
-              "❌ ERROR: Give some values with comma seperated and without spaces to vote on by !vote name1,name2"
+              "❌ ERROR: Give some values with comma seperated and without spaces to vote on by !startvote name1,name2"
             );
             return;
           }
@@ -472,12 +472,17 @@ const main = async () => {
             );
             return;
           }
+          let voteListName = body.trim().replace(/ +/, ",").split(/,/).slice(1);
+          if (voteListName.length < 2) {
+            reply("❌ ERROR: Give more than 1 voting choices!");
+            return;
+          }
 
-          let voteListName = args
-            .join(",")
-            .replace(/ /g, "")
-            .replace(/,{2,}/, ",")
-            .split(","); //[a,b,c]
+          // let voteListName = args
+          //   .join(",")
+          //   .replace(/ /g, "")
+          //   .replace(/,{2,}/, ",")
+          //   .split(","); //[a,b,c]
           let voteListCount = new Array(voteListName.length).fill(0); //[0,0,0]
           votingStartedGroups[groupName] = true;
           votingMemberGroup[groupName] = {}; //those who voted
@@ -485,10 +490,10 @@ const main = async () => {
           let voteMsg = `Voting started!\n\nsend "!vote number" to vote`;
 
           votingInfoGroups[groupName].voteListName.forEach((name, index) => {
-            voteMsg += `\n${index + 1} for ${name}`;
+            voteMsg += `\n${index + 1} for [${name.trim()}]`;
           });
 
-          voteMsg += `\n\nsend !stopvote to stop voting and see the result.`;
+          voteMsg += `\n\nsend !checkvote to see current status and !stopvote to stop voting and see the result.`;
           reply(voteMsg);
 
           break;
@@ -521,7 +526,10 @@ const main = async () => {
             return;
           }
 
-          if (voteNumber > votingInfoGroups[groupName].voteListCount.length) {
+          if (
+            voteNumber > votingInfoGroups[groupName].voteListCount.length ||
+            voteNumber < 1
+          ) {
             reply("❌ ERROR: Number out of range!");
             return;
           }
@@ -531,13 +539,14 @@ const main = async () => {
           votingMemberGroup[groupName][sender] = true;
 
           reply(
-            `Voted for ${
-              votingInfoGroups[groupName].voteListName[voteNumber - 1]
-            }`
+            `✔ Voted for [${votingInfoGroups[groupName].voteListName[
+              voteNumber - 1
+            ].trim()}]`
           );
           break;
 
         case "stopvote":
+        case "checkvote":
           if (blockCommandsInDesc.includes(command)) return;
 
           if (!isGroup) {
@@ -552,10 +561,17 @@ const main = async () => {
             return;
           }
 
-          votingStartedGroups[groupName] = false;
-          let resultVote = `Voting Result:\n`;
+          let resultVote = "";
+          if (command === "stopvote") {
+            votingStartedGroups[groupName] = false;
+            resultVote += `Voting Result:\n`;
+          } else {
+            resultVote += `Voting Status:\n`;
+          }
           votingInfoGroups[groupName].voteListName.forEach((name, index) => {
-            resultVote += `\n${votingInfoGroups[groupName].voteListCount[index]} : ${name}`;
+            resultVote += `\n${
+              votingInfoGroups[groupName].voteListCount[index]
+            } : [${name.trim()}]`;
           });
           sendText(resultVote);
           break;
@@ -818,6 +834,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: SCORECARD ------------------------------  */
         case "scorecard":
+        case "scoreboard":
           if (blockCommandsInDesc.includes(command)) return;
 
           if (!isGroup) {

@@ -2,19 +2,18 @@ module.exports.commandList = (prefix) => {
   return `*─「 🔥 <{PVX}> BOT 🔥 」─*
   
 📛 *${prefix}sticker*
-    - _Create original size sticker from different media types!_
+    - _Create sticker from image/gif/video!_
   
 📛 *${prefix}sticker crop*
-    - _Create full size sticker from different media types!_
+    - _Create full size sticker from image/gif/video!_
 
 📛 *${prefix}add <phone number>*
-    - _Add any new member!
-    [or tag message of removed member with !add]
+    - _Add any new member!_
+    [or tag message of removed member with *${prefix}add*]
     
 📛 *${prefix}kick <mention>*
-    - _Kick any member from group!
-    [or tag message of member with *${prefix}kick]
-    - Alias: *${prefix}ban* , *${prefix}remove* 
+    - _Kick any member from group!_
+    [or tag message of member with *${prefix}kick*]
 
 📛 *${prefix}mute | ${prefix}unmute*
     - _Mute and Unmute the group!_
@@ -67,6 +66,17 @@ NOTE: Put matchID (from cricbuzz) in description starting!
 📛 *${prefix}stopipl*
     - _Stop IPL match live score!_
 
+_*🗣️ VOTING COMMANDS:*_
+
+📛 *${prefix}startvote name1,name2..*
+    - _Start voting with comma seperated values!_
+📛 *${prefix}vote number*
+    - _To vote for particular number!_
+📛 *${prefix}checkvote*
+    - _Check status of current ongoing voting!_
+📛 *${prefix}stopvote*
+    - _Stop voting and see final result!_
+    
  _To add this bot in your group, simply send group link in my inbox!_
  ✔️ more cool commands coming...`;
 };

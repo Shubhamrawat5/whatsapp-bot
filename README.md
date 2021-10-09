@@ -65,6 +65,10 @@ Now Bot will start working!!
 | `!scorecard` |            Give IPL scorecard             |
 | `!startipl`  |          Start IPL score updated          |
 |  `!stotipl`  |          Stop IPL score updated           |
+| `!startvote` |           Start voting in group           |
+|   `!vote`    |             Vote for a choice             |
+| `!checkvote` |      Check status of current voting       |
+| `!stotvote`  |        Stop voting and see result         |
 |  `!source`   |            Get the bot source             |
 |    `!dev`    |          Get the contact of dev           |
 
