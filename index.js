@@ -241,7 +241,7 @@ const main = async () => {
       } = MessageType;
 
       //body will have the text message
-      body =
+      let body =
         type === "conversation" && mek.message.conversation.startsWith(prefix)
           ? mek.message.conversation
           : type == "imageMessage" &&
@@ -464,7 +464,7 @@ const main = async () => {
           }
           if (args.length === 0) {
             reply(
-              "❌ ERROR: Give some values with comma seperated to vote on by !startvote name1,name2"
+              "❌ ERROR: Give some values seperated with # to vote on like !startvote #title #name1 #name2 #name3"
             );
             return;
           }
@@ -474,7 +474,15 @@ const main = async () => {
             );
             return;
           }
-          let voteListName = body.trim().replace(/ +/, ",").split(/,/).slice(1);
+          // let voteListName = body.trim().replace(/ +/, ",").split(/,/).slice(1);
+          let voteList = body
+            .trim()
+            .replace(/ +/, ",")
+            .split(",")[1]
+            .split("#");
+          let voteTitle = voteList[1].trim();
+          let voteListName = voteList.slice(2);
+
           if (voteListName.length < 2) {
             // console.log(body);
             // console.log(args);
@@ -493,7 +501,6 @@ const main = async () => {
           for (let i = 0; i < voteListName.length; ++i) voteListMember.push([]);
           votingStartedGroups[groupName] = true;
           votingMemberGroup[groupName] = {}; //those who voted
-          let voteTitle = "title example";
           votingInfoGroups[groupName] = {
             voteTitle,
             voteListName,
@@ -501,7 +508,7 @@ const main = async () => {
             voteListMember,
             voteStartBy: sender,
           };
-          let voteMsg = `*Voting started!*\nsend "!vote number" to vote\n\n${voteTitle}`;
+          let voteMsg = `*Voting started!*\nsend "!vote number" to vote\n\n*🗣️ ${voteTitle}*`;
 
           votingInfoGroups[groupName].voteListName.forEach((name, index) => {
             voteMsg += `\n${index + 1} for [${name.trim()}]`;
@@ -521,7 +528,7 @@ const main = async () => {
           }
           if (!votingStartedGroups[groupName]) {
             reply(
-              "❌ ERROR: voting is not started here, Start by !startvote name1,name2"
+              `❌ ERROR: voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
             );
             return;
           }
@@ -576,7 +583,7 @@ const main = async () => {
 
           if (!votingStartedGroups[groupName]) {
             reply(
-              "❌ ERROR: voting is not started here, Start by !startvote name1,name2"
+              `❌ ERROR: voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
             );
             return;
           }
@@ -588,7 +595,7 @@ const main = async () => {
               isGroupAdmins
             ) {
               votingStartedGroups[groupName] = false;
-              resultVote += `*Voting Result:*\n${votingInfoGroups[groupName].voteTitle}`;
+              resultVote += `*Voting Result:*\n🗣️ ${votingInfoGroups[groupName].voteTitle}`;
             } else {
               reply(
                 "❌ ERROR: only admin or that member who started the voting, can stop current voting!"
@@ -596,7 +603,7 @@ const main = async () => {
               return;
             }
           } else {
-            resultVote += `*Voting Status:*\n${votingInfoGroups[groupName].voteTitle}`;
+            resultVote += `*Voting Status:*\n🗣️ ${votingInfoGroups[groupName].voteTitle}`;
           }
           votingInfoGroups[groupName].voteListName.forEach((name, index) => {
             resultVote += `\n\n*[${name.trim()}] : ${

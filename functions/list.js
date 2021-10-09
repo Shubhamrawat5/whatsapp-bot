@@ -68,8 +68,8 @@ NOTE: Put matchID (from cricbuzz) in description starting!
 
 _*🗣️ VOTING COMMANDS:*_
 
-📛 *${prefix}startvote name1,name2..*
-    - _Start voting with comma seperated values!_
+📛 *${prefix}startvote #title #name1 #name2..*
+    - _Start voting with seperated values with #!_
 📛 *${prefix}vote number*
     - _To vote for particular number!_
 📛 *${prefix}checkvote*
