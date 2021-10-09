@@ -142,10 +142,8 @@ let matchIdGroups = {}; //to store every group name with its match ID
 let iplsetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
 let iplStartedGroups = {}; //to store every group name with boolean value to know if ipl score is already started or not
 
-// voting command
-let votingStartedGroups = {};
-let votingInfoGroups = {};
-let votingMemberGroup = {};
+// voting import
+const { getVotingData, setVotingData } = require("./DB/VotingDB");
 
 // LOAD CUSTOM FUNCTIONS
 const getGroupAdmins = (participants) => {
@@ -289,6 +287,7 @@ const main = async () => {
       };
 
       const isGroup = from.endsWith("@g.us");
+      const chat_id = mek.key.remoteJid;
       const sender = isGroup ? mek.participant : mek.key.remoteJid;
       const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
       const groupName = isGroup ? groupMetadata.subject : "";
@@ -417,6 +416,7 @@ const main = async () => {
 
       /* -------------------------------- COMMANDS -------------------------------- */
       let data;
+      let votingResult;
       switch (command) {
         /* ------------------------------- CASE: TEST ------------------------------ */
         case "test":
@@ -468,49 +468,46 @@ const main = async () => {
             );
             return;
           }
-          if (votingStartedGroups[groupName]) {
+          votingResult = await getVotingData(chat_id);
+          if (votingResult.is_started) {
             reply(
               "❌ ERROR: voting already going on, Stop by !stopvote command"
             );
             return;
           }
-          // let voteListName = body.trim().replace(/ +/, ",").split(/,/).slice(1);
+          // let voteChoices = body.trim().replace(/ +/, ",").split(/,/).slice(1);
           let voteList = body
             .trim()
             .replace(/ +/, ",")
             .split(",")[1]
             .split("#");
           let voteTitle = voteList[1].trim();
-          let voteListName = voteList.slice(2);
+          let voteChoices = voteList.slice(2);
 
-          if (voteListName.length < 2) {
-            // console.log(body);
-            // console.log(args);
-            // console.log(voteListName);
+          if (voteChoices.length < 2) {
             reply("❌ ERROR: Give more than 1 voting choices!");
             return;
           }
 
-          // let voteListName = args
-          //   .join(",")
-          //   .replace(/ /g, "")
-          //   .replace(/,{2,}/, ",")
-          //   .split(","); //[a,b,c]
-          let voteListCount = new Array(voteListName.length).fill(0); //[0,0,0]
+          let voteListCount = new Array(voteChoices.length).fill(0); //[0,0,0]
           let voteListMember = [];
-          for (let i = 0; i < voteListName.length; ++i) voteListMember.push([]);
-          votingStartedGroups[groupName] = true;
-          votingMemberGroup[groupName] = {}; //those who voted
-          votingInfoGroups[groupName] = {
+          for (let i = 0; i < voteChoices.length; ++i) voteListMember.push([]);
+
+          await setVotingData(
+            chat_id,
+            true,
+            sender,
             voteTitle,
-            voteListName,
+            voteChoices,
             voteListCount,
             voteListMember,
-            voteStartBy: sender,
-          };
+            []
+          );
+          votingResult = await getVotingData(chat_id);
+
           let voteMsg = `*Voting started!*\nsend "!vote number" to vote\n\n*🗣️ ${voteTitle}*`;
 
-          votingInfoGroups[groupName].voteListName.forEach((name, index) => {
+          votingResult.choices.forEach((name, index) => {
             voteMsg += `\n${index + 1} for [${name.trim()}]`;
           });
 
@@ -526,13 +523,14 @@ const main = async () => {
             reply("❌ ERROR: Group command only!");
             return;
           }
-          if (!votingStartedGroups[groupName]) {
+          votingResult = await getVotingData(chat_id);
+          if (!votingResult.is_started) {
             reply(
               `❌ ERROR: voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
             );
             return;
           }
-          if (votingMemberGroup[groupName][sender]) {
+          if (votingResult.voted_members.includes(sender)) {
             reply("❌ ERROR: You already voted.");
             return;
           }
@@ -547,28 +545,32 @@ const main = async () => {
             return;
           }
 
-          if (
-            voteNumber > votingInfoGroups[groupName].voteListCount.length ||
-            voteNumber < 1
-          ) {
+          if (voteNumber > votingResult.count.length || voteNumber < 1) {
             reply("❌ ERROR: Number out of range!");
             return;
           }
 
-          votingInfoGroups[groupName].voteListCount[voteNumber - 1] += 1; //increase vote
+          votingResult.count[voteNumber - 1] += 1; //increase vote
 
           let user = conn.contacts[sender];
           let username = user.notify || user.vname || "unknown";
-          votingInfoGroups[groupName].voteListMember[voteNumber - 1].push(
-            username
-          ); // save who voted
+          votingResult.members_voted_for[voteNumber - 1].push(username); // save who voted
 
-          votingMemberGroup[groupName][sender] = true; //member voted
+          votingResult.voted_members.push(sender); //member voted
+
+          await setVotingData(
+            chat_id,
+            true,
+            votingResult.started_by,
+            votingResult.title,
+            votingResult.choices,
+            votingResult.count,
+            votingResult.members_voted_for,
+            votingResult.voted_members
+          );
 
           reply(
-            `_✔ Voted for [${votingInfoGroups[groupName].voteListName[
-              voteNumber - 1
-            ].trim()}]_`
+            `_✔ Voted for [${votingResult.choices[voteNumber - 1].trim()}]_`
           );
           break;
 
@@ -581,21 +583,28 @@ const main = async () => {
             return;
           }
 
-          if (!votingStartedGroups[groupName]) {
+          votingResult = await getVotingData(chat_id);
+          if (!votingResult.is_started) {
             reply(
               `❌ ERROR: voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
             );
             return;
           }
 
-          let resultVote = "";
+          let resultVoteMsg = "";
           if (command === "stopvote") {
-            if (
-              votingInfoGroups[groupName].voteStartBy === sender ||
-              isGroupAdmins
-            ) {
-              votingStartedGroups[groupName] = false;
-              resultVote += `*Voting Result:*\n🗣️ ${votingInfoGroups[groupName].voteTitle}`;
+            if (votingResult.started_by === sender || isGroupAdmins) {
+              await setVotingData(
+                chat_id,
+                false,
+                votingResult.started_by,
+                votingResult.title,
+                votingResult.choices,
+                votingResult.count,
+                votingResult.members_voted_for,
+                votingResult.voted_members
+              );
+              resultVoteMsg += `*Voting Result:*\n🗣️ ${votingResult.title}`;
             } else {
               reply(
                 "❌ ERROR: only admin or that member who started the voting, can stop current voting!"
@@ -603,19 +612,19 @@ const main = async () => {
               return;
             }
           } else {
-            resultVote += `*Voting Status:*\n🗣️ ${votingInfoGroups[groupName].voteTitle}`;
+            resultVoteMsg += `*Voting Status:*\n🗣️ ${votingResult.title}`;
           }
-          votingInfoGroups[groupName].voteListName.forEach((name, index) => {
-            resultVote += `\n\n*[${name.trim()}] : ${
-              votingInfoGroups[groupName].voteListCount[index]
+          votingResult.choices.forEach((name, index) => {
+            resultVoteMsg += `\n\n*[${name.trim()}] : ${
+              votingResult.count[index]
             }*`;
 
             //add voted members username
-            votingInfoGroups[groupName].voteListMember[index].forEach((mem) => {
-              resultVote += `\n  _${mem}_`;
+            votingResult.members_voted_for[index].forEach((mem) => {
+              resultVoteMsg += `\n  _${mem}_`;
             });
           });
-          sendText(resultVote);
+          sendText(resultVoteMsg);
           break;
 
         /* ------------------------------- CASE: BLOCK ------------------------------ */
