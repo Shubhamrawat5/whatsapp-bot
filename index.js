@@ -143,7 +143,11 @@ let iplsetIntervalGroups = {}; //to store every group name with its setInterval 
 let iplStartedGroups = {}; //to store every group name with boolean value to know if ipl score is already started or not
 
 // voting import
-const { getVotingData, setVotingData } = require("./DB/VotingDB");
+const {
+  getVotingData,
+  setVotingData,
+  stopVotingData,
+} = require("./DB/VotingDB");
 
 // LOAD CUSTOM FUNCTIONS
 const getGroupAdmins = (participants) => {
@@ -354,14 +358,22 @@ const main = async () => {
       //return false when stopped in middle. return true when run fully
       const startIplHelper = async (commandName, isFromSetInterval = false) => {
         if (!groupDesc) {
-          reply(`*❌ ERROR:* 
+          conn.sendMessage(
+            from,
+            `*❌ ERROR:* 
 - Group description is empty.
 - Put match ID in starting of group description. 
 - Get match ID from cricbuzz today match url.
 - example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
 - so match ID is 37572 !
 
-# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
+# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`,
+            MessageType.text,
+            {
+              quoted: mek,
+              detectLinks: false,
+            }
+          );
           return false;
         }
 
@@ -392,14 +404,22 @@ const main = async () => {
           stopIplHelper();
           return false;
         } else if (response.info === "ER") {
-          reply(`*❌ ERROR:* 
+          conn.sendMessage(
+            from,
+            `*❌ ERROR:* 
 - Group description starting is "${matchIdGroups[groupName]}"
 - Put match ID in starting of group description. 
 - Get match ID from cricbuzz today match url.
 - example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
 - so match ID is 37572 !
 
-# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
+# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`,
+            MessageType.text,
+            {
+              quoted: mek,
+              detectLinks: false,
+            }
+          );
           return false;
         }
         sendText(response.message);
@@ -594,16 +614,7 @@ const main = async () => {
           let resultVoteMsg = "";
           if (command === "stopvote") {
             if (votingResult.started_by === sender || isGroupAdmins) {
-              await setVotingData(
-                chat_id,
-                false,
-                votingResult.started_by,
-                votingResult.title,
-                votingResult.choices,
-                votingResult.count,
-                votingResult.members_voted_for,
-                votingResult.voted_members
-              );
+              await stopVotingData(chat_id);
               resultVoteMsg += `*Voting Result:*\n🗣️ ${votingResult.title}`;
             } else {
               reply(
@@ -612,19 +623,48 @@ const main = async () => {
               return;
             }
           } else {
-            resultVoteMsg += `*Voting Status:*\n🗣️ ${votingResult.title}`;
+            resultVoteMsg += `send "!vote number" to vote\n\n*🗣️ ${votingResult.title}*`;
+            votingResult.choices.forEach((name, index) => {
+              resultVoteMsg += `\n${index + 1} for [${name.trim()}]`;
+            });
+            resultVoteMsg += `\n\n*Voting Current Status:*`;
           }
+
+          let totalVoted = votingResult.voted_members.length;
+
           votingResult.choices.forEach((name, index) => {
-            resultVoteMsg += `\n\n*[${name.trim()}] : ${
+            resultVoteMsg += `\n======= ${(
+              (votingResult.count[index] / totalVoted) *
+              100
+            ).toFixed()}% =======\n📛 *[${name.trim()}] : ${
               votingResult.count[index]
-            }*`;
+            }*\n`;
 
             //add voted members username
             votingResult.members_voted_for[index].forEach((mem) => {
-              resultVoteMsg += `\n  _${mem}_`;
+              resultVoteMsg += `_${mem},_ `;
             });
           });
           sendText(resultVoteMsg);
+          break;
+
+        /* ------------------------------- CASE: VOTECOMMAND ------------------------------ */
+        case "votecommand":
+          if (blockCommandsInDesc.includes(command)) return;
+
+          reply(`_*🗣️ VOTING COMMANDS:*_
+
+📛 *${prefix}startvote #title #name1 #name2..*
+    - _Start voting with seperated values with #_
+
+📛 *${prefix}vote number*
+    - _To vote for particular number!_
+
+📛 *${prefix}checkvote*
+    - _Status of current ongoing voting!_
+    
+📛 *${prefix}stopvote*
+    - _Stop voting and see final result!_`);
           break;
 
         /* ------------------------------- CASE: BLOCK ------------------------------ */
@@ -893,14 +933,22 @@ const main = async () => {
             return;
           }
           if (!groupDesc) {
-            reply(`*❌ ERROR:* 
+            conn.sendMessage(
+              from,
+              `*❌ ERROR:* 
 - Group description is empty.
 - Put match ID in starting of group description. 
 - Get match ID from cricbuzz today match url.
 - example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
 - so match ID is 37572 !
   
-  # If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
+  # If you've put correct match ID in description starting and still facing this error then contact developer by !dev`,
+              MessageType.text,
+              {
+                quoted: mek,
+                detectLinks: false,
+              }
+            );
             return false;
           }
 
@@ -908,15 +956,51 @@ const main = async () => {
           let scoreCardMessage = await getScoreCard(groupDesc.slice(0, 5));
           if (scoreCardMessage) sendText(scoreCardMessage);
           else
-            reply(`*❌ ERROR:* 
+            conn.sendMessage(
+              from,
+              `*❌ ERROR:* 
 - Group description starting is "${matchIdGroups[groupName]}"
 - Put match ID in starting of group description. 
 - Get match ID from cricbuzz today match url.
 - example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
 - so match ID is 37572 !
 
-# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`);
+# If you've put correct match ID in description starting and still facing this error then contact developer by !dev`,
+              MessageType.text,
+              {
+                quoted: mek,
+                detectLinks: false,
+              }
+            );
 
+          break;
+        /* ------------------------------- CASE: IPLCOMMAND ------------------------------ */
+        case "iplcommand":
+          if (blockCommandsInDesc.includes(command)) return;
+
+          conn.sendMessage(
+            from,
+            `_*🏏  IPL COMMANDS:*_
+
+- Put matchID in starting of group description.
+- Get match ID from cricbuzz today match url.
+- example: https://www.cricbuzz.com/live-cricket-scores/37572/mi-vs-kkr-34th-match-indian-premier-league-2021 
+- so match ID is 37572 !
+
+📛 *${prefix}score*
+    - _current score of match!_
+📛 *${prefix}scorecard*
+    - _current scorecard of players!_
+📛 *${prefix}startipl*
+    - _start match live score every 1 min!_
+📛 *${prefix}stopipl*
+    - _Stop match live score!_`,
+            MessageType.text,
+            {
+              quoted: mek,
+              detectLinks: false,
+            }
+          );
           break;
 
         /* ------------------------------- CASE: HELP ------------------------------ */

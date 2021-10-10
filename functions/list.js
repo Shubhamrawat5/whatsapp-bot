@@ -39,6 +39,12 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}alive*
     - _Check if bot is ON or OFF!_
 
+📛 *${prefix}iplcommand*
+    - _To get command details of ipl!_
+
+📛 *${prefix}votecommand*
+    - _To get command details of voting!_
+
 📛 *${prefix}source*
     - _Get bot source code!_
 
@@ -54,29 +60,6 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}91only*
     - _To instant ban all numbers other than 91 when joined for this group!_
 
-_*🏏  IPL COMMANDS:*_
-NOTE: Put matchID (from cricbuzz) in description starting!
-  
-📛 *${prefix}score*
-    - _Give IPL match current score!_
-📛 *${prefix}scorecard*
-    - _Give IPL match current scorecard of players!_
-📛 *${prefix}startipl*
-    - _Start IPL match live score every 1 min!_
-📛 *${prefix}stopipl*
-    - _Stop IPL match live score!_
-
-_*🗣️ VOTING COMMANDS:*_
-
-📛 *${prefix}startvote #title #name1 #name2..*
-    - _Start voting with seperated values with #!_
-📛 *${prefix}vote number*
-    - _To vote for particular number!_
-📛 *${prefix}checkvote*
-    - _Check status of current ongoing voting!_
-📛 *${prefix}stopvote*
-    - _Stop voting and see final result!_
-    
  _To add this bot in your group, simply send group link in my inbox!_
  ✔️ more cool commands coming...`;
 };

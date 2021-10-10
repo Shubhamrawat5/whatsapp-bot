@@ -17,17 +17,14 @@ const createVotingTable = async () => {
 
 module.exports.getVotingData = async (chat_id) => {
   await createVotingTable();
-  console.log("GETTING");
 
   //check if today date is present in DB or not
   let result = await pool.query("select * from voting where chat_id=$1;", [
     chat_id,
   ]);
   if (result.rowCount) {
-    console.log("getVotingData:", result.rows);
     return result.rows[0];
   } else {
-    console.log("getVotingData:", result.rows);
     return {};
   }
 };
@@ -42,11 +39,9 @@ const updateVotingData = async (
   members_voted_for,
   voted_members
 ) => {
-  console.log("UPDATING DB");
   await pool.query(
-    "UPDATE voting SET is_started=$2, started_by=$3, title=$4, choices=$5, count=$6, members_voted_for=$7, voted_members=$8  WHERE chat_id=$1;",
+    "UPDATE voting SET is_started=$1, started_by=$2, title=$3, choices=$4, count=$5, members_voted_for=$6, voted_members=$7  WHERE chat_id=$8;",
     [
-      chat_id,
       is_started,
       started_by,
       title,
@@ -54,7 +49,21 @@ const updateVotingData = async (
       count,
       members_voted_for,
       voted_members,
+      chat_id,
     ]
+  );
+  await pool.query("commit;");
+};
+
+module.exports.stopVotingData = async (chat_id) => {
+  let todayDate = new Date().toLocaleString("en-GB", {
+    timeZone: "Asia/kolkata",
+  });
+  let new_chat_id = chat_id + " " + todayDate;
+
+  await pool.query(
+    "UPDATE voting SET chat_id=$1, is_started=$2 WHERE chat_id=$3;",
+    [new_chat_id, false, chat_id]
   );
   await pool.query("commit;");
 };
@@ -69,7 +78,6 @@ module.exports.setVotingData = async (
   members_voted_for,
   voted_members
 ) => {
-  console.log("SETTING DB");
   await createVotingTable();
 
   choices = JSON.stringify(choices);
