@@ -7,7 +7,7 @@ module.exports.getIplScore = async (matchID, commandName) => {
   let obj = {};
   try {
     let { data } = await axios.get(
-      "https://criapi.vercel.app/score?url=https://www.cricbuzz.com/live-cricket-scores/" +
+      "https://testing-nine-theta.vercel.app/score?url=https://www.cricbuzz.com/live-cricket-scores/" +
         matchID
     );
 

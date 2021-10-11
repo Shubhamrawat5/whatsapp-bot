@@ -96,6 +96,26 @@ Now Bot will start working!!
 
   > `91only` is command name and `only91` is to ban
 
+# Run locally:- :rocket:
+
+Run atleast one time in heroku to letall dataCreate a `.env` file for enviromental variables in directory with variables
+
+    myNumber = "your-number-to-receive-all-updates"
+    clientID = ""
+    serverToken =""
+    clientToken = ""
+    encKey = ""
+    macKey = ""
+
+Get values from Heroku database
+
+1. Go to heroku dashboard resources
+2. Click Heroku Postgres
+3. Click dataclips
+4. Give any name and run command `SELECT * FROM auth`
+
+   There you'll see all data and set the enviromental variables
+
 # Note:- :rocket:
 
 Since heroku uses:- Dyno sleeping in which if an app has a free web dyno, and that dyno receives no web traffic in a 30-minute period, it will sleep. In addition to the web dyno sleeping, the worker dyno (if present) will also sleep. and if a sleeping web dyno receives web traffic, it will become active again after a short delay (assuming your account has free dyno hours available)
