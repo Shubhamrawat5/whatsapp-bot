@@ -2,5 +2,4 @@ node_modules/
 .idea
 test.js
 test.txt
-DB/localdatabase.js
 .env

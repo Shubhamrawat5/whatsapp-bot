@@ -137,7 +137,9 @@ const { getInstaVideo } = require("./functions/insta");
 prefix = "!";
 require("dotenv").config();
 const myNumber = process.env.myNumber;
+const clientId = process.env.clientID;
 
+//IPL variables
 let matchIdGroups = {}; //to store every group name with its match ID
 let iplsetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
 let iplStartedGroups = {}; //to store every group name with boolean value to know if ipl score is already started or not
@@ -164,9 +166,9 @@ const getRandom = (text) => {
 
 //MAIN FUNCTION
 const main = async () => {
-  // const { connectToWA } = require("./DB/localdatabase");
-  const { connectToWA } = require("./DB/database");
-
+  const { connectToWA } = clientId
+    ? require("./DB/localdatabase")
+    : require("./DB/database");
   const conn = await connectToWA(WAConnection);
   let botNumberJid = conn.user.jid;
 
