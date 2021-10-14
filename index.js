@@ -457,6 +457,28 @@ const main = async () => {
           else reply(resultTest.toString());
           break;
 
+        /* ------------------------------- CASE: groupbackup ------------------------------ */
+        case "groupbackup":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`*❌ ERROR:* command only for developer!`);
+            return;
+          }
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+
+          const { takeGroupbackup } = require("./DB/backupDB");
+
+          let responseGB = await takeGroupbackup(
+            groupName,
+            groupDesc,
+            groupMetadata.participants
+          );
+          if (responseGB) reply(`*✔ SUCCESS:* Group backup taken!`);
+          else reply(`*❌ ERROR:* There is some problem!`);
+          break;
+
         /* ------------------------------- CASE: ALIVE ------------------------------ */
         case "alive":
           reply(`*─「 <{PVX}> BOT 」 ─*\n\nYES! BOT IS ALIVE !!!`);
@@ -719,7 +741,7 @@ const main = async () => {
             let response = await downloadSong(randomName, query);
             if (response == "NOT") {
               reply(
-                `❌ ERROR: Song not found!\nTry to put correct spelling of song alone with singer name.`
+                `❌ ERROR: Song not found!\nTry to put correct spelling of song along with singer name.`
               );
               return;
             }
@@ -1222,7 +1244,7 @@ const main = async () => {
               reply("_✔ SUCCESS: Number added to group!_");
             }
           } catch {
-            reply("_❌ ERROR: Try to put country code also!_");
+            reply("_❌ ERROR: Give correct number with country code also!_");
           }
           break;
 
