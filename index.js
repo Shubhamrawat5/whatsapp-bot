@@ -718,7 +718,9 @@ const main = async () => {
             let query = args.join("%20");
             let response = await downloadSong(randomName, query);
             if (response == "NOT") {
-              reply("❌ ERROR: Song not found!");
+              reply(
+                `❌ ERROR: Song not found!\nTry to put correct spelling of song alone with singer name.`
+              );
               return;
             }
             console.log(`song saved-> ./${randomName}`, response);
@@ -1200,21 +1202,27 @@ const main = async () => {
               num = num.slice(1);
             }
           }
-          const response = await conn.groupAdd(from, [num]);
-          let number = `${num.split("@s.whatsapp.net")[0]}`;
-          let get_status = response[`${number}@c.us`];
-          if (get_status == 400) {
-            reply("_❌ ERROR: Invalid number, include 91 also!_");
-          } else if (get_status == 403) {
-            reply("_❌ ERROR: Number has privacy on adding group!_");
-          } else if (get_status == 408) {
-            reply("_❌ ERROR: Number has left the group recently!_");
-          } else if (get_status == 409) {
-            reply("_❌ ERROR: Number is already in group!_");
-          } else if (get_status == 500) {
-            reply("_❌ ERROR: Group is currently full!_");
-          } else if (get_status == 200) {
-            reply("_✔ SUCCESS: Number added to group!_");
+          try {
+            const response = await conn.groupAdd(from, [num]);
+            console.log("RES", response);
+
+            let number = `${num.split("@s.whatsapp.net")[0]}`;
+            let get_status = response[`${number}@c.us`];
+            if (get_status == 400) {
+              reply("_❌ ERROR: Invalid number, include country code also!_");
+            } else if (get_status == 403) {
+              reply("_❌ ERROR: Number has privacy on adding group!_");
+            } else if (get_status == 408) {
+              reply("_❌ ERROR: Number has left the group recently!_");
+            } else if (get_status == 409) {
+              reply("_❌ ERROR: Number is already in group!_");
+            } else if (get_status == 500) {
+              reply("_❌ ERROR: Group is currently full!_");
+            } else if (get_status == 200) {
+              reply("_✔ SUCCESS: Number added to group!_");
+            }
+          } catch {
+            reply("_❌ ERROR: Try to put country code also!_");
           }
           break;
 
