@@ -289,7 +289,7 @@ const main = async () => {
       */
 
       errors = {
-        admin_error: "_❌ ERROR: I'm not Admin here!_",
+        admin_error: "❌ I'm not Admin here!",
       };
 
       const isGroup = from.endsWith("@g.us");
@@ -362,7 +362,7 @@ const main = async () => {
         if (!groupDesc) {
           conn.sendMessage(
             from,
-            `*❌ ERROR:* 
+            `❌
 - Group description is empty.
 - Put match ID in starting of group description. 
 - Get match ID from cricbuzz today match url.
@@ -408,7 +408,7 @@ const main = async () => {
         } else if (response.info === "ER") {
           conn.sendMessage(
             from,
-            `*❌ ERROR:* 
+            `❌
 - Group description starting is "${matchIdGroups[groupName]}"
 - Put match ID in starting of group description. 
 - Get match ID from cricbuzz today match url.
@@ -443,12 +443,10 @@ const main = async () => {
         /* ------------------------------- CASE: TEST ------------------------------ */
         case "test":
           if (args.length === 0) {
-            reply(`*❌ ERROR:* EMPTY!`);
+            reply(`❌ EMPTY!`);
           }
           if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(
-              `*❌ ERROR:* command only for developer for bot testing purpose!`
-            );
+            reply(`❌ Command only for developer for bot testing purpose!`);
             return;
           }
 
@@ -460,11 +458,11 @@ const main = async () => {
         /* ------------------------------- CASE: groupbackup ------------------------------ */
         case "groupbackup":
           if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`*❌ ERROR:* command only for developer!`);
+            reply(`❌ Command only for developer!`);
             return;
           }
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
 
@@ -475,8 +473,8 @@ const main = async () => {
             groupDesc,
             groupMetadata.participants
           );
-          if (responseGB) reply(`*✔ SUCCESS:* Group backup taken!`);
-          else reply(`*❌ ERROR:* There is some problem!`);
+          if (responseGB) reply(`✔ Group backup taken!`);
+          else reply(`❌ There is some problem!`);
           break;
 
         /* ------------------------------- CASE: ALIVE ------------------------------ */
@@ -486,10 +484,13 @@ const main = async () => {
 
         /* ------------------------------- CASE: 91only ------------------------------ */
         case "91only":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
 
@@ -500,23 +501,24 @@ const main = async () => {
 
         /* ------------------------------- CASE: VOTE ------------------------------ */
         case "startvote":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           if (args.length === 0) {
             reply(
-              "❌ ERROR: Give some values seperated with # to vote on like !startvote #title #name1 #name2 #name3"
+              "❌ Give some values seperated with # to vote on like !startvote #title #name1 #name2 #name3"
             );
             return;
           }
           votingResult = await getVotingData(chat_id);
           if (votingResult.is_started) {
-            reply(
-              "❌ ERROR: voting already going on, Stop by !stopvote command"
-            );
+            reply("❌ Voting already going on, Stop by !stopvote command");
             return;
           }
           // let voteChoices = body.trim().replace(/ +/, ",").split(/,/).slice(1);
@@ -529,7 +531,7 @@ const main = async () => {
           let voteChoices = voteList.slice(2);
 
           if (voteChoices.length < 2) {
-            reply("❌ ERROR: Give more than 1 voting choices!");
+            reply("❌ Give more than 1 voting choices!");
             return;
           }
 
@@ -561,36 +563,39 @@ const main = async () => {
           break;
 
         case "vote":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           votingResult = await getVotingData(chat_id);
           if (!votingResult.is_started) {
             reply(
-              `❌ ERROR: voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
+              `❌ Voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
             );
             return;
           }
           if (votingResult.voted_members.includes(sender)) {
-            reply("❌ ERROR: You already voted.");
+            reply("❌ You already voted.");
             return;
           }
           if (args.length === 0) {
-            reply("❌ ERROR: Give value to vote on!");
+            reply("❌ Give value to vote on!");
             return;
           }
 
           let voteNumber = Math.floor(Number(args[0]));
           if (isNaN(voteNumber)) {
-            reply("❌ ERROR: Give a number!");
+            reply("❌ Give a number!");
             return;
           }
 
           if (voteNumber > votingResult.count.length || voteNumber < 1) {
-            reply("❌ ERROR: Number out of range!");
+            reply("❌ Number out of range!");
             return;
           }
 
@@ -620,17 +625,20 @@ const main = async () => {
 
         case "stopvote":
         case "checkvote":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
 
           votingResult = await getVotingData(chat_id);
           if (!votingResult.is_started) {
             reply(
-              `❌ ERROR: voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
+              `❌ Voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
             );
             return;
           }
@@ -642,7 +650,7 @@ const main = async () => {
               resultVoteMsg += `*Voting Result:*\n🗣️ ${votingResult.title}`;
             } else {
               reply(
-                "❌ ERROR: only admin or that member who started the voting, can stop current voting!"
+                "❌ Only admin or that member who started the voting, can stop current voting!"
               );
               return;
             }
@@ -674,7 +682,10 @@ const main = async () => {
 
         /* ------------------------------- CASE: VOTECOMMAND ------------------------------ */
         case "votecommand":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           reply(`_*🗣️ VOTING COMMANDS:*_
 
@@ -693,10 +704,13 @@ const main = async () => {
 
         /* ------------------------------- CASE: BLOCK ------------------------------ */
         case "block":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
 
@@ -707,7 +721,10 @@ const main = async () => {
 
         /* ------------------------------- CASE: BUTTON ------------------------------ */
         case "button":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           //not working yet, maybe of whatsapp business
           let { button } = require("./functions/button");
@@ -716,7 +733,10 @@ const main = async () => {
 
         /* ------------------------------- CASE: PVXLINK ------------------------------ */
         case "pvxlink":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           reply(
             "*─「 🔥 JOIN <{PVX}> FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
@@ -725,14 +745,17 @@ const main = async () => {
 
         /* ------------------------------- CASE: SONG ------------------------------ */
         case "song":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           if (args.length === 0) {
-            reply(`❌ ERROR: query is empty! \nSend !song query`);
+            reply(`❌ Query is empty! \nSend !song query`);
             return;
           }
           try {
@@ -741,7 +764,7 @@ const main = async () => {
             let response = await downloadSong(randomName, query);
             if (response == "NOT") {
               reply(
-                `❌ ERROR: Song not found!\nTry to put correct spelling of song along with singer name.`
+                `❌ Song not found!\nTry to put correct spelling of song along with singer name.`
               );
               return;
             }
@@ -759,20 +782,23 @@ const main = async () => {
             );
           } catch (err) {
             console.log(err);
-            reply(`❌ ERROR: There is some problem.`);
+            reply(`❌ There is some problem.`);
           }
           break;
 
         /* ------------------------------- CASE: INSTA ------------------------------ */
         case "insta":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           if (args.length === 0) {
-            reply(`❌ ERROR: URL is empty! \nSend !insta url`);
+            reply(`❌ URL is empty! \nSend !insta url`);
             return;
           }
           let urlInsta = args[0];
@@ -784,7 +810,7 @@ const main = async () => {
             )
           ) {
             reply(
-              `❌ ERROR: Wrong URL! Only Instagram posted videos and reels can be downloaded.`
+              `❌ Wrong URL! Only Instagram posted videos and reels can be downloaded.`
             );
             return;
           }
@@ -807,20 +833,23 @@ const main = async () => {
                 { mimetype: Mimetype.mp4, quoted: mek }
               );
             } else {
-              reply(`❌ ERROR: There is some problem.`);
+              reply(`❌ There is some problem.`);
             }
           } catch (err) {
             console.log(err);
-            reply(`❌ ERROR: There is some problem.`);
+            reply(`❌ There is some problem.`);
           }
           break;
 
         /* ------------------------------- CASE: TECHNEWS ------------------------------ */
         case "technews":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           let news = await getNews();
@@ -829,10 +858,13 @@ const main = async () => {
 
         /* ------------------------------- CASE: QUOTES ------------------------------ */
         case "quote":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           let { getQuote } = require("./functions/quote");
@@ -842,19 +874,22 @@ const main = async () => {
 
         /* ------------------------------- CASE: GENDER ------------------------------ */
         case "gender":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           if (args.length === 0) {
-            reply(`❌ ERROR: Name is not given! \nSend !gender firstname`);
+            reply(`❌ Name is not given! \nSend !gender firstname`);
             return;
           }
           let namePerson = args[0];
           if (namePerson.includes("@")) {
-            reply(`❌ ERROR: Don't tag! \nSend !gender firstname`);
+            reply(`❌ Don't tag! \nSend !gender firstname`);
             return;
           }
           let { getGender } = require("./functions/gender");
@@ -864,10 +899,13 @@ const main = async () => {
 
         /* ------------------------------- CASE: TEXT ------------------------------ */
         case "text":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
 
@@ -888,13 +926,16 @@ const main = async () => {
 
             reply(message);
           } else {
-            reply("❌ ERROR: Give image having text!");
+            reply("❌ Give image having text!");
           }
           break;
 
         /* ------------------------------- CASE: DEV ------------------------------ */
         case "dev":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           reply(
             `*─「 <{PVX}> BOT 」 ─*\n\n_Message t.me/KryptonPVX in telegram to report any bug or to give new ideas/features for this bot!_ `
@@ -903,14 +944,17 @@ const main = async () => {
 
         /* ------------------------------- CASE: STARTIPL ------------------------------ */
         case "startipl":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           if (iplStartedGroups[groupName]) {
-            reply("❌ ERROR: IPL SCORES already started for this group!");
+            reply("❌ IPL SCORES already started for this group!");
             return;
           }
 
@@ -926,10 +970,13 @@ const main = async () => {
 
         /* ------------------------------- CASE: SCORE ------------------------------ */
         case "score":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
 
@@ -938,30 +985,36 @@ const main = async () => {
 
         /* ------------------------------- CASE: STOPIPL ------------------------------  */
         case "stopipl":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
 
           if (iplStartedGroups[groupName]) stopIplHelper();
-          else reply("❌ ERROR: IPL scores was never started for this group!");
+          else reply("❌ IPL scores was never started for this group!");
           break;
 
         /* ------------------------------- CASE: SCORECARD ------------------------------  */
         case "scorecard":
         case "scoreboard":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           if (!groupDesc) {
             conn.sendMessage(
               from,
-              `*❌ ERROR:* 
+              `❌ 
 - Group description is empty.
 - Put match ID in starting of group description. 
 - Get match ID from cricbuzz today match url.
@@ -984,7 +1037,7 @@ const main = async () => {
           else
             conn.sendMessage(
               from,
-              `*❌ ERROR:* 
+              `❌
 - Group description starting is "${matchIdGroups[groupName]}"
 - Put match ID in starting of group description. 
 - Get match ID from cricbuzz today match url.
@@ -1002,7 +1055,10 @@ const main = async () => {
           break;
         /* ------------------------------- CASE: IPLCOMMAND ------------------------------ */
         case "iplcommand":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           conn.sendMessage(
             from,
@@ -1031,14 +1087,20 @@ const main = async () => {
 
         /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           reply(commandList(prefix));
           break;
 
         /* ------------------------------- CASE: SOURCE ------------------------------ */
         case "source":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           conn.sendMessage(
             from,
@@ -1053,10 +1115,13 @@ const main = async () => {
 
         /* ------------------------------- CASE: STICKER ------------------------------ */
         case "sticker":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
 
@@ -1120,7 +1185,7 @@ const main = async () => {
                 fs.unlinkSync(media);
                 //unlinkSync remove the given file
                 console.log(`Error : ${err}`);
-                reply("_❌ ERROR: Failed to convert image into sticker!_");
+                reply("❌ Failed to convert image into sticker!");
               })
               .on("end", function () {
                 buildSticker(media, ran);
@@ -1136,7 +1201,7 @@ const main = async () => {
           ) {
             //VIDEO/GIF TO STICKER, BUT INVALID LENGTH
             reply(
-              "❌ ERROR: Only video with length less than 11 seconds are accepted!"
+              "❌ Only video with length less than 11 seconds are accepted!"
             );
           } else if (
             (isMedia && mek.message.videoMessage.seconds < 11) ||
@@ -1156,9 +1221,7 @@ const main = async () => {
               .on("error", function (err) {
                 fs.unlinkSync(media);
                 mediaType = media.endsWith(".mp4") ? "video" : "gif";
-                reply(
-                  `_❌ ERROR: Failed to convert ${mediaType} to sticker! ❌_`
-                );
+                reply(`❌ Failed to convert ${mediaType} to sticker! ❌`);
               })
               .on("end", function () {
                 buildSticker(media, ran);
@@ -1168,21 +1231,21 @@ const main = async () => {
               .save(ran);
           } else {
             reply(
-              "_❌ ERROR: Give a media (image/gif/video) to convert into sticker! ❌_"
+              "_❌ Give a media (image/gif/video) to convert into sticker! ❌_"
             );
           }
           break;
 
         /* ------------------------------- CASE: DRIVE ------------------------------ */
         // case "drive":
-        // if (blockCommandsInDesc.includes(command)) return;
+        // if (blockCommandsInDesc.includes(command)) {            reply("❌ Command blocked for this group!");   return;}
 
         //   if (!isGroup) {
-        //     reply("❌ ERROR: Group command only!");
+        //     reply("❌ Group command only!");
         //     return;
         //   }
         //   if (args.length === 0) {
-        //     reply(`❌ ERROR: Query is empty! \nSend !drive query_name`);
+        //     reply(`❌ Query is empty! \nSend !drive query_name`);
         //     return;
         //   }
         //   let query = args.join(" ");
@@ -1193,18 +1256,21 @@ const main = async () => {
 
         /* ------------------------------- CASE: ADD ------------------------------ */
         case "add":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           if (!isGroupAdmins) {
-            reply("❌ ERROR: Admin command!");
+            reply("❌ Admin command!");
             return;
           }
           if (!isBotGroupAdmins) {
-            reply("❌ ERROR: I'm not Admin here!");
+            reply("❌ I'm not Admin here!");
             return;
           }
 
@@ -1215,7 +1281,7 @@ const main = async () => {
           } else {
             //number is given like !add 919557---82
             if (args.length === 0) {
-              reply("❌ ERROR: Give number to add!");
+              reply("❌ Give number to add!");
               return;
             }
             num = `${args.join("").replace(/ |-|\(|\)/g, "")}@s.whatsapp.net`; //remove spaces , ( , ) and -
@@ -1231,20 +1297,20 @@ const main = async () => {
             let number = `${num.split("@s.whatsapp.net")[0]}`;
             let get_status = response[`${number}@c.us`];
             if (get_status == 400) {
-              reply("_❌ ERROR: Invalid number, include country code also!_");
+              reply("_❌ Invalid number, include country code also!_");
             } else if (get_status == 403) {
-              reply("_❌ ERROR: Number has privacy on adding group!_");
+              reply("_❌ Number has privacy on adding group!_");
             } else if (get_status == 408) {
-              reply("_❌ ERROR: Number has left the group recently!_");
+              reply("_❌ Number has left the group recently!_");
             } else if (get_status == 409) {
-              reply("_❌ ERROR: Number is already in group!_");
+              reply("_❌ Number is already in group!_");
             } else if (get_status == 500) {
-              reply("_❌ ERROR: Group is currently full!_");
+              reply("_❌ Group is currently full!_");
             } else if (get_status == 200) {
-              reply("_✔ SUCCESS: Number added to group!_");
+              reply("_✔ Number added to group!_");
             }
           } catch {
-            reply("_❌ ERROR: Give correct number with country code also!_");
+            reply("_❌ Give correct number with country code also!_");
           }
           break;
 
@@ -1252,22 +1318,25 @@ const main = async () => {
         case "kick":
         case "ban":
         case "remove":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           if (!isGroupAdmins) {
-            reply("❌ ERROR: Admin command!");
+            reply("❌ Admin command!");
             return;
           }
           if (!isBotGroupAdmins) {
-            reply("❌ ERROR: I'm not Admin here!");
+            reply("❌ I'm not Admin here!");
             return;
           }
           if (!mek.message.extendedTextMessage) {
-            reply("❌ ERROR: Tag someone!");
+            reply("❌ Tag someone!");
             return;
           }
 
@@ -1304,14 +1373,14 @@ const main = async () => {
             if (mentioned.length === 1) {
               if (groupAdmins.includes(mentioned[0])) {
                 //if admin then don't remove
-                reply("❌ ERROR: Cannot remove admin!");
+                reply("❌ Cannot remove admin!");
                 return;
               }
               conn.groupRemove(from, mentioned);
-              reply("_✔ SUCCESS: Number removed from group!_");
+              reply("_✔ Number removed from group!_");
             } else {
               //if multiple members are tagged
-              reply("❌ ERROR: Mention only 1 member!");
+              reply("❌ Mention only 1 member!");
             }
           } else {
             //when message is tagged with command
@@ -1320,20 +1389,23 @@ const main = async () => {
             ];
             if (groupAdmins.includes(taggedMessageUser[0])) {
               //if admin then don't remove
-              reply("❌ ERROR: Cannot remove admin!");
+              reply("❌ Cannot remove admin!");
               return;
             }
             conn.groupRemove(from, taggedMessageUser);
-            reply("_✔ SUCCESS: Number removed from group!_");
+            reply("_✔ Number removed from group!_");
           }
           break;
 
         /* ------------------------------- CASE: MUTE ------------------------------ */
         case "mute":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           await conn.groupSettingChange(
@@ -1345,10 +1417,13 @@ const main = async () => {
 
         /* ------------------------------- CASE: UNMUTE ------------------------------ */
         case "unmute":
-          if (blockCommandsInDesc.includes(command)) return;
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
 
           if (!isGroup) {
-            reply("❌ ERROR: Group command only!");
+            reply("❌ Group command only!");
             return;
           }
           await conn.groupSettingChange(
