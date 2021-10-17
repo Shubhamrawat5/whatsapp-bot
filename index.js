@@ -133,6 +133,9 @@ const { commandList } = require("./functions/list");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
 
+const AdmZip = require("adm-zip");
+let stickertg = false;
+
 // BASIC SETTINGS
 prefix = "!";
 require("dotenv").config();
@@ -310,6 +313,8 @@ const main = async () => {
         type === "extendedTextMessage" && content.includes("videoMessage");
       const isTaggedSticker =
         type === "extendedTextMessage" && content.includes("stickerMessage");
+      const isTaggedDocument =
+        type === "extendedTextMessage" && content.includes("documentMessage");
 
       // Display every command info
       console.log(
@@ -453,6 +458,68 @@ const main = async () => {
           let resultTest = eval(args[0]);
           if (typeof resultTest === "object") reply(JSON.stringify(resultTest));
           else reply(resultTest.toString());
+          break;
+
+        /* ------------------------------- CASE: TG sticker ------------------------------ */
+        case "tg":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Command is on testing phase!`);
+            return;
+          }
+          if (!isTaggedDocument) {
+            reply(`❌ Send zip document file!`);
+            return;
+          }
+          if (stickertg) {
+            reply(`❌ Another process is going on. wait till it finish!`);
+            return;
+          }
+          try {
+            stickertg = true;
+            const encmediatg = JSON.parse(
+              JSON.stringify(mek).replace("quotedM", "m")
+            ).message.extendedTextMessage.contextInfo;
+
+            const mediatg = await conn.downloadAndSaveMediaMessage(encmediatg);
+            console.log("saved", mediatg);
+
+            // reading zip
+            let zip = new AdmZip(`./${mediatg}`);
+            // extracts everything
+            zip.extractAllTo(`./`, true);
+
+            let filestg = fs.readdirSync("./649341653");
+            let stickerCounttg = filestg.length;
+            console.log("extracted: files " + stickerCounttg);
+
+            let timetg = 0;
+
+            reply(`✔ Sending all ${stickerCounttg} stickers`);
+            for (let size = 0; size < stickerCounttg; ++size) {
+              setTimeout(async () => {
+                console.log("Sending sticker ", size);
+                const webpWithMetadatatg = await WSF.setMetadata(
+                  "<{PVX}> BOT",
+                  "www.pvxfamily.tech",
+                  `./649341653/${filestg[i]}`
+                );
+                await conn.sendMessage(
+                  from,
+                  webpWithMetadatatg,
+                  MessageType.sticker
+                );
+                if (size == stickerCounttg - 1) {
+                  reply(`✔ Finished!`);
+                  stickertg = false;
+                }
+              }, timetg);
+              timetg += 1000;
+            }
+          } catch (err) {
+            console.log(err);
+            reply(`❌ Some error came!`);
+            stickertg = false;
+          }
           break;
 
         /* ------------------------------- CASE: groupbackup ------------------------------ */
