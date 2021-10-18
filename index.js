@@ -135,6 +135,7 @@ const { getInstaVideo } = require("./functions/insta");
 
 const AdmZip = require("adm-zip");
 let stickertg = false;
+let setIntervaltg;
 
 // BASIC SETTINGS
 prefix = "!";
@@ -461,6 +462,22 @@ const main = async () => {
           break;
 
         /* ------------------------------- CASE: TG sticker ------------------------------ */
+        case "stg":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Command is on testing phase!`);
+            return;
+          }
+          if (!stickertg) {
+            reply(`❌ tg stickers download is not started!`);
+            return;
+          }
+
+          clearInterval(setIntervaltg);
+          stickertg = false;
+          reply(`✔ Stopped tg stickers download!`);
+
+          break;
+
         case "tg":
           if (myNumber + "@s.whatsapp.net" !== sender) {
             reply(`❌ Command is on testing phase!`);
@@ -480,41 +497,54 @@ const main = async () => {
               JSON.stringify(mek).replace("quotedM", "m")
             ).message.extendedTextMessage.contextInfo;
 
+            console.log("downloading...");
             const mediatg = await conn.downloadAndSaveMediaMessage(encmediatg);
-            console.log("saved", mediatg);
+            console.log("downloaded", mediatg);
 
             // reading zip
             let zip = new AdmZip(`./${mediatg}`);
             // extracts everything
             zip.extractAllTo(`./`, true);
+            let zipEntries = zip.getEntries(); // an array of ZipEntry records
 
-            let filestg = fs.readdirSync("./649341653");
-            let stickerCounttg = filestg.length;
+            // let filestg = fs.readdirSync(dirNametg);
+            let stickerCounttg = zipEntries.length;
             console.log("extracted: files " + stickerCounttg);
 
-            let timetg = 0;
-
             reply(`✔ Sending all ${stickerCounttg} stickers`);
-            for (let size = 0; size < stickerCounttg; ++size) {
-              setTimeout(async () => {
-                console.log("Sending sticker ", size);
+            let itg = -1;
+            setIntervaltg = setInterval(async () => {
+              itg += 1;
+
+              //last file
+              if (itg >= stickerCounttg - 1) {
+                stickertg = false;
+                clearInterval(setIntervaltg);
+                reply(`✔ Finished!`);
+              }
+              console.log("Sending sticker ", itg);
+              if (zipEntries[itg].entryName.endsWith(".webp")) {
+                let filepath = `${__dirname}`;
+                //add slash of not present
+                filepath += zipEntries[itg].entryName.startsWith("/")
+                  ? ""
+                  : "/";
+                filepath += `${zipEntries[itg].entryName}`;
+
+                //"<{PVX}> BOT 🤖"
+                //"www.pvxfamily.tech"
                 const webpWithMetadatatg = await WSF.setMetadata(
-                  "<{PVX}> BOT",
-                  "www.pvxfamily.tech",
-                  `./649341653/${filestg[i]}`
+                  "",
+                  "https://pvxfamily.tech",
+                  filepath
                 );
                 await conn.sendMessage(
                   from,
                   webpWithMetadatatg,
                   MessageType.sticker
                 );
-                if (size == stickerCounttg - 1) {
-                  reply(`✔ Finished!`);
-                  stickertg = false;
-                }
-              }, timetg);
-              timetg += 1000;
-            }
+              }
+            }, 1000);
           } catch (err) {
             console.log(err);
             reply(`❌ Some error came!`);
