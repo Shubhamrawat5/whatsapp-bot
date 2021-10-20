@@ -194,17 +194,17 @@ const main = async () => {
         let num_split = `${numJid.split("@s.whatsapp.net")[0]}`;
 
         // other than 91 are blocked from joining when description have written in first line -> only91
-        if (
-          !num_split.startsWith(91) &&
-          blockCommandsInDesc.includes("only91")
-        ) {
-          conn.sendMessage(
-            from,
-            `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nOnly 91 numbers are allowed !!!!`,
-            MessageType.text
-          );
-          conn.groupRemove(from, anu.participants);
-        }
+        // if (
+        //   !num_split.startsWith(91) &&
+        //   blockCommandsInDesc.includes("only91")
+        // ) {
+        //   conn.sendMessage(
+        //     from,
+        //     `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nOnly 91 numbers are allowed !!!!`,
+        //     MessageType.text
+        //   );
+        //   conn.groupRemove(from, anu.participants);
+        // }
 
         if (numJid === botNumberJid) {
           console.log("Bot is add to new group!");
@@ -479,6 +479,9 @@ const main = async () => {
           break;
 
         case "tg":
+          reply(`❌ This command is not available!`);
+          return;
+
           if (myNumber + "@s.whatsapp.net" !== sender) {
             reply(`❌ Command is on testing phase!`);
             return;
