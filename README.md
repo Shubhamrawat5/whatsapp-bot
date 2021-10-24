@@ -43,36 +43,38 @@ Now Bot will start working!!
 
 ## Commands :
 
-|   Commands   |                Description                |
-| :----------: | :---------------------------------------: |
-|   `!help`    |           Display help message            |
-|    `!add`    |            Add member to group            |
-|   `!kick`    |          kick member from group           |
-|   `!mute`    |              Mute the group               |
-|  `!unmute`   |             Unmute the group              |
-|  `!sticker`  | Create sticker from different media types |
-|   `!block`   |  To block particular commands for group   |
-|   `!text`    |        Get text extract from image        |
-|   `!song`    |       Get any song in good quality        |
-|   `!insta`   |      Get insta reels or post videos       |
-| `!technews`  |           Get latest Tech news            |
-|  `!pvxlink`  |          Get group links of PVX           |
-|   `!drive`   |       Get GDrive files direct link        |
-|   `!quote`   |            Give a random quote            |
-|  `!gender`   |        Get gender from first name         |
-|   `!alive`   |          Check bot is ON or OFF           |
-|   `!score`   |              Give IPL score               |
-| `!scorecard` |            Give IPL scorecard             |
-| `!startipl`  |          Start IPL score updated          |
-|  `!stotipl`  |          Stop IPL score updated           |
-| `!startvote` |           Start voting in group           |
-|   `!vote`    |             Vote for a choice             |
-| `!checkvote` |      Check status of current voting       |
-| `!stotvote`  |        Stop voting and see result         |
-|  `!source`   |            Get the bot source             |
-|    `!dev`    |          Get the contact of dev           |
+|     Commands      |                Description                |
+| :---------------: | :---------------------------------------: |
+|      `!help`      |           Display help message            |
+|      `!add`       |            Add member to group            |
+|      `!kick`      |          kick member from group           |
+|      `!mute`      |              Mute the group               |
+|     `!unmute`     |             Unmute the group              |
+|    `!sticker`     | Create sticker from different media types |
+|     `!block`      |  To block particular commands for group   |
+|      `!text`      |        Get text extract from image        |
+|      `!song`      |       Get any song in good quality        |
+|     `!insta`      |      Get insta reels or post videos       |
+|    `!technews`    |           Get latest Tech news            |
+|    `!pvxlink`     |          Get group links of PVX           |
+|     `!drive`      |       Get GDrive files direct link        |
+|     `!quote`      |            Give a random quote            |
+|     `!gender`     |        Get gender from first name         |
+|     `!alive`      |          Check bot is ON or OFF           |
+| `!cricketcommand` |       Get list of cricket commands        |
+|     `!score`      |            Give Cricket score             |
+|   `!scorecard`    |          Give Cricket scorecard           |
+|     `!startc`     |        Start Cricket score updated        |
+|     `!stopc`      |        Stop Cricket score updated         |
+|  `!votecommand`   |         Get list of vote commands         |
+|   `!startvote`    |           Start voting in group           |
+|      `!vote`      |             Vote for a choice             |
+|   `!checkvote`    |      Check status of current voting       |
+|    `!stotvote`    |        Stop voting and see result         |
+|     `!source`     |            Get the bot source             |
+|      `!dev`       |          Get the contact of dev           |
 
-- IPL SCORES:
+- CRICKET SCORES:
 
   > Put match id in starting of group description.
 

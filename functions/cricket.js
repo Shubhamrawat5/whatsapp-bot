@@ -3,7 +3,7 @@ const axios = require("axios");
 //return object {message:"", info:""} =>
 //message having score and info having extra info about game like inning over, game over etc
 //INFO KEY: "MO" when match over, "IO" when inning over, "ER" when error
-module.exports.getIplScore = async (matchID, commandName) => {
+module.exports.getCricketScore = async (matchID, commandName) => {
   let obj = {};
   try {
     let { data } = await axios.get(

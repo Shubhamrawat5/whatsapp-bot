@@ -39,8 +39,8 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}alive*
     - _Check if bot is ON or OFF!_
 
-📛 *${prefix}iplcommand*
-    - _To get command details of ipl!_
+📛 *${prefix}cricketcommand*
+    - _To get command details of cricket!_
 
 📛 *${prefix}votecommand*
     - _To get command details of voting!_

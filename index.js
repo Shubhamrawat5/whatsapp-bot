@@ -128,7 +128,7 @@ const tesseract = require("node-tesseract-ocr");
 const axios = require("axios");
 
 //importing function files
-const { getIplScore } = require("./functions/ipl");
+const { getCricketScore } = require("./functions/cricket");
 const { commandList } = require("./functions/list");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
@@ -143,10 +143,10 @@ require("dotenv").config();
 const myNumber = process.env.myNumber;
 const clientId = process.env.clientID;
 
-//IPL variables
+//CRICKET variables
 let matchIdGroups = {}; //to store every group name with its match ID
-let iplsetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
-let iplStartedGroups = {}; //to store every group name with boolean value to know if ipl score is already started or not
+let cricSetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
+let cricStartedGroups = {}; //to store every group name with boolean value to know if cricket score is already started or not
 
 // voting import
 const {
@@ -355,16 +355,16 @@ const main = async () => {
         );
       }
 
-      /* -------------------------- IPL HELPING FUNCTIONS ------------------------- */
-      const stopIplHelper = () => {
-        reply("✔️ Stopping IPL scores for this group !");
-        console.log("Stopping IPL scores for " + groupName);
-        clearInterval(iplsetIntervalGroups[groupName]);
-        iplStartedGroups[groupName] = false;
+      /* -------------------------- CRICKET HELPING FUNCTIONS ------------------------- */
+      const stopcHelper = () => {
+        reply("✔️ Stopping Cricket scores for this group !");
+        console.log("Stopping Cricket scores for " + groupName);
+        clearInterval(cricSetIntervalGroups[groupName]);
+        cricStartedGroups[groupName] = false;
       };
 
       //return false when stopped in middle. return true when run fully
-      const startIplHelper = async (commandName, isFromSetInterval = false) => {
+      const startcHelper = async (commandName, isFromSetInterval = false) => {
         if (!groupDesc) {
           conn.sendMessage(
             from,
@@ -386,30 +386,33 @@ const main = async () => {
         }
 
         matchIdGroups[groupName] = groupDesc.slice(0, 5);
-        if (commandName === "startipl" && !isFromSetInterval) {
+        if (commandName === "startc" && !isFromSetInterval) {
           reply(
-            "✔️ Starting IPL scores for matchID: " +
+            "✔️ Starting Cricket scores for matchID: " +
               matchIdGroups[groupName] +
               " (taken from description)"
           );
         }
 
-        let response = await getIplScore(matchIdGroups[groupName], commandName);
+        let response = await getCricketScore(
+          matchIdGroups[groupName],
+          commandName
+        );
 
-        //response.info have "MO" only when command is startipl
-        if (commandName === "startipl" && response.info === "MO") {
+        //response.info have "MO" only when command is startc
+        if (commandName === "startc" && response.info === "MO") {
           sendText(response.message);
-          reply("✔️ Match over! Stopping IPL scores for this group !");
-          console.log("Match over! Stopping IPL scores for " + groupName);
-          clearInterval(iplsetIntervalGroups[groupName]);
-          iplStartedGroups[groupName] = false;
+          reply("✔️ Match over! Stopping Cricket scores for this group !");
+          console.log("Match over! Stopping Cricket scores for " + groupName);
+          clearInterval(cricSetIntervalGroups[groupName]);
+          cricStartedGroups[groupName] = false;
           return false;
-        } else if (commandName === "startipl" && response.info === "IO") {
+        } else if (commandName === "startc" && response.info === "IO") {
           sendText(response.message);
           reply(
-            "✔️ Inning over! Open again live scores later when 2nd inning will start by !startipl"
+            "✔️ Inning over! Open again live scores later when 2nd inning will start by !startc"
           );
-          stopIplHelper();
+          stopcHelper();
           return false;
         } else if (response.info === "ER") {
           conn.sendMessage(
@@ -434,7 +437,7 @@ const main = async () => {
         return true;
       };
 
-      // give command name with comma seperated to be blocked for particular group in first line of description like (82132 is matchid for ipl scores)
+      // give command name with comma seperated to be blocked for particular group in first line of description like (82132 is matchid for cricket scores)
       //82132,score,add,remove
       let blockCommandsInDesc = []; //commands to be blocked
       if (groupDesc) {
@@ -1042,8 +1045,8 @@ const main = async () => {
           );
           break;
 
-        /* ------------------------------- CASE: STARTIPL ------------------------------ */
-        case "startipl":
+        /* ------------------------------- CASE: startc ------------------------------ */
+        case "startc":
           if (blockCommandsInDesc.includes(command)) {
             reply("❌ Command blocked for this group!");
             return;
@@ -1053,17 +1056,17 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          if (iplStartedGroups[groupName]) {
-            reply("❌ IPL SCORES already started for this group!");
+          if (cricStartedGroups[groupName]) {
+            reply("❌ CRICKET SCORES already started for this group!");
             return;
           }
 
-          data = await startIplHelper("startipl");
+          data = await startcHelper("startc");
           if (!data) return;
 
-          iplStartedGroups[groupName] = true;
-          iplsetIntervalGroups[groupName] = setInterval(async () => {
-            data = await startIplHelper("startipl", true);
+          cricStartedGroups[groupName] = true;
+          cricSetIntervalGroups[groupName] = setInterval(async () => {
+            data = await startcHelper("startc", true);
             if (!data) return;
           }, 1000 * 60); //1 min
           break;
@@ -1080,11 +1083,11 @@ const main = async () => {
             return;
           }
 
-          data = await startIplHelper("score");
+          data = await startcHelper("score");
           break;
 
-        /* ------------------------------- CASE: STOPIPL ------------------------------  */
-        case "stopipl":
+        /* ------------------------------- CASE: stopc ------------------------------  */
+        case "stopc":
           if (blockCommandsInDesc.includes(command)) {
             reply("❌ Command blocked for this group!");
             return;
@@ -1095,8 +1098,8 @@ const main = async () => {
             return;
           }
 
-          if (iplStartedGroups[groupName]) stopIplHelper();
-          else reply("❌ IPL scores was never started for this group!");
+          if (cricStartedGroups[groupName]) stopcHelper();
+          else reply("❌ CRICKET scores was never started for this group!");
           break;
 
         /* ------------------------------- CASE: SCORECARD ------------------------------  */
@@ -1131,7 +1134,7 @@ const main = async () => {
             return false;
           }
 
-          let { getScoreCard } = require("./functions/scoreCardIPL");
+          let { getScoreCard } = require("./functions/cricketScoreCard");
           let scoreCardMessage = await getScoreCard(groupDesc.slice(0, 5));
           if (scoreCardMessage) sendText(scoreCardMessage);
           else
@@ -1153,8 +1156,8 @@ const main = async () => {
             );
 
           break;
-        /* ------------------------------- CASE: IPLCOMMAND ------------------------------ */
-        case "iplcommand":
+        /* ------------------------------- CASE: CRICKETCOMMAND ------------------------------ */
+        case "cricketcommand":
           if (blockCommandsInDesc.includes(command)) {
             reply("❌ Command blocked for this group!");
             return;
@@ -1162,7 +1165,7 @@ const main = async () => {
 
           conn.sendMessage(
             from,
-            `_*🏏  IPL COMMANDS:*_
+            `_*🏏  CRICKET COMMANDS:*_
 
 - Put matchID in starting of group description.
 - Get match ID from cricbuzz today match url.
@@ -1173,9 +1176,9 @@ const main = async () => {
     - _current score of match!_
 📛 *${prefix}scorecard*
     - _current scorecard of players!_
-📛 *${prefix}startipl*
+📛 *${prefix}startc*
     - _start match live score every 1 min!_
-📛 *${prefix}stopipl*
+📛 *${prefix}stopc*
     - _Stop match live score!_`,
             MessageType.text,
             {
