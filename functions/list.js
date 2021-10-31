@@ -3,9 +3,11 @@ module.exports.commandList = (prefix) => {
   
 📛 *${prefix}sticker*
     - _Create sticker from image/gif/video!_
+    Alias: *${prefix}s
   
 📛 *${prefix}sticker crop*
     - _Create full size sticker from image/gif/video!_
+    Alias: *${prefix}s c
 
 📛 *${prefix}add <phone number>*
     - _Add any new member!_
@@ -20,12 +22,25 @@ module.exports.commandList = (prefix) => {
     
 📛 *${prefix}insta url*
     - _Instagram post videos / reels downloader!_
+    Alias: *${prefix}i url
     
 📛 *${prefix}song name*
     - _Get songs in good quality!_
 
 📛 *${prefix}text*
     - _Get text extractor from image!_
+
+📛 *${prefix}alive*
+    - _Check if bot is ON or OFF!_
+    Alias: *${prefix}a
+
+📛 *${prefix}cricketcommand*
+    - _To get command details of cricket!_
+    Alias: *${prefix}c
+
+📛 *${prefix}votecommand*
+    - _To get command details of voting!_
+    Alias: *${prefix}v
 
 📛 *${prefix}quote*
     - _Give a random quote!_
@@ -35,15 +50,6 @@ module.exports.commandList = (prefix) => {
       
 📛 *${prefix}technews*
     - _Get latest Tech news from inshorts !_
-  
-📛 *${prefix}alive*
-    - _Check if bot is ON or OFF!_
-
-📛 *${prefix}cricketcommand*
-    - _To get command details of cricket!_
-
-📛 *${prefix}votecommand*
-    - _To get command details of voting!_
 
 📛 *${prefix}source*
     - _Get bot source code!_

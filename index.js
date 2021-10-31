@@ -132,6 +132,7 @@ const { getCricketScore } = require("./functions/cricket");
 const { commandList } = require("./functions/list");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
+const { getFbVideo } = require("./functions/fb");
 
 const AdmZip = require("adm-zip");
 let stickertg = false;
@@ -210,7 +211,7 @@ const main = async () => {
           console.log("Bot is add to new group!");
           conn.sendMessage(
             from,
-            `*─「 🔥 <{PVX}> BOT 🔥 」─\n\nSEND !help FOR BOT COMMANDS`,
+            `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nSEND !help FOR BOT COMMANDS`,
             MessageType.text
           );
         }
@@ -482,11 +483,8 @@ const main = async () => {
           break;
 
         case "tg":
-          reply(`❌ This command is not available!`);
-          return;
-
           if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Command is on testing phase!`);
+            reply(`❌ Owner command only!`);
             return;
           }
           if (!isTaggedDocument) {
@@ -550,7 +548,7 @@ const main = async () => {
                   MessageType.sticker
                 );
               }
-            }, 1000);
+            }, 0);
           } catch (err) {
             console.log(err);
             reply(`❌ Some error came!`);
@@ -582,6 +580,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: ALIVE ------------------------------ */
         case "alive":
+        case "a":
           reply(`*─「 <{PVX}> BOT 」 ─*\n\nYES! BOT IS ALIVE !!!`);
           break;
 
@@ -785,6 +784,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: VOTECOMMAND ------------------------------ */
         case "votecommand":
+        case "v":
           if (blockCommandsInDesc.includes(command)) {
             reply("❌ Command blocked for this group!");
             return;
@@ -889,8 +889,46 @@ const main = async () => {
           }
           break;
 
+        /* ----------------------------------- FB ----------------------------------- */
+        case "fb":
+          if (blockCommandsInDesc.includes(command)) {
+            reply("❌ Command blocked for this group!");
+            return;
+          }
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (args.length === 0) {
+            reply(`❌ URL is empty! \nSend !insta url`);
+            return;
+          }
+          let urlFb = "https://fb.watch/8TZN7ldBKG/";
+          let randomName = getRandom(".mp4");
+          try {
+            let { videoDirectLinkFb } = await getFbVideo(urlFb);
+            if (videoDirectLinkFb) {
+              await saveInstaVideo(randomName, videoDirectLinkFb);
+              console.log(`video saved-> ./${randomName}`);
+              await conn.sendMessage(
+                from,
+                fs.readFileSync(`./${randomName}`), // can send mp3, mp4, & ogg
+                MessageType.video,
+                { mimetype: Mimetype.mp4, quoted: mek }
+              );
+            } else {
+              //TODO: throw err
+              reply(`❌ There is some problem!`);
+            }
+          } catch (err) {
+            console.log(err);
+            reply(`❌ There is some problem.`);
+          }
+          break;
+
         /* ------------------------------- CASE: INSTA ------------------------------ */
         case "insta":
+        case "i":
           if (blockCommandsInDesc.includes(command)) {
             reply("❌ Command blocked for this group!");
             return;
@@ -936,7 +974,7 @@ const main = async () => {
                 { mimetype: Mimetype.mp4, quoted: mek }
               );
             } else {
-              reply(`❌ There is some problem.`);
+              reply(`❌ There is some problem!`);
             }
           } catch (err) {
             console.log(err);
@@ -1158,6 +1196,7 @@ const main = async () => {
           break;
         /* ------------------------------- CASE: CRICKETCOMMAND ------------------------------ */
         case "cricketcommand":
+        case "c":
           if (blockCommandsInDesc.includes(command)) {
             reply("❌ Command blocked for this group!");
             return;
@@ -1218,6 +1257,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: STICKER ------------------------------ */
         case "sticker":
+        case "s":
           if (blockCommandsInDesc.includes(command)) {
             reply("❌ Command blocked for this group!");
             return;
@@ -1239,7 +1279,7 @@ const main = async () => {
             `-vf`,
             `scale=600:600:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=600:600:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1`,
           ];
-          if (args.includes("crop")) {
+          if (args.includes("crop") || args.includes("c")) {
             outputOptions = [
               `-vcodec`,
               `libwebp`,
