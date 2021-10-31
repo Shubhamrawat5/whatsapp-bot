@@ -56,6 +56,7 @@ module.exports.getCricketScore = async (matchID, commandName) => {
         .match(/(\b\S)?/g)
         .join("")
         .toUpperCase();
+      if (firstInningTeam.length <= 1) firstInningTeam = data.Innings1[2].team;
     }
 
     let isInningOver = false;

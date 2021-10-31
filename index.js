@@ -173,7 +173,7 @@ const getRandom = (text) => {
 const main = async () => {
   const { connectToWA } = clientId
     ? require("./DB/localdatabase")
-    : require("./DB/database");
+    : require("./DB/authDB");
   const conn = await connectToWA(WAConnection);
   let botNumberJid = conn.user.jid;
 
@@ -446,8 +446,14 @@ const main = async () => {
         blockCommandsInDesc = firstLineDesc.split(",");
       }
 
+      if (blockCommandsInDesc.includes(command)) {
+        reply("❌ Command blocked for this group!");
+        return;
+      }
+
+      /* ------------------------------------ - ----------------------------------- */
       /* -------------------------------- COMMANDS -------------------------------- */
-      let data;
+      /* ------------------------------------ - ----------------------------------- */
       let votingResult;
       switch (command) {
         /* ------------------------------- CASE: TEST ------------------------------ */
@@ -465,10 +471,25 @@ const main = async () => {
           else reply(resultTest.toString());
           break;
 
+        case "deleteauth":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Owner command only!`);
+            return;
+          }
+          try {
+            const { dropAuth } = require("./DB/dropauthDB");
+            await dropAuth();
+            reply(`✔ auth data deleted!`);
+          } catch (err) {
+            console.log(err);
+            reply(`❌ Error!`);
+          }
+          break;
+
         /* ------------------------------- CASE: TG sticker ------------------------------ */
         case "stg":
           if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Command is on testing phase!`);
+            reply(`❌ Owner command only!`);
             return;
           }
           if (!stickertg) {
@@ -586,11 +607,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: 91only ------------------------------ */
         case "91only":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -603,11 +619,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: VOTE ------------------------------ */
         case "startvote":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -665,11 +676,6 @@ const main = async () => {
           break;
 
         case "vote":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -727,11 +733,6 @@ const main = async () => {
 
         case "stopvote":
         case "checkvote":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -785,11 +786,6 @@ const main = async () => {
         /* ------------------------------- CASE: VOTECOMMAND ------------------------------ */
         case "votecommand":
         case "v":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           reply(`_*🗣️ VOTING COMMANDS:*_
 
 📛 *${prefix}startvote #title #name1 #name2..*
@@ -807,40 +803,25 @@ const main = async () => {
 
         /* ------------------------------- CASE: BLOCK ------------------------------ */
         case "block":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
           }
 
           reply(
-            `*─「 <{PVX}> BOT 」 ─*\n\n_Give command name (with comma seperated and without spaces) to be blocked for particular group in first line of group description, like_\nscore,add,quote\n\n_If matchId is to be added in description also then add in starting, like_\n82621,score,add,quote`
+            `*─「 <{PVX}> BOT 」 ─*\n\n_# Give command name (with comma seperated and without spaces) to be blocked in *first line of group description* , like:_\nscore,add,quote\n\n_# If cricket matchId is to be added in description also then give matchId in starting always, like_\n82621,score,add,quote`
           );
           break;
 
         /* ------------------------------- CASE: BUTTON ------------------------------ */
         case "button":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
-          //not working yet, maybe of whatsapp business
+          //not working yet, maybe for whatsapp business
           let { button } = require("./functions/button");
           await conn.sendMessage(from, button, MessageType.listMessage);
           break;
 
         /* ------------------------------- CASE: PVXLINK ------------------------------ */
         case "pvxlink":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           reply(
             "*─「 🔥 JOIN <{PVX}> FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
           );
@@ -848,11 +829,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: SONG ------------------------------ */
         case "song":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -891,10 +867,7 @@ const main = async () => {
 
         /* ----------------------------------- FB ----------------------------------- */
         case "fb":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
+          //not working in heroku
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -929,11 +902,6 @@ const main = async () => {
         /* ------------------------------- CASE: INSTA ------------------------------ */
         case "insta":
         case "i":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -984,11 +952,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: TECHNEWS ------------------------------ */
         case "technews":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -999,11 +962,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: QUOTES ------------------------------ */
         case "quote":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1015,11 +973,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: GENDER ------------------------------ */
         case "gender":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1040,11 +993,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: TEXT ------------------------------ */
         case "text":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1073,23 +1021,13 @@ const main = async () => {
 
         /* ------------------------------- CASE: DEV ------------------------------ */
         case "dev":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           reply(
-            `*─「 <{PVX}> BOT 」 ─*\n\n_Message t.me/KryptonPVX in telegram to report any bug or to give new ideas/features for this bot!_ `
+            `*─「 <{PVX}> BOT 」 ─*\n\n_Message https://t.me/KryptonPVX in telegram to report any bug or to give new ideas/features for this bot!_ `
           );
           break;
 
         /* ------------------------------- CASE: startc ------------------------------ */
         case "startc":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1099,38 +1037,28 @@ const main = async () => {
             return;
           }
 
-          data = await startcHelper("startc");
-          if (!data) return;
+          let respCric = await startcHelper("startc");
+          if (!respCric) return;
 
           cricStartedGroups[groupName] = true;
           cricSetIntervalGroups[groupName] = setInterval(async () => {
-            data = await startcHelper("startc", true);
-            if (!data) return;
+            respCric = await startcHelper("startc", true);
+            if (!respCric) return;
           }, 1000 * 60); //1 min
           break;
 
         /* ------------------------------- CASE: SCORE ------------------------------ */
         case "score":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
           }
 
-          data = await startcHelper("score");
+          await startcHelper("score");
           break;
 
         /* ------------------------------- CASE: stopc ------------------------------  */
         case "stopc":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1143,11 +1071,6 @@ const main = async () => {
         /* ------------------------------- CASE: SCORECARD ------------------------------  */
         case "scorecard":
         case "scoreboard":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1197,11 +1120,6 @@ const main = async () => {
         /* ------------------------------- CASE: CRICKETCOMMAND ------------------------------ */
         case "cricketcommand":
         case "c":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           conn.sendMessage(
             from,
             `_*🏏  CRICKET COMMANDS:*_
@@ -1229,21 +1147,11 @@ const main = async () => {
 
         /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           reply(commandList(prefix));
           break;
 
         /* ------------------------------- CASE: SOURCE ------------------------------ */
         case "source":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           conn.sendMessage(
             from,
             `*─「 <{PVX}> BOT 」 ─*\n\nhttps://github.com/Shubhamrawat5/whatsapp-bot \n\nGive a star if you like or using this. Many new cool helpful commands will be keep on adding.`,
@@ -1258,11 +1166,6 @@ const main = async () => {
         /* ------------------------------- CASE: STICKER ------------------------------ */
         case "sticker":
         case "s":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1399,11 +1302,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: ADD ------------------------------ */
         case "add":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1461,11 +1359,6 @@ const main = async () => {
         case "kick":
         case "ban":
         case "remove":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1542,11 +1435,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: MUTE ------------------------------ */
         case "mute":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1560,11 +1448,6 @@ const main = async () => {
 
         /* ------------------------------- CASE: UNMUTE ------------------------------ */
         case "unmute":
-          if (blockCommandsInDesc.includes(command)) {
-            reply("❌ Command blocked for this group!");
-            return;
-          }
-
           if (!isGroup) {
             reply("❌ Group command only!");
             return;

@@ -3,26 +3,26 @@ module.exports.commandList = (prefix) => {
   
 📛 *${prefix}sticker*
     - _Create sticker from image/gif/video!_
-    Alias: *${prefix}s
+    Alias: *${prefix}s*
   
 📛 *${prefix}sticker crop*
     - _Create full size sticker from image/gif/video!_
-    Alias: *${prefix}s c
+    Alias: *${prefix}s c*
 
 📛 *${prefix}add <phone number>*
-    - _Add any new member!_
+    - _Add new member!_
     [or tag message of removed member with *${prefix}add*]
     
 📛 *${prefix}kick <mention>*
-    - _Kick any member from group!_
+    - _Kick member from group!_
     [or tag message of member with *${prefix}kick*]
 
 📛 *${prefix}mute | ${prefix}unmute*
     - _Mute and Unmute the group!_
     
 📛 *${prefix}insta url*
-    - _Instagram post videos / reels downloader!_
-    Alias: *${prefix}i url
+    - _Instagram videos downloader!_
+    Alias: *${prefix}i url*
     
 📛 *${prefix}song name*
     - _Get songs in good quality!_
@@ -32,15 +32,15 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}alive*
     - _Check if bot is ON or OFF!_
-    Alias: *${prefix}a
+    Alias: *${prefix}a*
 
 📛 *${prefix}cricketcommand*
     - _To get command details of cricket!_
-    Alias: *${prefix}c
+    Alias: *${prefix}c*
 
 📛 *${prefix}votecommand*
     - _To get command details of voting!_
-    Alias: *${prefix}v
+    Alias: *${prefix}v*
 
 📛 *${prefix}quote*
     - _Give a random quote!_
