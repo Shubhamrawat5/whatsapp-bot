@@ -129,10 +129,23 @@ const axios = require("axios");
 
 //importing function files
 const { getCricketScore } = require("./functions/cricket");
+const { getScoreCard } = require("./functions/cricketScoreCard");
+const { button } = require("./functions/button");
 const { commandList } = require("./functions/list");
+const { commandListOwner } = require("./functions/listOwner");
+const { countToday } = require("./DB/countDB");
+const { dropAuth } = require("./DB/dropauthDB");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
 const { getFbVideo } = require("./functions/fb");
+const { getGender } = require("./functions/gender");
+const { getQuote } = require("./functions/quote");
+const { takeGroupbackup } = require("./DB/backupDB");
+const {
+  getVotingData,
+  setVotingData,
+  stopVotingData,
+} = require("./DB/VotingDB");
 
 const AdmZip = require("adm-zip");
 let stickertg = false;
@@ -148,13 +161,6 @@ const clientId = process.env.clientID;
 let matchIdGroups = {}; //to store every group name with its match ID
 let cricSetIntervalGroups = {}; //to store every group name with its setInterval value so that it can be stopped
 let cricStartedGroups = {}; //to store every group name with boolean value to know if cricket score is already started or not
-
-// voting import
-const {
-  getVotingData,
-  setVotingData,
-  stopVotingData,
-} = require("./DB/VotingDB");
 
 // LOAD CUSTOM FUNCTIONS
 const getGroupAdmins = (participants) => {
@@ -339,7 +345,6 @@ const main = async () => {
 
       // send every command info to my whatsapp, won't work when i send something for bot
       if (myNumber && myNumber + "@s.whatsapp.net" !== sender) {
-        let { countToday } = require("./DB/countDB");
         let count = await countToday();
         // await conn.sendMessage(
         //   myNumber + "@s.whatsapp.net",
@@ -455,6 +460,16 @@ const main = async () => {
       /* ------------------------------------ - ----------------------------------- */
       let votingResult;
       switch (command) {
+        /* ------------------------------- CASE: HELP ------------------------------ */
+        case "help":
+          reply(commandList(prefix));
+          break;
+
+        /* ------------------------------- CASE: helpr ------------------------------ */
+        case "helpr":
+          reply(commandListOwner(prefix));
+          break;
+
         /* ------------------------------- CASE: TEST ------------------------------ */
         case "test":
           if (myNumber + "@s.whatsapp.net" !== sender) {
@@ -527,11 +542,10 @@ const main = async () => {
         /* ------------------------------- CASE: DELETEAUTH ------------------------------ */
         case "deleteauth":
           if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Owner command only!`);
+            reply(`❌ Command only for owner!`);
             return;
           }
           try {
-            const { dropAuth } = require("./DB/dropauthDB");
             await dropAuth();
             reply(`✔ auth data deleted!`);
           } catch (err) {
@@ -634,15 +648,13 @@ const main = async () => {
         /* ------------------------------- CASE: groupbackup ------------------------------ */
         case "groupbackup":
           if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Command only for developer!`);
+            reply(`❌ Command only for owner!`);
             return;
           }
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
           }
-
-          const { takeGroupbackup } = require("./DB/backupDB");
 
           let responseGB = await takeGroupbackup(
             groupName,
@@ -867,10 +879,9 @@ const main = async () => {
           );
           break;
 
-        /* ------------------------------- CASE: BUTTON ------------------------------ */
-        case "button":
+        /* ------------------------------- CASE: BTN ------------------------------ */
+        case "btn":
           //not working yet, maybe for whatsapp business
-          let { button } = require("./functions/button");
           await conn.sendMessage(from, button, MessageType.listMessage);
           break;
 
@@ -1020,7 +1031,6 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          let { getQuote } = require("./functions/quote");
           let quote = await getQuote();
           reply(quote);
           break;
@@ -1040,7 +1050,6 @@ const main = async () => {
             reply(`❌ Don't tag! \nSend !gender firstname`);
             return;
           }
-          let { getGender } = require("./functions/gender");
           let genderText = await getGender(namePerson);
           reply(genderText);
           break;
@@ -1149,7 +1158,6 @@ const main = async () => {
             return false;
           }
 
-          let { getScoreCard } = require("./functions/cricketScoreCard");
           let scoreCardMessage = await getScoreCard(groupDesc.slice(0, 5));
           if (scoreCardMessage) sendText(scoreCardMessage);
           else
@@ -1197,11 +1205,6 @@ const main = async () => {
               detectLinks: false,
             }
           );
-          break;
-
-        /* ------------------------------- CASE: HELP ------------------------------ */
-        case "help":
-          reply(commandList(prefix));
           break;
 
         /* ------------------------------- CASE: SOURCE ------------------------------ */

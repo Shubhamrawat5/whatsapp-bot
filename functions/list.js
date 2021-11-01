@@ -70,6 +70,12 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}91only*
     - _To instant ban all numbers other than 91 when joined for this group!_
 
+📛 *${prefix}help*
+    - _To get list of public commands!_
+
+📛 *${prefix}helpr*
+    - _To get list of restricted commands!_
+
  _To add this bot in your group, simply send group link in my inbox!_
  ✔️ more cool commands coming...`;
 };

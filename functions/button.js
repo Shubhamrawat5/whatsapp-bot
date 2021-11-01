@@ -1,4 +1,5 @@
 // send a list message!
+let prefix = "!";
 const adminRows = [
   {
     title: `${prefix}add`,

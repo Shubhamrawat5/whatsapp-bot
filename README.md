@@ -43,9 +43,10 @@ Now Bot will start working!!
 
 ## Commands :
 
-|     Commands      |                Description                |
+|  Public Commands  |                Description                |
 | :---------------: | :---------------------------------------: |
-|      `!help`      |           Display help message            |
+|      `!help`      |          Display public commands          |
+|     `!helpr`      |        Display restricted commands        |
 |      `!add`       |            Add member to group            |
 |      `!kick`      |          kick member from group           |
 |      `!mute`      |              Mute the group               |
@@ -74,6 +75,18 @@ Now Bot will start working!!
 |    `!stotvote`    |        Stop voting and see result         |
 |     `!source`     |            Get the bot source             |
 |      `!dev`       |          Get the contact of dev           |
+
+<hr>
+
+| Owner Commands |             Description             |
+| :------------: | :---------------------------------: |
+|    `!helpr`    |     Display restricted commands     |
+|    `!test`     | execute code with whatsapp directly |
+|   `!tagall`    |      Tag all members in group       |
+| `!groupbackup` |       Take group backup in DB       |
+| `!deleteauth`  |  Delete auth DB to get new qr scan  |
+|     `!tg`      |       Make TG to WA stickers        |
+|     `!stg`     |       Stop TG to WA stickers        |
 
 - CRICKET SCORES:
 
