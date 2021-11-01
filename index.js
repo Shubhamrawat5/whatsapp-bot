@@ -457,17 +457,42 @@ const main = async () => {
       switch (command) {
         /* ------------------------------- CASE: TEST ------------------------------ */
         case "test":
-          if (args.length === 0) {
-            reply(`❌ EMPTY!`);
-          }
           if (myNumber + "@s.whatsapp.net" !== sender) {
             reply(`❌ Command only for developer for bot testing purpose!`);
             return;
+          }
+          if (args.length === 0) {
+            reply(`❌ EMPTY!`);
           }
 
           let resultTest = eval(args[0]);
           if (typeof resultTest === "object") reply(JSON.stringify(resultTest));
           else reply(resultTest.toString());
+          break;
+
+        /* ------------------------------- CASE: tagall ------------------------------ */
+        case "tagall":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Owner only command for avoiding spam!`);
+            return;
+          }
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+
+          let jids = [];
+          let mesaj = "";
+
+          for (let i of groupMembers) {
+            mesaj += "@" + i.id.split("@")[0] + " ";
+            jids.push(i.id.replace("c.us", "s.whatsapp.net"));
+          }
+          await conn.sendMessage(from, mesaj, MessageType.extendedText, {
+            contextInfo: { mentionedJid: jids },
+            quoted: mek,
+          });
+
           break;
 
         /* ------------------------------- CASE: DELETE ------------------------------ */
@@ -518,7 +543,7 @@ const main = async () => {
         /* ------------------------------- CASE: TG sticker ------------------------------ */
         case "stg":
           if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Owner command only!`);
+            reply(`❌ Owner only command for avoiding spam!`);
             return;
           }
           if (!stickertg) {
@@ -534,7 +559,7 @@ const main = async () => {
 
         case "tg":
           if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Owner command only!`);
+            reply(`❌ Owner only command for avoiding spam!`);
             return;
           }
           if (!isTaggedDocument) {
