@@ -50,6 +50,7 @@ Now Bot will start working!!
 |      `!kick`      |          kick member from group           |
 |      `!mute`      |              Mute the group               |
 |     `!unmute`     |             Unmute the group              |
+|     `!delete`     |           Delete message of bot           |
 |    `!sticker`     | Create sticker from different media types |
 |     `!block`      |  To block particular commands for group   |
 |      `!text`      |        Get text extract from image        |

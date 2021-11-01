@@ -190,7 +190,6 @@ const main = async () => {
 
       if (anu.action == "add") {
         let from = anu.jid;
-        let botNumberJid = conn.user.jid;
         let numJid = anu.participants[0];
         let num_split = `${numJid.split("@s.whatsapp.net")[0]}`;
 
@@ -471,6 +470,36 @@ const main = async () => {
           else reply(resultTest.toString());
           break;
 
+        /* ------------------------------- CASE: DELETE ------------------------------ */
+        case "delete":
+        case "d":
+          try {
+            if (!mek.message.extendedTextMessage) {
+              reply(`❌ Tag message of bot to delete.`);
+              return;
+            }
+            if (
+              botNumberJid ==
+              mek.message.extendedTextMessage.contextInfo.participant
+            ) {
+              const chatJid = mek.key.remoteJid;
+              const chatId =
+                mek.message.extendedTextMessage.contextInfo.stanzaId;
+              await conn.deleteMessage(chatJid, {
+                id: chatId,
+                remoteJid: chatJid,
+                fromMe: true,
+              });
+            } else {
+              reply(`❌ Tag message of bot to delete.`);
+            }
+          } catch (err) {
+            console.log(err);
+            reply(`❌ Error!`);
+          }
+          break;
+
+        /* ------------------------------- CASE: DELETEAUTH ------------------------------ */
         case "deleteauth":
           if (myNumber + "@s.whatsapp.net" !== sender) {
             reply(`❌ Owner command only!`);
@@ -1460,7 +1489,7 @@ const main = async () => {
           break;
 
         default:
-          reply("Send !help for <{PVX}> BOT commands list!");
+          reply(`Send ${prefix}help for <{PVX}> BOT commands list!`);
           break;
       }
     } catch (err) {

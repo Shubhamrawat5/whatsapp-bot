@@ -19,6 +19,10 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}mute | ${prefix}unmute*
     - _Mute and Unmute the group!_
+
+📛 *${prefix}delete*
+    - _Delete message of bot!_
+    Alias: *${prefix}d*
     
 📛 *${prefix}insta url*
     - _Instagram videos downloader!_
