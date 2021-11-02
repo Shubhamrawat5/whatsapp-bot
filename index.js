@@ -980,11 +980,12 @@ const main = async () => {
           if (
             !(
               urlInsta.includes("instagram.com/p/") ||
-              urlInsta.includes("instagram.com/reel/")
+              urlInsta.includes("instagram.com/reel/") ||
+              urlInsta.includes("instagram.com/tv/")
             )
           ) {
             reply(
-              `❌ Wrong URL! Only Instagram posted videos and reels can be downloaded.`
+              `❌ Wrong URL! Only Instagram posted videos, tv and reels can be downloaded.`
             );
             return;
           }
