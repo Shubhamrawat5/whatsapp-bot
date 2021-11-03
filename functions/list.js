@@ -40,11 +40,11 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}cricketcommand*
     - _To get command details of cricket!_
-    Alias: *${prefix}c*
+    Alias: *${prefix}cc*
 
 📛 *${prefix}votecommand*
     - _To get command details of voting!_
-    Alias: *${prefix}v*
+    Alias: *${prefix}vc*
 
 📛 *${prefix}quote*
     - _Give a random quote!_

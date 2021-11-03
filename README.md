@@ -43,50 +43,50 @@ Now Bot will start working!!
 
 ## Commands :
 
-|  Public Commands  |                Description                |
-| :---------------: | :---------------------------------------: |
-|      `!help`      |          Display public commands          |
-|     `!helpr`      |        Display restricted commands        |
-|      `!add`       |            Add member to group            |
-|      `!kick`      |          kick member from group           |
-|      `!mute`      |              Mute the group               |
-|     `!unmute`     |             Unmute the group              |
-|     `!delete`     |           Delete message of bot           |
-|    `!sticker`     | Create sticker from different media types |
-|     `!block`      |  To block particular commands for group   |
-|      `!text`      |        Get text extract from image        |
-|      `!song`      |       Get any song in good quality        |
-|     `!insta`      |      Get insta reels or post videos       |
-|    `!technews`    |           Get latest Tech news            |
-|    `!pvxlink`     |          Get group links of PVX           |
-|     `!drive`      |       Get GDrive files direct link        |
-|     `!quote`      |            Give a random quote            |
-|     `!gender`     |        Get gender from first name         |
-|     `!alive`      |          Check bot is ON or OFF           |
-| `!cricketcommand` |       Get list of cricket commands        |
-|     `!score`      |            Give Cricket score             |
-|   `!scorecard`    |          Give Cricket scorecard           |
-|     `!startc`     |        Start Cricket score updated        |
-|     `!stopc`      |        Stop Cricket score updated         |
-|  `!votecommand`   |         Get list of vote commands         |
-|   `!startvote`    |           Start voting in group           |
-|      `!vote`      |             Vote for a choice             |
-|   `!checkvote`    |      Check status of current voting       |
-|    `!stotvote`    |        Stop voting and see result         |
-|     `!source`     |            Get the bot source             |
-|      `!dev`       |          Get the contact of dev           |
+|  Public Commands  |                Description                |  Alias  |
+| :---------------: | :---------------------------------------: | :-----: |
+|      `!help`      |          Display public commands          |         |
+|     `!helpr`      |        Display restricted commands        |         |
+|      `!add`       |            Add member to group            |         |
+|      `!kick`      |          kick member from group           |         |
+|      `!mute`      |              Mute the group               |         |
+|     `!unmute`     |             Unmute the group              |         |
+|     `!delete`     |           Delete message of bot           |   !d    |
+|    `!sticker`     | Create sticker from different media types |   !s    |
+|     `!block`      |  To block particular commands for group   |         |
+|      `!text`      |        Get text extract from image        |         |
+|      `!song`      |       Get any song in good quality        |         |
+|     `!insta`      |      Get insta reels or post videos       |   !i    |
+|    `!technews`    |           Get latest Tech news            |         |
+|    `!pvxlink`     |          Get group links of PVX           |         |
+|     `!drive`      |       Get GDrive files direct link        |         |
+|     `!quote`      |            Give a random quote            |         |
+|     `!gender`     |        Get gender from first name         |         |
+|     `!alive`      |          Check bot is ON or OFF           |   !a    |
+| `!cricketcommand` |       Get list of cricket commands        |   !cc   |
+|     `!score`      |            Give Cricket score             |         |
+|   `!scorecard`    |          Give Cricket scorecard           | !sc !sb |
+|     `!startc`     |        Start Cricket score updated        |         |
+|     `!stopc`      |        Stop Cricket score updated         |         |
+|  `!votecommand`   |         Get list of vote commands         |   !vc   |
+|   `!startvote`    |           Start voting in group           |         |
+|      `!vote`      |             Vote for a choice             |         |
+|   `!checkvote`    |      Check status of current voting       |   !cv   |
+|    `!stotvote`    |        Stop voting and see result         |         |
+|     `!source`     |            Get the bot source             |         |
+|      `!dev`       |          Get the contact of dev           |         |
 
 <hr>
 
-| Owner Commands |             Description             |
-| :------------: | :---------------------------------: |
-|    `!helpr`    |     Display restricted commands     |
-|    `!test`     | execute code with whatsapp directly |
-|   `!tagall`    |      Tag all members in group       |
-| `!groupbackup` |       Take group backup in DB       |
-| `!deleteauth`  |  Delete auth DB to get new qr scan  |
-|     `!tg`      |       Make TG to WA stickers        |
-|     `!stg`     |       Stop TG to WA stickers        |
+| Owner Commands |             Description             | Alias |
+| :------------: | :---------------------------------: | :---: |
+|    `!helpr`    |     Display restricted commands     |       |
+|    `!test`     | execute code with whatsapp directly |       |
+|   `!tagall`    |      Tag all members in group       |       |
+| `!groupbackup` |       Take group backup in DB       |       |
+| `!deleteauth`  |  Delete auth DB to get new qr scan  |       |
+|     `!tg`      |       Make TG to WA stickers        |       |
+|     `!stg`     |       Stop TG to WA stickers        |       |
 
 - CRICKET SCORES:
 

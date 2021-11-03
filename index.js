@@ -213,10 +213,10 @@ const main = async () => {
         }
 
         if (numJid === botNumberJid) {
-          console.log("Bot is add to new group!");
+          console.log("Bot is added to new group!");
           conn.sendMessage(
             from,
-            `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nSEND !help FOR BOT COMMANDS`,
+            `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nSEND ${prefix}help FOR BOT COMMANDS`,
             MessageType.text
           );
         }
@@ -691,13 +691,15 @@ const main = async () => {
           }
           if (args.length === 0) {
             reply(
-              "❌ Give some values seperated with # to vote on like !startvote #title #name1 #name2 #name3"
+              `❌ Give some values seperated with # to vote on like ${prefix}startvote #title #name1 #name2 #name3`
             );
             return;
           }
           votingResult = await getVotingData(chat_id);
           if (votingResult.is_started) {
-            reply("❌ Voting already going on, Stop by !stopvote command");
+            reply(
+              `❌ Voting already going on, Stop by ${prefix}stopvote command`
+            );
             return;
           }
           // let voteChoices = body.trim().replace(/ +/, ",").split(/,/).slice(1);
@@ -730,13 +732,13 @@ const main = async () => {
           );
           votingResult = await getVotingData(chat_id);
 
-          let voteMsg = `*Voting started!*\nsend "!vote number" to vote\n\n*🗣️ ${voteTitle}*`;
+          let voteMsg = `*Voting started!*\nsend "${prefix}vote number" to vote\n\n*🗣️ ${voteTitle}*`;
 
           votingResult.choices.forEach((name, index) => {
             voteMsg += `\n${index + 1} for [${name.trim()}]`;
           });
 
-          voteMsg += `\n\n_send !checkvote to see current status and !stopvote to stop voting and see the result._`;
+          voteMsg += `\n\n_send ${prefix}checkvote or ${prefix}cv to see current status and ${prefix}stopvote to stop voting and see the result._`;
           reply(voteMsg);
 
           break;
@@ -749,7 +751,7 @@ const main = async () => {
           votingResult = await getVotingData(chat_id);
           if (!votingResult.is_started) {
             reply(
-              `❌ Voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
+              `❌ Voting is not started here, Start by \n${prefix}startvote #title #name1 #name2 #name3`
             );
             return;
           }
@@ -799,6 +801,7 @@ const main = async () => {
 
         case "stopvote":
         case "checkvote":
+        case "cv":
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -807,7 +810,7 @@ const main = async () => {
           votingResult = await getVotingData(chat_id);
           if (!votingResult.is_started) {
             reply(
-              `❌ Voting is not started here, Start by \n!startvote #title #name1 #name2 #name3`
+              `❌ Voting is not started here, Start by \n${prefix}startvote #title #name1 #name2 #name3`
             );
             return;
           }
@@ -824,7 +827,7 @@ const main = async () => {
               return;
             }
           } else {
-            resultVoteMsg += `send "!vote number" to vote\n\n*🗣️ ${votingResult.title}*`;
+            resultVoteMsg += `send "${prefix}vote number" to vote\n\n*🗣️ ${votingResult.title}*`;
             votingResult.choices.forEach((name, index) => {
               resultVoteMsg += `\n${index + 1} for [${name.trim()}]`;
             });
@@ -851,7 +854,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: VOTECOMMAND ------------------------------ */
         case "votecommand":
-        case "v":
+        case "vc":
           reply(`_*🗣️ VOTING COMMANDS:*_
 
 📛 *${prefix}startvote #title #name1 #name2..*
@@ -862,6 +865,7 @@ const main = async () => {
 
 📛 *${prefix}checkvote*
     - _Status of current ongoing voting!_
+    Alias: ${prefix}cv
     
 📛 *${prefix}stopvote*
     - _Stop voting and see final result!_`);
@@ -899,7 +903,7 @@ const main = async () => {
             return;
           }
           if (args.length === 0) {
-            reply(`❌ Query is empty! \nSend !song query`);
+            reply(`❌ Query is empty! \nSend ${prefix}song query`);
             return;
           }
           try {
@@ -938,7 +942,7 @@ const main = async () => {
             return;
           }
           if (args.length === 0) {
-            reply(`❌ URL is empty! \nSend !insta url`);
+            reply(`❌ URL is empty! \nSend ${prefix}insta url`);
             return;
           }
           let urlFb = "https://fb.watch/8TZN7ldBKG/";
@@ -972,7 +976,7 @@ const main = async () => {
             return;
           }
           if (args.length === 0) {
-            reply(`❌ URL is empty! \nSend !insta url`);
+            reply(`❌ URL is empty! \nSend ${prefix}insta url`);
             return;
           }
           let urlInsta = args[0];
@@ -1043,12 +1047,12 @@ const main = async () => {
             return;
           }
           if (args.length === 0) {
-            reply(`❌ Name is not given! \nSend !gender firstname`);
+            reply(`❌ Name is not given! \nSend ${prefix}gender firstname`);
             return;
           }
           let namePerson = args[0];
           if (namePerson.includes("@")) {
-            reply(`❌ Don't tag! \nSend !gender firstname`);
+            reply(`❌ Don't tag! \nSend ${prefix}gender firstname`);
             return;
           }
           let genderText = await getGender(namePerson);
@@ -1135,6 +1139,8 @@ const main = async () => {
         /* ------------------------------- CASE: SCORECARD ------------------------------  */
         case "scorecard":
         case "scoreboard":
+        case "sc":
+        case "sb":
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -1182,7 +1188,7 @@ const main = async () => {
           break;
         /* ------------------------------- CASE: CRICKETCOMMAND ------------------------------ */
         case "cricketcommand":
-        case "c":
+        case "cc":
           conn.sendMessage(
             from,
             `_*🏏  CRICKET COMMANDS:*_
@@ -1196,6 +1202,7 @@ const main = async () => {
     - _current score of match!_
 📛 *${prefix}scorecard*
     - _current scorecard of players!_
+    Alias: ${prefix}sc ${prefix}sb
 📛 *${prefix}startc*
     - _start match live score every 1 min!_
 📛 *${prefix}stopc*
@@ -1349,7 +1356,7 @@ const main = async () => {
         //     return;
         //   }
         //   if (args.length === 0) {
-        //     reply(`❌ Query is empty! \nSend !drive query_name`);
+        //     reply(`❌ Query is empty! \nSend ${prefix}drive query_name`);
         //     return;
         //   }
         //   let query = args.join(" ");
