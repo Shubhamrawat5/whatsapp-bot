@@ -83,6 +83,7 @@ Now Bot will start working!!
 |    `!helpr`    |     Display restricted commands     |       |
 |    `!test`     | execute code with whatsapp directly |       |
 |   `!tagall`    |      Tag all members in group       |       |
+|  `!pvxstats`   |       Get stats of PVX groups       |       |
 | `!groupbackup` |       Take group backup in DB       |       |
 | `!deleteauth`  |  Delete auth DB to get new qr scan  |       |
 |     `!tg`      |       Make TG to WA stickers        |       |

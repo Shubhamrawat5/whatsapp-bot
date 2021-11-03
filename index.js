@@ -470,6 +470,46 @@ const main = async () => {
           reply(commandListOwner(prefix));
           break;
 
+        /* ------------------------------- CASE: PVXSTATS ------------------------------ */
+        case "pvxstats":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Owner only command for avoiding spam!`);
+            return;
+          }
+          let groups = conn.chats
+            .all()
+            .filter(
+              (v) =>
+                v.jid.endsWith("g.us") &&
+                !v.read_only &&
+                v.message &&
+                !v.announce &&
+                v.name.startsWith("<{PVX}>")
+            )
+            .map((v) => {
+              return { name: v.name, jid: v.jid };
+            });
+          // console.log(groups);
+
+          let pvxMsg = "*📛 PVX STATS 📛*";
+          let totalMem = 0;
+          let uniqueMem = new Set();
+          let temppvxMsg = "";
+          for (let group of groups) {
+            const mdpvx = await conn.groupMetadata(group.jid);
+            // console.log(mdpvx);
+            totalMem += mdpvx.participants.length;
+            temppvxMsg += `\n\n*${mdpvx.subject}*\nMembers: ${mdpvx.participants.length}`;
+            for (let parti of mdpvx.participants) {
+              uniqueMem.add(parti.jid);
+            }
+          }
+
+          pvxMsg += `\nTotal Groups: ${groups.length}\nTotal Members: ${totalMem}\nUnique Members: ${uniqueMem.size}`;
+          pvxMsg += temppvxMsg;
+          reply(pvxMsg);
+          break;
+
         /* ------------------------------- CASE: TEST ------------------------------ */
         case "test":
           if (myNumber + "@s.whatsapp.net" !== sender) {

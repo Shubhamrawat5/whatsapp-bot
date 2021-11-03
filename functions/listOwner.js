@@ -7,7 +7,10 @@ module.exports.commandListOwner = (prefix) => {
       - _Execute code with whatsapp directly!_
     
   📛 *${prefix}tagall*
-      - _Tag all the members!_
+      - _Tag all the members!_  
+      
+  📛 *${prefix}pvxstats*
+      - _Get stats of PVX groups!_
       
   📛 *${prefix}deleteauth*
       - _Delete auth DB to get new qr scan!_
