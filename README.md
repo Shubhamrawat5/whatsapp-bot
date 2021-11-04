@@ -143,3 +143,5 @@ You can use (http://kaffeine.herokuapp.com) to ping the heroku app every 30 minu
 - [@Baileys](https://github.com/adiwajshing/Baileys)
 - [@WA-STICKER-FORMATTER](https://github.com/Alensaito1/wa-sticker-formatter)
 - Initial code taken from [Karma](https://github.com/karmaisgreat/simple-whatsapp-bot).
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Shubhamrawat5/whatsapp-bot)
