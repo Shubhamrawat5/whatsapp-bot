@@ -1544,6 +1544,10 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
+            return;
+          }
           await conn.groupSettingChange(
             from,
             GroupSettingChange.messageSend,
@@ -1555,6 +1559,10 @@ const main = async () => {
         case "unmute":
           if (!isGroup) {
             reply("❌ Group command only!");
+            return;
+          }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
             return;
           }
           await conn.groupSettingChange(
