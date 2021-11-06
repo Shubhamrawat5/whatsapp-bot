@@ -234,7 +234,7 @@ const main = async () => {
       mek = JSON.parse(JSON.stringify(mek)).messages[0];
       if (!mek.message) return;
       if (mek.key && mek.key.remoteJid == "status@broadcast") return;
-      if (mek.key.fromMe) return;
+      // if (mek.key.fromMe) return;
       const content = JSON.stringify(mek.message);
       global.prefix;
       const from = mek.key.remoteJid;
@@ -304,7 +304,9 @@ const main = async () => {
 
       const isGroup = from.endsWith("@g.us");
       const chat_id = mek.key.remoteJid;
-      const sender = isGroup ? mek.participant : mek.key.remoteJid;
+      // console.log(mek);
+      let sender = isGroup ? mek.participant : mek.key.remoteJid;
+      if (mek.key.fromMe) sender = botNumberJid;
       const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
       const groupName = isGroup ? groupMetadata.subject : "";
       const groupDesc = isGroup ? groupMetadata.desc : "";
@@ -527,7 +529,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: tagall ------------------------------ */
         case "tagall":
-          if (myNumber + "@s.whatsapp.net" !== sender) {
+          if (![myNumber + "@s.whatsapp.net", botNumberJid].includes(sender)) {
             reply(`❌ Owner only command for avoiding spam!`);
             return;
           }
@@ -537,7 +539,18 @@ const main = async () => {
           }
 
           let jids = [];
-          let mesaj = "";
+          let mesaj = "ALL: ";
+          if (
+            mek.message.extendedTextMessage &&
+            mek.message.extendedTextMessage.contextInfo.quotedMessage
+              .conversation
+          ) {
+            mesaj +=
+              mek.message.extendedTextMessage.contextInfo.quotedMessage
+                .conversation + "\n\n";
+          } else {
+            mesaj += args.length ? args.join(" ") + "\n\n" : "";
+          }
 
           for (let i of groupMembers) {
             mesaj += "@" + i.id.split("@")[0] + " ";
