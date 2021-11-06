@@ -1008,7 +1008,7 @@ const main = async () => {
             }).pipe(fs.createWriteStream(`./${randomName}`));
             //22 - 1080p/720p and 18 - 360p
             console.log("Video downloading !", urlYt);
-            reply("Downloading.. This may take upto 3 min!");
+            reply("Downloading.. This may take upto 5 min!");
             await new Promise((resolve, reject) => {
               stream.on("error", reject);
               stream.on("finish", resolve);
@@ -1040,7 +1040,6 @@ const main = async () => {
             return;
           }
           let urlFb = args[0];
-          console.log(urlFb);
           let randomName = getRandom(".mp4");
           try {
             let { videoDirectLinkFb } = await getFbVideo(urlFb);
@@ -1343,6 +1342,19 @@ const main = async () => {
             `libwebp`,
             `-vf`,
             `scale=600:600:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=600:600:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1`,
+            `-loop`,
+            `0`,
+            `-ss`,
+            `00:00:00.0`,
+            `-t`,
+            `00:00:10.0`,
+            `-preset`,
+            `default`,
+            `-an`,
+            `-vsync`,
+            `0`,
+            `-s`,
+            `512:512`,
           ];
           if (args.includes("crop") || args.includes("c")) {
             outputOptions = [
