@@ -147,6 +147,7 @@ const {
   stopVotingData,
 } = require("./DB/VotingDB");
 
+const ytdl = require("ytdl-core");
 const AdmZip = require("adm-zip");
 let stickertg = false;
 let setIntervaltg;
@@ -981,6 +982,43 @@ const main = async () => {
                 quoted: mek,
               }
             );
+          } catch (err) {
+            console.log(err);
+            reply(`❌ There is some problem.`);
+          }
+          break;
+
+        /* ------------------------------- CASE: YT ------------------------------ */
+        case "yt":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (args.length === 0) {
+            reply(`❌ URL is empty! \nSend ${prefix}yt url`);
+            return;
+          }
+          try {
+            let urlYt = args[0];
+            let info = ytdl.getInfo(urlYt);
+            let rany = getRandom(".mp4");
+            const stream = ytdl(url, {
+              filter: (info) => info.itag == 22 || info.itag == 18,
+            }).pipe(fs.createWriteStream(rany));
+            console.log("Video downloaded !");
+            await new Promise((resolve, reject) => {
+              stream.on("error", reject);
+              stream.on("finish", resolve);
+            });
+
+            await conn.sendMessage(
+              from,
+              fs.readFileSync(rany),
+              MessageType.video,
+              { mimetype: Mimetype.mp4, quoted: mek }
+            );
+            console.log("Sent !");
+            fs.unlinkSync(rany);
           } catch (err) {
             console.log(err);
             reply(`❌ There is some problem.`);

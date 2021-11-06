@@ -24,7 +24,8 @@
     "googleapis": "^87.0.0",
     "node-tesseract-ocr": "^2.2.1",
     "pg": "^8.5.1",
-    "wa-sticker-formatter": "^3.6.0"
+    "wa-sticker-formatter": "^3.6.0",
+    "ytdl-core": "^4.9.1"
   },
   "homepage": "https://github.com/Shubhamrawat5/whatsapp-bot#readme",
   "devDependencies": {},
