@@ -1000,25 +1000,28 @@ const main = async () => {
           }
           try {
             let urlYt = args[0];
-            let info = ytdl.getInfo(urlYt);
-            let rany = getRandom(".mp4");
-            const stream = ytdl(url, {
+            let infoYt = await ytdl.getInfo(urlYt);
+            let titleYt = infoYt.videoDetails.title;
+            let randomName = getRandom(".mp4");
+            const stream = ytdl(urlYt, {
               filter: (info) => info.itag == 22 || info.itag == 18,
-            }).pipe(fs.createWriteStream(rany));
-            console.log("Video downloaded !");
+            }).pipe(fs.createWriteStream(`./${randomName}`));
+            //22 - 1080p/720p and 18 - 360p
+            console.log("Video downloading !", urlYt);
+            reply("Downloading.. This may take upto 3 min!");
             await new Promise((resolve, reject) => {
               stream.on("error", reject);
               stream.on("finish", resolve);
             });
+            console.log("Video downloaded !");
 
             await conn.sendMessage(
               from,
-              fs.readFileSync(rany),
+              fs.readFileSync(`./${randomName}`),
               MessageType.video,
-              { mimetype: Mimetype.mp4, quoted: mek }
+              { mimetype: Mimetype.mp4, caption: titleYt, quoted: mek }
             );
-            console.log("Sent !");
-            fs.unlinkSync(rany);
+            fs.unlinkSync(`./${randomName}`);
           } catch (err) {
             console.log(err);
             reply(`❌ There is some problem.`);
@@ -1036,7 +1039,8 @@ const main = async () => {
             reply(`❌ URL is empty! \nSend ${prefix}insta url`);
             return;
           }
-          let urlFb = "https://fb.watch/8TZN7ldBKG/";
+          let urlFb = args[0];
+          console.log(urlFb);
           let randomName = getRandom(".mp4");
           try {
             let { videoDirectLinkFb } = await getFbVideo(urlFb);
@@ -1049,6 +1053,7 @@ const main = async () => {
                 MessageType.video,
                 { mimetype: Mimetype.mp4, quoted: mek }
               );
+              fs.unlinkSync(`./${randomName}`);
             } else {
               //TODO: throw err
               reply(`❌ There is some problem!`);
@@ -1102,6 +1107,7 @@ const main = async () => {
                 MessageType.video,
                 { mimetype: Mimetype.mp4, quoted: mek }
               );
+              fs.unlinkSync(`./${randomName}`);
             } else {
               reply(`❌ There is some problem!`);
             }

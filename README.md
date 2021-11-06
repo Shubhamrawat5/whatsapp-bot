@@ -57,6 +57,7 @@ Now Bot will start working!!
 |      `!text`      |        Get text extract from image        |         |
 |      `!song`      |       Get any song in good quality        |         |
 |     `!insta`      |      Get insta reels or post videos       |   !i    |
+|       `!yt`       |          Download youtube videos          |         |
 |    `!technews`    |           Get latest Tech news            |         |
 |    `!pvxlink`     |          Get group links of PVX           |         |
 |     `!drive`      |       Get GDrive files direct link        |         |
