@@ -1357,6 +1357,33 @@ const main = async () => {
           );
           break;
 
+        /* ------------------------------- CASE: steal ------------------------------ */
+        case "steal":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (!isTaggedSticker) {
+            reply(`❌ Tag a sticker with ${prefix}steal command!`);
+            return;
+          }
+          try {
+            const mediaSteal = await conn.downloadAndSaveMediaMessage({
+              message:
+                mek.message.extendedTextMessage.contextInfo.quotedMessage,
+            });
+            const webpWithMetadata = await WSF.setMetadata(
+              "<{PVX}> BOT 🤖",
+              "",
+              mediaSteal
+            );
+            await conn.sendMessage(from, webpWithMetadata, MessageType.sticker);
+          } catch (err) {
+            console.log(err);
+            reply("❌ There is some problem!");
+          }
+          break;
+
         /* ------------------------------- CASE: TOIMG ------------------------------ */
         case "toimg":
           if (!isGroup) {
