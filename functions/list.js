@@ -2,12 +2,15 @@ module.exports.commandList = (prefix) => {
   return `*─「 🔥 <{PVX}> BOT 🔥 」─*
   
 📛 *${prefix}sticker*
-    - _Create sticker from image/gif/video!_
+    - _Create sticker from media!_
     Alias: *${prefix}s*
-  
+    
 📛 *${prefix}sticker crop*
-    - _Create full size sticker from image/gif/video!_
+    - _Create full size sticker from media!_
     Alias: *${prefix}s c*
+
+📛 *${prefix}toimg*
+    - _Create image from sticker!_
 
 📛 *${prefix}add <phone number>*
     - _Add new member!_

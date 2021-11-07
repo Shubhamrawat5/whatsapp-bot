@@ -945,6 +945,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: PVXLINK ------------------------------ */
         case "pvxlink":
+        case "link":
           reply(
             "*─「 🔥 JOIN <{PVX}> FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
           );
@@ -1026,7 +1027,7 @@ const main = async () => {
                 MessageType.video,
                 {
                   mimetype: Mimetype.mp4,
-                  caption: `*─「 <{PVX}> BOT 」 ─*\n\n${titleYt}`,
+                  caption: `${titleYt}`,
                   quoted: mek,
                 }
               );
@@ -1125,7 +1126,6 @@ const main = async () => {
                   MessageType.video,
                   {
                     mimetype: Mimetype.mp4,
-                    caption: "*─「 <{PVX}> BOT 」 ─*",
                     quoted: mek,
                   }
                 );
@@ -1138,7 +1138,7 @@ const main = async () => {
                 from,
                 { url: imgDirectLink },
                 MessageType.image,
-                { caption: "*─「 <{PVX}> BOT 」 ─*", quoted: mek }
+                { quoted: mek }
               );
             } else {
               reply(`❌ There is some problem!`);
@@ -1357,6 +1357,52 @@ const main = async () => {
           );
           break;
 
+        /* ------------------------------- CASE: TOIMG ------------------------------ */
+        case "toimg":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (!isTaggedSticker) {
+            reply(`❌ Tag a sticker with ${prefix}toimg command!`);
+            return;
+          }
+
+          if (
+            !mek.message.extendedTextMessage.contextInfo.quotedMessage
+              .stickerMessage.isAnimated
+          ) {
+            const mediaToImg = await conn.downloadAndSaveMediaMessage({
+              message:
+                mek.message.extendedTextMessage.contextInfo.quotedMessage,
+            });
+            await ffmpeg(`./${mediaToImg}`)
+              .fromFormat("webp_pipe")
+              .save("result.png")
+              .on("error", (err) => {
+                console.log(err);
+                reply(
+                  "❌ There is some problem!\nOnly non-animated stickers can be convert to image!"
+                );
+              })
+              .on("end", () => {
+                conn.sendMessage(
+                  from,
+                  fs.readFileSync("result.png"),
+                  MessageType.image,
+                  {
+                    mimetype: Mimetype.png,
+                    quoted: mek,
+                  }
+                );
+              });
+          } else {
+            reply(
+              "❌ There is some problem!\nOnly non-animated stickers can be convert to image!"
+            );
+          }
+          break;
+
         /* ------------------------------- CASE: STICKER ------------------------------ */
         case "sticker":
         case "s":
@@ -1364,37 +1410,16 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
+          if (isMedia || isTaggedImage || isTaggedVideo) {
+            let packName = "<{PVX}> BOT 🤖";
+            let authorName = "";
+            let ran = getRandom(".webp");
 
-          // Format should be <prefix>sticker pack <pack_name> author <author_name>
-          let packName = "<{PVX}> BOT 🤖";
-          let authorName = "";
-          let ran = getRandom(".webp");
-
-          let outputOptions = [
-            `-vcodec`,
-            `libwebp`,
-            `-vf`,
-            `scale=600:600:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=600:600:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1`,
-            `-loop`,
-            `0`,
-            `-ss`,
-            `00:00:00.0`,
-            `-t`,
-            `00:00:10.0`,
-            `-preset`,
-            `default`,
-            `-an`,
-            `-vsync`,
-            `0`,
-            `-s`,
-            `512:512`,
-          ];
-          if (args.includes("crop") || args.includes("c")) {
-            outputOptions = [
+            let outputOptions = [
               `-vcodec`,
               `libwebp`,
               `-vf`,
-              `crop=w='min(min(iw\,ih)\,500)':h='min(min(iw\,ih)\,500)',scale=500:500,setsar=1,fps=15`,
+              `scale=600:600:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=600:600:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1`,
               `-loop`,
               `0`,
               `-ss`,
@@ -1409,84 +1434,88 @@ const main = async () => {
               `-s`,
               `512:512`,
             ];
-          }
-          async function buildSticker(media, ran) {
-            const webpWithMetadata = await WSF.setMetadata(
-              packName,
-              authorName,
-              ran
-            );
-            await conn.sendMessage(from, webpWithMetadata, MessageType.sticker);
-            fs.unlinkSync(media);
-            fs.unlinkSync(ran);
-          }
+            if (args.includes("crop") || args.includes("c")) {
+              outputOptions = [
+                `-vcodec`,
+                `libwebp`,
+                `-vf`,
+                `crop=w='min(min(iw\,ih)\,500)':h='min(min(iw\,ih)\,500)',scale=500:500,setsar=1,fps=15`,
+                `-loop`,
+                `0`,
+                `-ss`,
+                `00:00:00.0`,
+                `-t`,
+                `00:00:10.0`,
+                `-preset`,
+                `default`,
+                `-an`,
+                `-vsync`,
+                `0`,
+                `-s`,
+                `512:512`,
+              ];
+            }
 
-          if ((isMedia && !mek.message.videoMessage) || isTaggedImage) {
-            //IMAGE TO STICKER
-            const encmedia = isTaggedImage
-              ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
-                  .extendedTextMessage.contextInfo
-              : mek;
+            // //new version of wa-sticker-formatter...
+            // async function addMetadataSticker(media, ran, type) {
+            //   console.log(ran);
+            //   await conn.sendMessage(from, ran, MessageType.sticker, {
+            //     quoted: mek,
+            //   });
+            //   const sticker = new Sticker(`./${ran}`, {
+            //     pack: packName,
+            //     author: authorName,
+            //     type,
+            //     quality: 40,
+            //   });
+            //   // await sticker.toFile(ran);
+            //   const buffer = await sticker.build();
+            //   await conn.sendMessage(from, buffer, MessageType.sticker, {
+            //     quoted: mek,
+            //   });
+            //   fs.unlinkSync(media);
+            //   fs.unlinkSync(ran);
+            // }
+            async function buildSticker(media, ran) {
+              const webpWithMetadata = await WSF.setMetadata(
+                packName,
+                authorName,
+                ran
+              );
+              await conn.sendMessage(
+                from,
+                webpWithMetadata,
+                MessageType.sticker
+              );
+              fs.unlinkSync(media);
+              fs.unlinkSync(ran);
+            }
+
+            const encmedia =
+              isTaggedImage || isTaggedVideo
+                ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m"))
+                    .message.extendedTextMessage.contextInfo
+                : mek;
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
-            // reply("⌛ Processing image wait... ⏳");
-            // console.log("MEDIA", media); // MEDIA undefined.jpeg
-            // console.log("RAN", ran); //RAN 1126.webp
 
-            await ffmpeg(`./${media}`)
+            ffmpeg(`./${media}`)
               .input(media)
-              .on("error", function (err) {
+              .addOutputOptions(outputOptions)
+              .on("error", (err) => {
                 fs.unlinkSync(media);
-                //unlinkSync remove the given file
-                console.log(`Error : ${err}`);
-                reply("❌ Failed to convert image into sticker!");
+                console.log(err);
+                reply(`❌ Failed to convert media to sticker!`);
               })
-              .on("end", function () {
+              .on("end", async () => {
                 buildSticker(media, ran);
               })
-              .addOutputOptions(outputOptions)
-              .toFormat("webp")
-              .save(ran);
-          } else if (
-            (isMedia && mek.message.videoMessage.seconds > 10) ||
-            (isTaggedVideo &&
-              mek.message.extendedTextMessage.contextInfo.quotedMessage
-                .videoMessage.seconds > 10)
-          ) {
-            //VIDEO/GIF TO STICKER, BUT INVALID LENGTH
-            reply(
-              "❌ Only video with length less than 11 seconds are accepted!"
-            );
-          } else if (
-            (isMedia && mek.message.videoMessage.seconds < 11) ||
-            (isTaggedVideo &&
-              mek.message.extendedTextMessage.contextInfo.quotedMessage
-                .videoMessage.seconds < 11)
-          ) {
-            //VIDEO/GIF TO STICKER
-            const encmedia = isTaggedVideo
-              ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
-                  .extendedTextMessage.contextInfo
-              : mek;
-            const media = await conn.downloadAndSaveMediaMessage(encmedia);
-            // reply("⌛ Processing animation... ⏳");
-            await ffmpeg(`./${media}`)
-              .inputFormat(media.split(".")[1])
-              .on("error", function (err) {
-                fs.unlinkSync(media);
-                mediaType = media.endsWith(".mp4") ? "video" : "gif";
-                reply(`❌ Failed to convert ${mediaType} to sticker! ❌`);
-              })
-              .on("end", function () {
-                buildSticker(media, ran);
-              })
-              .addOutputOptions(outputOptions)
               .toFormat("webp")
               .save(ran);
           } else {
-            reply(
-              "_❌ Give a media (image/gif/video) to convert into sticker! ❌_"
-            );
+            reply("❌ Give a media to convert into sticker!");
+            return;
           }
+
           break;
 
         /* ------------------------------- CASE: DRIVE ------------------------------ */

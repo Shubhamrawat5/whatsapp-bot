@@ -54,6 +54,7 @@ Now Bot will start working!!
 |     `!delete`     |           Delete message of bot           |   !d    |
 |    `!sticker`     | Create sticker from different media types |   !s    |
 |     `!block`      |  To block particular commands for group   |         |
+|     `!toimg`      |         Create image from sticker         |         |
 |      `!text`      |        Get text extract from image        |         |
 |      `!song`      |       Get any song in good quality        |         |
 |     `!insta`      |      Get insta reels or post videos       |   !i    |
