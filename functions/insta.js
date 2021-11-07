@@ -1,6 +1,7 @@
 const axios = require("axios");
 
 module.exports.getInstaVideo = async (url) => {
+  // const getInstaVideo = async (url) => {
   let imgDirectLink = "",
     videoDirectLink = "";
   try {
@@ -31,11 +32,13 @@ module.exports.getInstaVideo = async (url) => {
 
     if (res.status == 200 && res.data.graphql.shortcode_media.is_video) {
       videoDirectLink = res.data.graphql.shortcode_media.video_url;
-      imgDirectLink = res.data.graphql.shortcode_media.display_url;
     }
+    imgDirectLink = res.data.graphql.shortcode_media.display_url;
   } catch (err) {
     console.log(err);
   }
   // console.log({ imgDirectLink, videoDirectLink });
   return { imgDirectLink, videoDirectLink };
 };
+
+// getInstaVideo("https://www.instagram.com/p/CV7guhtM1R2/");

@@ -1013,14 +1013,27 @@ const main = async () => {
               stream.on("error", reject);
               stream.on("finish", resolve);
             });
-            console.log("Video downloaded !");
 
-            await conn.sendMessage(
-              from,
-              fs.readFileSync(`./${randomName}`),
-              MessageType.video,
-              { mimetype: Mimetype.mp4, caption: titleYt, quoted: mek }
-            );
+            let stats = fs.statSync(`./${randomName}`);
+            let fileSizeInBytes = stats.size;
+            // Convert the file size to megabytes (optional)
+            let fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+            console.log("Video downloaded ! Size: " + fileSizeInMegabytes);
+            if (fileSizeInMegabytes <= 30) {
+              await conn.sendMessage(
+                from,
+                fs.readFileSync(`./${randomName}`),
+                MessageType.video,
+                {
+                  mimetype: Mimetype.mp4,
+                  caption: `*─「 <{PVX}> BOT 」 ─*\n\n${titleYt}`,
+                  quoted: mek,
+                }
+              );
+            } else {
+              reply(`❌ File size bigger than 30mb.`);
+            }
+
             fs.unlinkSync(`./${randomName}`);
           } catch (err) {
             console.log(err);
@@ -1036,7 +1049,7 @@ const main = async () => {
             return;
           }
           if (args.length === 0) {
-            reply(`❌ URL is empty! \nSend ${prefix}insta url`);
+            reply(`❌ URL is empty! \nSend ${prefix}fb url`);
             return;
           }
           let urlFb = args[0];
@@ -1091,22 +1104,42 @@ const main = async () => {
 
           try {
             // console.log("Trying saving", urlInsta);
-            let instaObj = await getInstaVideo(urlInsta);
-            let videoDirectLink = instaObj.videoDirectLink;
+            let { imgDirectLink, videoDirectLink } = await getInstaVideo(
+              urlInsta
+            );
             if (videoDirectLink) {
               let randomName = getRandom(".mp4");
               await saveInstaVideo(randomName, videoDirectLink);
-              console.log(`video saved-> ./${randomName}`);
+              let stats = fs.statSync(`./${randomName}`);
+              let fileSizeInBytes = stats.size;
+              // Convert the file size to megabytes (optional)
+              let fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+              console.log("Video downloaded ! Size: " + fileSizeInMegabytes);
 
               //  { caption: "hello there!", mimetype: Mimetype.mp4 }
               // quoted: mek for tagged
+              if (fileSizeInMegabytes <= 30) {
+                await conn.sendMessage(
+                  from,
+                  fs.readFileSync(`./${randomName}`), // can send mp3, mp4, & ogg
+                  MessageType.video,
+                  {
+                    mimetype: Mimetype.mp4,
+                    caption: "*─「 <{PVX}> BOT 」 ─*",
+                    quoted: mek,
+                  }
+                );
+              } else {
+                reply(`❌ File size bigger than 30mb.`);
+              }
+              fs.unlinkSync(`./${randomName}`);
+            } else if (imgDirectLink) {
               await conn.sendMessage(
                 from,
-                fs.readFileSync(`./${randomName}`), // can send mp3, mp4, & ogg
-                MessageType.video,
-                { mimetype: Mimetype.mp4, quoted: mek }
+                { url: imgDirectLink },
+                MessageType.image,
+                { caption: "*─「 <{PVX}> BOT 」 ─*", quoted: mek }
               );
-              fs.unlinkSync(`./${randomName}`);
             } else {
               reply(`❌ There is some problem!`);
             }
