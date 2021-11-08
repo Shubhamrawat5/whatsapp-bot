@@ -39,6 +39,7 @@ module.exports.commandList = (prefix) => {
     
 📛 *${prefix}song name*
     - _Get songs in good quality!_
+    [Better use ${prefix}yta command to download correct song from youtube]
 
 📛 *${prefix}text*
     - _Get text extractor from image!_

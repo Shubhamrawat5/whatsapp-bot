@@ -13,7 +13,7 @@
   "author": "Shubham Rawat",
   "license": "ISC",
   "dependencies": {
-    "@adiwajshing/baileys": "^3.5.2",
+    "@adiwajshing/baileys": "github:adiwajshing/Baileys#pull/804/head",
     "adm-zip": "^0.5.9",
     "async": "^3.2.0",
     "child_process": "^1.0.2",
@@ -25,7 +25,7 @@
     "node-tesseract-ocr": "^2.2.1",
     "pg": "^8.5.1",
     "wa-sticker-formatter": "^3.6.0",
-    "ytdl-core": "^4.9.1"
+    "ytdl-core": "github:fent/node-ytdl-core#pull/1022/head"
   },
   "homepage": "https://github.com/Shubhamrawat5/whatsapp-bot#readme",
   "devDependencies": {},

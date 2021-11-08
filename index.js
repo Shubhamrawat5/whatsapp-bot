@@ -189,17 +189,17 @@ const main = async () => {
     try {
       const groupMetadata = await conn.groupMetadata(anu.jid);
       let groupDesc = groupMetadata.desc;
+      let groupSubject = groupMetadata.subject;
       let blockCommandsInDesc = []; //commands to be blocked
       if (groupDesc) {
         let firstLineDesc = groupDesc.split("\n")[0];
         blockCommandsInDesc = firstLineDesc.split(",");
       }
 
+      let from = anu.jid;
+      let numJid = anu.participants[0];
+      let num_split = `${numJid.split("@s.whatsapp.net")[0]}`;
       if (anu.action == "add") {
-        let from = anu.jid;
-        let numJid = anu.participants[0];
-        let num_split = `${numJid.split("@s.whatsapp.net")[0]}`;
-
         // other than 91 are blocked from joining when description have written in first line -> only91
         if (
           !num_split.startsWith(91) &&
@@ -221,7 +221,10 @@ const main = async () => {
             MessageType.text
           );
         }
-        console.log("Joined: ", numJid);
+        console.log(`[GROUP] ${groupSubject} [JOINED] ${numJid}`);
+      }
+      if (anu.action == "remove") {
+        console.log(`[GROUP] ${groupSubject} [LEAVED] ${numJid}`);
       }
     } catch (err) {
       console.log(err);
@@ -232,7 +235,12 @@ const main = async () => {
   conn.on("chat-update", async (mek) => {
     try {
       if (!mek.hasNewMessage) return;
-      mek = JSON.parse(JSON.stringify(mek)).messages[0];
+      try {
+        mek = JSON.parse(JSON.stringify(mek)).messages[0];
+      } catch {
+        return;
+      }
+      // mek = mek.messages[0];
       if (!mek.message) return;
       if (mek.key && mek.key.remoteJid == "status@broadcast") return;
       // if (mek.key.fromMe) return;
@@ -304,9 +312,8 @@ const main = async () => {
       };
 
       const isGroup = from.endsWith("@g.us");
-      const chat_id = mek.key.remoteJid;
       // console.log(mek);
-      let sender = isGroup ? mek.participant : mek.key.remoteJid;
+      let sender = isGroup ? mek.participant : from;
       if (mek.key.fromMe) sender = botNumberJid;
       const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
       const groupName = isGroup ? groupMetadata.subject : "";
@@ -465,7 +472,20 @@ const main = async () => {
       switch (command) {
         /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
-          reply(commandList(prefix));
+          const resHelp = await conn.sendMessage(
+            from,
+            commandList(prefix),
+            MessageType.text
+          );
+
+          //delete after 5 min
+          setTimeout(async () => {
+            await conn.deleteMessage(from, {
+              id: resHelp.key.id,
+              remoteJid: from,
+              fromMe: true,
+            });
+          }, 1000 * 60 * 5);
           break;
 
         /* ------------------------------- CASE: helpr ------------------------------ */
@@ -576,12 +596,11 @@ const main = async () => {
               botNumberJid ==
               mek.message.extendedTextMessage.contextInfo.participant
             ) {
-              const chatJid = mek.key.remoteJid;
               const chatId =
                 mek.message.extendedTextMessage.contextInfo.stanzaId;
-              await conn.deleteMessage(chatJid, {
+              await conn.deleteMessage(from, {
                 id: chatId,
-                remoteJid: chatJid,
+                remoteJid: from,
                 fromMe: true,
               });
             } else {
@@ -749,7 +768,7 @@ const main = async () => {
             );
             return;
           }
-          votingResult = await getVotingData(chat_id);
+          votingResult = await getVotingData(from);
           if (votingResult.is_started) {
             reply(
               `❌ Voting already going on, Stop by ${prefix}stopvote command`
@@ -775,7 +794,7 @@ const main = async () => {
           for (let i = 0; i < voteChoices.length; ++i) voteListMember.push([]);
 
           await setVotingData(
-            chat_id,
+            from,
             true,
             sender,
             voteTitle,
@@ -784,7 +803,7 @@ const main = async () => {
             voteListMember,
             []
           );
-          votingResult = await getVotingData(chat_id);
+          votingResult = await getVotingData(from);
 
           let voteMsg = `*Voting started!*\nsend "${prefix}vote number" to vote\n\n*🗣️ ${voteTitle}*`;
 
@@ -802,7 +821,7 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          votingResult = await getVotingData(chat_id);
+          votingResult = await getVotingData(from);
           if (!votingResult.is_started) {
             reply(
               `❌ Voting is not started here, Start by \n${prefix}startvote #title #name1 #name2 #name3`
@@ -838,7 +857,7 @@ const main = async () => {
           votingResult.voted_members.push(sender); //member voted
 
           await setVotingData(
-            chat_id,
+            from,
             true,
             votingResult.started_by,
             votingResult.title,
@@ -861,7 +880,7 @@ const main = async () => {
             return;
           }
 
-          votingResult = await getVotingData(chat_id);
+          votingResult = await getVotingData(from);
           if (!votingResult.is_started) {
             reply(
               `❌ Voting is not started here, Start by \n${prefix}startvote #title #name1 #name2 #name3`
@@ -872,7 +891,7 @@ const main = async () => {
           let resultVoteMsg = "";
           if (command === "stopvote") {
             if (votingResult.started_by === sender || isGroupAdmins) {
-              await stopVotingData(chat_id);
+              await stopVotingData(from);
               resultVoteMsg += `*Voting Result:*\n🗣️ ${votingResult.title}`;
             } else {
               reply(
@@ -967,7 +986,7 @@ const main = async () => {
             let response = await downloadSong(randomName, query);
             if (response == "NOT") {
               reply(
-                `❌ Song not found!\nTry to put correct spelling of song along with singer name.`
+                `❌ Song not found!\nTry to put correct spelling of song along with singer name.\n[Better use ${prefix}yta command to download correct song from youtube]`
               );
               return;
             }
@@ -1009,8 +1028,8 @@ const main = async () => {
               filter: (info) =>
                 info.audioBitrate == 160 || info.audioBitrate == 128,
             }).pipe(fs.createWriteStream(`./${randomName}`));
-            console.log("Audio downloading !", urlYt);
-            reply("Downloading.. This may take upto 5 min!");
+            console.log("Audio downloading ->", urlYt);
+            // reply("Downloading.. This may take upto 5 min!");
             await new Promise((resolve, reject) => {
               stream.on("error", reject);
               stream.on("finish", resolve);
@@ -1063,8 +1082,8 @@ const main = async () => {
               filter: (info) => info.itag == 22 || info.itag == 18,
             }).pipe(fs.createWriteStream(`./${randomName}`));
             //22 - 1080p/720p and 18 - 360p
-            console.log("Video downloading !", urlYt);
-            reply("Downloading.. This may take upto 5 min!");
+            console.log("Video downloading ->", urlYt);
+            // reply("Downloading.. This may take upto 5 min!");
             await new Promise((resolve, reject) => {
               stream.on("error", reject);
               stream.on("finish", resolve);
@@ -1159,6 +1178,7 @@ const main = async () => {
           }
 
           try {
+            console.log("Video downloading ->", urlInsta);
             // console.log("Trying saving", urlInsta);
             let { imgDirectLink, videoDirectLink } = await getInstaVideo(
               urlInsta
