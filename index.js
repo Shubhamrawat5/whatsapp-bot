@@ -989,14 +989,68 @@ const main = async () => {
           }
           break;
 
-        /* ------------------------------- CASE: YT ------------------------------ */
-        case "yt":
+        /* ------------------------------- CASE: YTA ------------------------------ */
+        case "yta":
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
           }
           if (args.length === 0) {
-            reply(`❌ URL is empty! \nSend ${prefix}yt url`);
+            reply(`❌ URL is empty! \nSend ${prefix}yta url`);
+            return;
+          }
+          try {
+            let urlYt = args[0];
+            let infoYt = await ytdl.getInfo(urlYt);
+            let titleYt = infoYt.videoDetails.title;
+            let randomName = getRandom(".mp3");
+
+            const stream = ytdl(urlYt, {
+              filter: (info) =>
+                info.audioBitrate == 160 || info.audioBitrate == 128,
+            }).pipe(fs.createWriteStream(`./${randomName}`));
+            console.log("Audio downloading !", urlYt);
+            reply("Downloading.. This may take upto 5 min!");
+            await new Promise((resolve, reject) => {
+              stream.on("error", reject);
+              stream.on("finish", resolve);
+            });
+
+            let stats = fs.statSync(`./${randomName}`);
+            let fileSizeInBytes = stats.size;
+            // Convert the file size to megabytes (optional)
+            let fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+            console.log("Audio downloaded ! Size: " + fileSizeInMegabytes);
+            if (fileSizeInMegabytes <= 30) {
+              await conn.sendMessage(
+                from,
+                fs.readFileSync(randomName),
+                MessageType.document,
+                {
+                  mimetype: "audio/mpeg",
+                  filename: titleYt + ".mp3",
+                  quoted: mek,
+                }
+              );
+            } else {
+              reply(`❌ File size bigger than 30mb.`);
+            }
+
+            fs.unlinkSync(`./${randomName}`);
+          } catch (err) {
+            console.log(err);
+            reply(`❌ There is some problem.`);
+          }
+
+          break;
+        /* ------------------------------- CASE: YT ------------------------------ */
+        case "ytv":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (args.length === 0) {
+            reply(`❌ URL is empty! \nSend ${prefix}ytv url`);
             return;
           }
           try {
@@ -1004,6 +1058,7 @@ const main = async () => {
             let infoYt = await ytdl.getInfo(urlYt);
             let titleYt = infoYt.videoDetails.title;
             let randomName = getRandom(".mp4");
+
             const stream = ytdl(urlYt, {
               filter: (info) => info.itag == 22 || info.itag == 18,
             }).pipe(fs.createWriteStream(`./${randomName}`));
@@ -1377,7 +1432,14 @@ const main = async () => {
               "",
               mediaSteal
             );
-            await conn.sendMessage(from, webpWithMetadata, MessageType.sticker);
+            await conn.sendMessage(
+              from,
+              webpWithMetadata,
+              MessageType.sticker,
+              {
+                quoted: mek,
+              }
+            );
           } catch (err) {
             console.log(err);
             reply("❌ There is some problem!");
@@ -1512,7 +1574,10 @@ const main = async () => {
               await conn.sendMessage(
                 from,
                 webpWithMetadata,
-                MessageType.sticker
+                MessageType.sticker,
+                {
+                  quoted: mek,
+                }
               );
               fs.unlinkSync(media);
               fs.unlinkSync(ran);

@@ -31,8 +31,11 @@ module.exports.commandList = (prefix) => {
     - _Instagram videos downloader!_
     Alias: *${prefix}i url*
 
-📛 *${prefix}yt url*
+📛 *${prefix}ytv url*
     - _Youtube videos downloader!_
+    
+📛 *${prefix}yta url*
+    - _Youtube audio downloader!_
     
 📛 *${prefix}song name*
     - _Get songs in good quality!_
