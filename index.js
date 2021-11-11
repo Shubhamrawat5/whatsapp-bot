@@ -134,6 +134,7 @@ const { button } = require("./functions/button");
 const { commandList } = require("./functions/list");
 const { commandListOwner } = require("./functions/listOwner");
 const { countToday } = require("./DB/countDB");
+const { addDonation, getDonation } = require("./DB/donationDB");
 const { dropAuth } = require("./DB/dropauthDB");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
@@ -240,7 +241,6 @@ const main = async () => {
       } catch {
         return;
       }
-      // mek = mek.messages[0];
       if (!mek.message) return;
       if (mek.key && mek.key.remoteJid == "status@broadcast") return;
       // if (mek.key.fromMe) return;
@@ -285,6 +285,31 @@ const main = async () => {
       const command = body.slice(1).trim().split(/ +/).shift().toLowerCase();
       const args = body.trim().split(/ +/).slice(1);
       const isCmd = body.startsWith(prefix);
+
+      //send all sticker message to given group
+      // if (
+      //   mek.message.stickerMessage &&
+      //   mek.key.fromMe == false &&
+      //   from.endsWith("@g.us")
+      // ) {
+      //   console.log(mek);
+      //   const mediaSticker = await conn.downloadAndSaveMediaMessage({
+      //     message: mek.message,
+      //   });
+      //   const webpWithMetadataSticker = await WSF.setMetadata(
+      //     "<{PVX}> BOT 🤖",
+      //     "",
+      //     mediaSticker
+      //   );
+      //   //sticker 1.0 -> "919557666582-1580308963@g.us"
+      //   await conn.sendMessage(
+      //     "919557666582-1628610549@g.us",
+      //     webpWithMetadataSticker,
+      //     MessageType.sticker
+      //   );
+      //   console.log("Sticker Sent!");
+      // }
+
       if (!isCmd) return;
 
       /* [INFO] 
@@ -479,18 +504,67 @@ const main = async () => {
           );
 
           //delete after 5 min
-          setTimeout(async () => {
-            await conn.deleteMessage(from, {
-              id: resHelp.key.id,
-              remoteJid: from,
-              fromMe: true,
-            });
-          }, 1000 * 60 * 5);
+          // setTimeout(async () => {
+          //   await conn.deleteMessage(from, {
+          //     id: resHelp.key.id,
+          //     remoteJid: from,
+          //     fromMe: true,
+          //   });
+          // }, 1000 * 60 * 5);
           break;
 
         /* ------------------------------- CASE: helpr ------------------------------ */
         case "helpr":
           reply(commandListOwner(prefix));
+          break;
+
+        /* ------------------------------- CASE: donationadd ------------------------------ */
+        // !donationadd #name #amount
+        case "donationadd":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Owner only command!`);
+            return;
+          }
+          let donaList = body
+            .trim()
+            .replace(/ +/, ",")
+            .split(",")[1]
+            .split("#");
+          let donaName = donaList[1].trim();
+          let donaAmount = Number(donaList[2].trim());
+          if (donaName && donaAmount) {
+            let addDonaRes = await addDonation(donaName, donaAmount);
+            if (addDonaRes) reply("✔️ Added!");
+            else reply("❌ Error!");
+          } else reply(`❌ Error! Add by ${prefix}adddonation #name #amount`);
+          break;
+
+        /* ------------------------------ CASE: DONATION ------------------------------ */
+        case "donation":
+        case "donate":
+          let donaResult = await getDonation();
+          // console.log(donaResult);
+          let totalDona = 0;
+          let donaMsgTemp = "";
+          donaResult.forEach((dona, index) => {
+            totalDona += dona.amount;
+            donaMsgTemp += `\n❤️ Rs ${dona.amount} - ${dona.name}`;
+          });
+
+          let donaMsg = `Helping PVX COMMUNITY to grow and provide good stuff for all members.\nIt'll be used to buy new domain name for PVX website, for tournaments in futute, for maybe buy a server for all bots and website, etc etc.\n\n*Any amount is appreciated.*\n\nUPI: shubhamraw123@okhdfcbank\n\nAfter sending donation, take a screenshot and send to https://wa.me/919557666582 with your name. [Your name will be shown here after that]\n\n*Total Donations: Rs ${totalDona}*`;
+
+          donaMsg += donaMsgTemp;
+          conn.sendMessage(
+            from,
+            fs.readFileSync("./assert/donation.jpg"),
+            MessageType.image,
+            {
+              mimetype: Mimetype.png,
+              quoted: mek,
+              caption: donaMsg,
+              detectLinks: false,
+            }
+          );
           break;
 
         /* ------------------------------- CASE: PVXSTATS ------------------------------ */

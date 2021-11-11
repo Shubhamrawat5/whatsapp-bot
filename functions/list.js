@@ -1,6 +1,6 @@
-module.exports.commandList = (prefix) => {
+﻿module.exports.commandList = (prefix) => {
   return `*─「 🔥 <{PVX}> BOT 🔥 」─*
-  
+
 📛 *${prefix}sticker*
     - _Create sticker from media!_
     Alias: *${prefix}s*
@@ -11,6 +11,19 @@ module.exports.commandList = (prefix) => {
 
 📛 *${prefix}toimg*
     - _Create image from sticker!_
+
+📛 *${prefix}insta url*
+    - _Instagram videos downloader!_
+    Alias: *${prefix}i url*
+
+📛 *${prefix}donation*
+    - _Get donation details and help PVX community!_
+    
+📛 *${prefix}ytv url*
+    - _Youtube videos downloader!_
+
+📛 *${prefix}yta url*
+    - _Youtube audio downloader!_
 
 📛 *${prefix}add <phone number>*
     - _Add new member!_
@@ -26,17 +39,7 @@ module.exports.commandList = (prefix) => {
 📛 *${prefix}delete*
     - _Delete message of bot!_
     Alias: *${prefix}d*
-    
-📛 *${prefix}insta url*
-    - _Instagram videos downloader!_
-    Alias: *${prefix}i url*
 
-📛 *${prefix}ytv url*
-    - _Youtube videos downloader!_
-    
-📛 *${prefix}yta url*
-    - _Youtube audio downloader!_
-    
 📛 *${prefix}song name*
     - _Get songs in good quality!_
     [Better use ${prefix}yta command to download correct song from youtube]

@@ -22,5 +22,8 @@ module.exports.commandListOwner = (prefix) => {
       - _Make TG to WA stickers!_
   
   📛 *${prefix}stg*
-      - _Stop TG to WA stickers!_`;
+      - _Stop TG to WA stickers!_
+
+  📛 *${prefix}donationadd*
+      - _add by giving after command #name #amount!_`;
 };

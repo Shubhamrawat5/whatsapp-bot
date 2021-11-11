@@ -76,6 +76,7 @@ Now Bot will start working!!
 |      `!vote`      |             Vote for a choice             |         |
 |   `!checkvote`    |      Check status of current voting       |   !cv   |
 |    `!stotvote`    |        Stop voting and see result         |         |
+|    `!donation`    |           Get Donation details            |         |
 |     `!source`     |            Get the bot source             |         |
 |      `!dev`       |          Get the contact of dev           |         |
 
