@@ -538,6 +538,17 @@ const main = async () => {
           break;
 
         /* ------------------------------- CASE: blacklist ------------------------------ */
+        case "blacklist":
+          let blacklistRes = await getBlacklist();
+          let blacklistMsg = "Blacklist Numbers\n";
+          blacklistRes.forEach((num) => {
+            blacklistMsg += `\n${num.number}`;
+          });
+
+          reply(blacklistMsg);
+          break;
+
+        /* ------------------------------- CASE: blacklistremove ------------------------------ */
         case "blacklistremove":
         case "blr":
           if (myNumber + "@s.whatsapp.net" !== sender) {
@@ -547,7 +558,9 @@ const main = async () => {
 
           let blacklistNumb1 = args[0];
           if (!Number(blacklistNumb1)) {
-            reply(`❌ Give number to add in blacklist!`);
+            reply(
+              `❌ Give number to remove from blacklist by ${prefix}blr number!`
+            );
             return;
           }
 
@@ -563,7 +576,7 @@ const main = async () => {
           else reply("❌ Error!");
           break;
 
-        /* ------------------------------- CASE: blacklist ------------------------------ */
+        /* ------------------------------- CASE: blacklistadd ------------------------------ */
         case "blacklistadd":
         case "bla":
           if (myNumber + "@s.whatsapp.net" !== sender) {
@@ -573,7 +586,7 @@ const main = async () => {
 
           let blacklistNumb2 = args[0];
           if (!Number(blacklistNumb2)) {
-            reply(`❌ Give number to add in blacklist!`);
+            reply(`❌ Give number to add in blacklist by ${prefix}bla number!`);
             return;
           }
 
@@ -609,6 +622,7 @@ const main = async () => {
             if (addDonaRes) reply("✔️ Added!");
             else reply("❌ Error!");
           } else reply(`❌ Error! Add by ${prefix}adddonation #name #amount`);
+
           break;
 
         /* ------------------------------ CASE: DONATION ------------------------------ */

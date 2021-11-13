@@ -82,16 +82,19 @@ Now Bot will start working!!
 
 <hr>
 
-| Owner Commands |             Description             | Alias |
-| :------------: | :---------------------------------: | :---: |
-|    `!helpr`    |     Display restricted commands     |       |
-|    `!test`     | execute code with whatsapp directly |       |
-|   `!tagall`    |      Tag all members in group       |       |
-|  `!pvxstats`   |       Get stats of PVX groups       |       |
-| `!groupbackup` |       Take group backup in DB       |       |
-| `!deleteauth`  |  Delete auth DB to get new qr scan  |       |
-|     `!tg`      |       Make TG to WA stickers        |       |
-|     `!stg`     |       Stop TG to WA stickers        |       |
+|   Owner Commands   |             Description             | Alias |
+| :----------------: | :---------------------------------: | :---: |
+|      `!helpr`      |     Display restricted commands     |       |
+|      `!test`       | execute code with whatsapp directly |       |
+|     `!tagall`      |      Tag all members in group       |       |
+|    `!pvxstats`     |       Get stats of PVX groups       |       |
+|   `!groupbackup`   |       Take group backup in DB       |       |
+|   `!deleteauth`    |  Delete auth DB to get new qr scan  |       |
+|       `!tg`        |       Make TG to WA stickers        |       |
+|       `!stg`       |       Stop TG to WA stickers        |       |
+|    `!blacklist`    |        Get blacklist numbers        |       |
+|  `!blacklistadd`   |       Add number to blacklist       | !bla  |
+| `!blacklistremove` |    Remove number from blacklist     | !blr  |
 
 - CRICKET SCORES:
 

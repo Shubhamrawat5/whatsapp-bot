@@ -18,6 +18,17 @@ module.exports.commandListOwner = (prefix) => {
   📛 *${prefix}groupbackup*
       - _Take backup of group in DB!_  
       
+  📛 *${prefix}blacklist*
+      - _Get blacklist numbers!_  
+
+  📛 *${prefix}blacklistadd*
+      - _Add number to blacklist!_
+      Alias: *${prefix}bla*
+
+  📛 *${prefix}blacklistremove*
+      - Remove number from blacklist!_  
+      Alias: *${prefix}blr*
+      
   📛 *${prefix}tg*
       - _Make TG to WA stickers!_
   
