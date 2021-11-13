@@ -134,6 +134,11 @@ const { button } = require("./functions/button");
 const { commandList } = require("./functions/list");
 const { commandListOwner } = require("./functions/listOwner");
 const { countToday } = require("./DB/countDB");
+const {
+  addBlacklist,
+  removeBlacklist,
+  getBlacklist,
+} = require("./DB/blacklistDB");
 const { addDonation, getDonation } = require("./DB/donationDB");
 const { dropAuth } = require("./DB/dropauthDB");
 const { getNews } = require("./functions/news");
@@ -196,10 +201,15 @@ const main = async () => {
         let firstLineDesc = groupDesc.split("\n")[0];
         blockCommandsInDesc = firstLineDesc.split(",");
       }
+      let blacklistRes = await getBlacklist();
+      blacklistRes = blacklistRes.map((num) => num.number);
+      // console.log(blacklistRes);
 
       let from = anu.jid;
       let numJid = anu.participants[0];
       let num_split = `${numJid.split("@s.whatsapp.net")[0]}`;
+      console.log(num_split);
+
       if (anu.action == "add") {
         // other than 91 are blocked from joining when description have written in first line -> only91
         if (
@@ -209,6 +219,15 @@ const main = async () => {
           conn.sendMessage(
             from,
             `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nOnly 91 numbers are allowed !!!!`,
+            MessageType.text
+          );
+          conn.groupRemove(from, anu.participants);
+        }
+
+        if (blacklistRes.includes(num_split)) {
+          conn.sendMessage(
+            from,
+            `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nNumber is blacklisted !!!!`,
             MessageType.text
           );
           conn.groupRemove(from, anu.participants);
@@ -516,6 +535,59 @@ const main = async () => {
         /* ------------------------------- CASE: helpr ------------------------------ */
         case "helpr":
           reply(commandListOwner(prefix));
+          break;
+
+        /* ------------------------------- CASE: blacklist ------------------------------ */
+        case "blacklistremove":
+        case "blr":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Owner only command!`);
+            return;
+          }
+
+          let blacklistNumb1 = args[0];
+          if (!Number(blacklistNumb1)) {
+            reply(`❌ Give number to add in blacklist!`);
+            return;
+          }
+
+          if (
+            blacklistNumb1.length === 10 &&
+            !blacklistNumb1.startsWith("91")
+          ) {
+            blacklistNumb1 = "91" + blacklistNumb1;
+          }
+
+          let blacklistRes1 = await removeBlacklist(blacklistNumb1);
+          if (blacklistRes1) reply("✔️ Removed from blacklist!");
+          else reply("❌ Error!");
+          break;
+
+        /* ------------------------------- CASE: blacklist ------------------------------ */
+        case "blacklistadd":
+        case "bla":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Owner only command!`);
+            return;
+          }
+
+          let blacklistNumb2 = args[0];
+          if (!Number(blacklistNumb2)) {
+            reply(`❌ Give number to add in blacklist!`);
+            return;
+          }
+
+          if (
+            blacklistNumb2.length === 10 &&
+            !blacklistNumb2.startsWith("91")
+          ) {
+            blacklistNumb2 = "91" + blacklistNumb2;
+          }
+
+          let blacklistRes2 = await addBlacklist(blacklistNumb2);
+          if (blacklistRes2) reply("✔️ Added to blacklist!");
+          else reply("❌ Error!");
+
           break;
 
         /* ------------------------------- CASE: donationadd ------------------------------ */
