@@ -540,7 +540,7 @@ const main = async () => {
         /* ------------------------------- CASE: blacklist ------------------------------ */
         case "blacklist":
           let blacklistRes = await getBlacklist();
-          let blacklistMsg = "Blacklist Numbers\n";
+          let blacklistMsg = "Blacklisted Numbers\n";
           blacklistRes.forEach((num) => {
             blacklistMsg += `\n${num.number}`;
           });
@@ -632,12 +632,13 @@ const main = async () => {
           // console.log(donaResult);
           let totalDona = 0;
           let donaMsgTemp = "";
+          donaResult = donaResult.sort((x, y) => y.amount - x.amount);
           donaResult.forEach((dona, index) => {
             totalDona += dona.amount;
             donaMsgTemp += `\n❤️ Rs ${dona.amount} - ${dona.name}`;
           });
 
-          let donaMsg = `Helping PVX COMMUNITY to grow and provide good stuff for all members.\nIt'll be used to buy new domain name for PVX website, for tournaments in futute, for maybe buy a server for all bots and website, etc etc.\n\n*Any amount is appreciated.*\n\nUPI: shubhamraw123@okhdfcbank\n\nAfter sending donation, take a screenshot and send to https://wa.me/919557666582 with your name. [Your name will be shown here after that]\n\n*Total Donations: Rs ${totalDona}*`;
+          let donaMsg = `Helping PVX COMMUNITY to grow and provide good stuff for all members.\nUse cases: buy new domain name for PVX website, for tournaments in future, for maybe buy a server for all bots and website, etc etc.\n\n*Any amount is appreciated.*\n\nUPI: shubhamraw123@okhdfcbank\n\nAfter sending donation, take a screenshot and send to https://wa.me/919557666582 with your name. [Your name will be shown here after that]\n\n*Total Donations: Rs ${totalDona}*`;
 
           donaMsg += donaMsgTemp;
           conn.sendMessage(
