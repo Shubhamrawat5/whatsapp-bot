@@ -182,13 +182,69 @@ const getRandom = (text) => {
   return `${Math.floor(Math.random() * 10000)}${text}`;
 };
 
-//MAIN FUNCTION
+/* ------------------------------ MAIN FUNCTION ----------------------------- */
 const main = async () => {
   const { connectToWA } = clientId
     ? require("./DB/localdatabase")
     : require("./DB/authDB");
   const conn = await connectToWA(WAConnection);
   let botNumberJid = conn.user.jid;
+
+  /* -------------------------------- BIRTHDAY -------------------------------- */
+  let usedDate = new Date()
+    .toLocaleString("en-GB", { timeZone: "Asia/kolkata" })
+    .split(",")[0];
+
+  const checkTodayBday = async (todayDate) => {
+    console.log("CHECKING TODAY BDAY...", todayDate);
+    todayDate = todayDate.split("/");
+    let d = todayDate[0];
+    d = d.startsWith("0") ? d[1] : d;
+    let m = todayDate[1];
+    m = m.startsWith("0") ? m[1] : m;
+    let url = "https://pvxgroup.herokuapp.com/api/bday";
+    let { data } = await axios.get(url);
+    let bday = [];
+    let pvxcommunity = "919557666582-1467533860@g.us";
+
+    data.data.forEach((member) => {
+      if (member.month == m && member.date == d) {
+        bday.push(
+          `${member.name.toUpperCase()} (${member.username.toUpperCase()})`
+        );
+        console.log(`Today is ${member.name} Birthday!`);
+      }
+    });
+    if (bday.length) {
+      let bdayComb = bday.join(" & ");
+      conn.sendMessage(
+        pvxcommunity,
+        `Today is ${bdayComb} Birthday 🍰 🎉🎉`,
+        MessageType.text
+      );
+    } else {
+      console.log("NO BIRTHDAY!");
+      await conn.groupUpdateSubject(pvxcommunity, "<{PVX}> COMMUNITY ❤️");
+      conn.sendMessage(
+        pvxcommunity,
+        `There is no Birthday today!`,
+        MessageType.text
+      );
+    }
+  };
+
+  setInterval(() => {
+    console.log("SET INTERVAL FOR BIRTHDAY.");
+    let todayDate = "07/07/2021";
+    // new Date().toLocaleDateString("en-GB", {
+    //   timeZone: "Asia/kolkata",
+    // });
+
+    if (usedDate !== todayDate) {
+      usedDate = todayDate;
+      checkTodayBday(todayDate);
+    }
+  }, 1000 * 60 * 1); //10 min
 
   // member left or join
   conn.on("group-participants-update", async (anu) => {
@@ -208,7 +264,6 @@ const main = async () => {
       let from = anu.jid;
       let numJid = anu.participants[0];
       let num_split = `${numJid.split("@s.whatsapp.net")[0]}`;
-      console.log(num_split);
 
       if (anu.action == "add") {
         // other than 91 are blocked from joining when description have written in first line -> only91
