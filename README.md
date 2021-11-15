@@ -90,6 +90,7 @@ Now Bot will start working!!
 |    `!pvxstats`     |       Get stats of PVX groups       |       |
 |   `!groupbackup`   |       Take group backup in DB       |       |
 |   `!deleteauth`    |  Delete auth DB to get new qr scan  |       |
+|      `!count`      | Get stats of number of command used |       |
 |       `!tg`        |       Make TG to WA stickers        |       |
 |       `!stg`       |       Stop TG to WA stickers        |       |
 |    `!blacklist`    |        Get blacklist numbers        |       |

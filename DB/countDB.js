@@ -16,6 +16,16 @@ const createCountTable = async () => {
   );
 };
 
+module.exports.getcount = async () => {
+  await createCountTable();
+  let result = await pool.query("select * from count;");
+  if (result.rowCount) {
+    return result.rows;
+  } else {
+    return [];
+  }
+};
+
 module.exports.countToday = async () => {
   let todayDate = new Date()
     .toLocaleString("en-GB", { timeZone: "Asia/kolkata" })

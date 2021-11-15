@@ -18,6 +18,9 @@ module.exports.commandListOwner = (prefix) => {
   📛 *${prefix}groupbackup*
       - _Take backup of group in DB!_  
       
+  📛 *${prefix}count*
+      - _Get stats of number of command used!_  
+      
   📛 *${prefix}blacklist*
       - _Get blacklist numbers!_  
 

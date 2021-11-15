@@ -133,7 +133,7 @@ const { getScoreCard } = require("./functions/cricketScoreCard");
 const { button } = require("./functions/button");
 const { commandList } = require("./functions/list");
 const { commandListOwner } = require("./functions/listOwner");
-const { countToday } = require("./DB/countDB");
+const { countToday, getcount } = require("./DB/countDB");
 const {
   addBlacklist,
   removeBlacklist,
@@ -593,6 +593,21 @@ const main = async () => {
         /* ------------------------------- CASE: helpr ------------------------------ */
         case "helpr":
           reply(commandListOwner(prefix));
+          break;
+
+        /* ------------------------------- CASE: count ------------------------------ */
+        case "count":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Owner only command!`);
+            return;
+          }
+          let countRes = await getcount();
+          let countMsg = "COMMAND USED STATS:\n";
+
+          countRes.forEach((r) => {
+            countMsg += `\n${r.date} ${r.times} times`;
+          });
+          reply(countMsg);
           break;
 
         /* ------------------------------- CASE: blacklist ------------------------------ */
