@@ -235,16 +235,15 @@ const main = async () => {
 
   setInterval(() => {
     console.log("SET INTERVAL FOR BIRTHDAY.");
-    let todayDate = "07/07/2021";
-    // new Date().toLocaleDateString("en-GB", {
-    //   timeZone: "Asia/kolkata",
-    // });
+    let todayDate = new Date().toLocaleDateString("en-GB", {
+      timeZone: "Asia/kolkata",
+    });
 
     if (usedDate !== todayDate) {
       usedDate = todayDate;
       checkTodayBday(todayDate);
     }
-  }, 1000 * 60 * 1); //10 min
+  }, 1000 * 60 * 15); //15 min
 
   // member left or join
   conn.on("group-participants-update", async (anu) => {
@@ -564,6 +563,10 @@ const main = async () => {
         return;
       }
 
+      let pvxadminjid = "919557666582-1498394056@g.us";
+      let pvxadminsGroup = await conn.groupMetadata(pvxadminjid);
+      let pvxadminsMem = pvxadminsGroup.participants.map((mem) => mem.jid);
+
       /* ------------------------------------ - ----------------------------------- */
       /* -------------------------------- COMMANDS -------------------------------- */
       /* ------------------------------------ - ----------------------------------- */
@@ -606,8 +609,8 @@ const main = async () => {
         /* ------------------------------- CASE: blacklistremove ------------------------------ */
         case "blacklistremove":
         case "blr":
-          if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Owner only command!`);
+          if (!pvxadminsMem.includes(sender)) {
+            reply(`❌ PVX admin only command!`);
             return;
           }
 
@@ -618,7 +621,9 @@ const main = async () => {
             );
             return;
           }
-
+          if (blacklistNumb1.startsWith("+")) {
+            blacklistNumb2 = blacklistNumb1.slice(1);
+          }
           if (
             blacklistNumb1.length === 10 &&
             !blacklistNumb1.startsWith("91")
@@ -634,8 +639,8 @@ const main = async () => {
         /* ------------------------------- CASE: blacklistadd ------------------------------ */
         case "blacklistadd":
         case "bla":
-          if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Owner only command!`);
+          if (!pvxadminsMem.includes(sender)) {
+            reply(`❌ PVX admin only command!`);
             return;
           }
 
@@ -643,6 +648,9 @@ const main = async () => {
           if (!Number(blacklistNumb2)) {
             reply(`❌ Give number to add in blacklist by ${prefix}bla number!`);
             return;
+          }
+          if (blacklistNumb2.startsWith("+")) {
+            blacklistNumb2 = blacklistNumb2.slice(1);
           }
 
           if (
@@ -711,8 +719,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: PVXSTATS ------------------------------ */
         case "pvxstats":
-          if (myNumber + "@s.whatsapp.net" !== sender) {
-            reply(`❌ Owner only command for avoiding spam!`);
+          if (!pvxadminsMem.includes(sender)) {
+            reply(`❌ PVX admin only command!`);
             return;
           }
           let groups = conn.chats
@@ -734,15 +742,25 @@ const main = async () => {
           let totalMem = 0;
           let uniqueMem = new Set();
           let temppvxMsg = "";
+          let temppvxList = [];
           for (let group of groups) {
             const mdpvx = await conn.groupMetadata(group.jid);
             // console.log(mdpvx);
             totalMem += mdpvx.participants.length;
-            temppvxMsg += `\n\n*${mdpvx.subject}*\nMembers: ${mdpvx.participants.length}`;
+            temppvxList.push({
+              subject: mdpvx.subject,
+              count: mdpvx.participants.length,
+            });
+
             for (let parti of mdpvx.participants) {
               uniqueMem.add(parti.jid);
             }
           }
+          temppvxList = temppvxList.sort((x, y) => y.count - x.count); //sort
+
+          temppvxList.forEach((grp) => {
+            temppvxMsg += `\n\n*${grp.subject}*\nMembers: ${grp.count}`;
+          });
 
           pvxMsg += `\nTotal Groups: ${groups.length}\nTotal Members: ${totalMem}\nUnique Members: ${uniqueMem.size}`;
           pvxMsg += temppvxMsg;
