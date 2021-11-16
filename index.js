@@ -228,17 +228,17 @@ const main = async () => {
       let bdayComb = bday.join(" & ");
       conn.sendMessage(
         pvxcommunity,
-        `Today is ${bdayComb} Birthday 🍰 🎉🎉`,
+        `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nToday is ${bdayComb} Birthday 🍰 🎉🎉`,
         MessageType.text
       );
     } else {
       console.log("NO BIRTHDAY!");
-      await conn.groupUpdateSubject(pvxcommunity, "<{PVX}> COMMUNITY ❤️");
       conn.sendMessage(
         pvxcommunity,
-        `There is no Birthday today!`,
+        `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nThere is no Birthday today!`,
         MessageType.text
       );
+      await conn.groupUpdateSubject(pvxcommunity, "<{PVX}> COMMUNITY ❤️");
     }
   };
 
@@ -286,15 +286,10 @@ const main = async () => {
     }
     console.log(`STUDY NEWS FUNCTION ${count} times!`);
     let feed;
-    let random = Math.floor(Math.random() * 2);
-    if (random === 0)
-      feed = await parser.parseURL(
-        "https://news.google.com/rss/topics/CAAqKggKIiRDQkFTRlFvSUwyMHZNRGx6TVdZU0JXVnVMVWRDR2dKSlRpZ0FQAQ?hl=en-IN&gl=IN&ceid=IN%3Aen"
-      );
-    else
-      feed = await parser.parseURL(
-        "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
-      );
+    // let random = Math.floor(Math.random() * 2);
+    feed = await parser.parseURL(
+      "https://www.thehindu.com/news/national/feeder/default.rss"
+    );
 
     let li = feed.items.map((item) => {
       return { title: item.title, link: item.link };
@@ -307,14 +302,9 @@ const main = async () => {
     let techRes = await storeNewsStudy(news.title);
     if (techRes) {
       console.log("NEW STUDY NEWS!");
-      conn.sendMessage(
-        pvxstudy,
-        `📰 ${news.title}\n\nLINK: ${news.link}`,
-        MessageType.text,
-        {
-          detectLinks: false,
-        }
-      );
+      conn.sendMessage(pvxstudy, `📰 ${news.title}`, MessageType.text, {
+        detectLinks: false,
+      });
     } else {
       console.log("OLD STUDY NEWS!");
       postStudyInfo(count + 1);
@@ -1371,6 +1361,10 @@ const main = async () => {
           try {
             let urlYt = args[0];
             let infoYt = await ytdl.getInfo(urlYt);
+            if (infoYt.videoDetails.lengthSeconds >= 2400) {
+              reply(`❌ Video too big!`);
+              return;
+            }
             let titleYt = infoYt.videoDetails.title;
             let randomName = getRandom(".mp3");
 
@@ -1390,7 +1384,7 @@ const main = async () => {
             // Convert the file size to megabytes (optional)
             let fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
             console.log("Audio downloaded ! Size: " + fileSizeInMegabytes);
-            if (fileSizeInMegabytes <= 30) {
+            if (fileSizeInMegabytes <= 40) {
               await conn.sendMessage(
                 from,
                 fs.readFileSync(randomName),
@@ -1425,6 +1419,11 @@ const main = async () => {
           try {
             let urlYt = args[0];
             let infoYt = await ytdl.getInfo(urlYt);
+            //40 MIN
+            if (infoYt.videoDetails.lengthSeconds >= 2400) {
+              reply(`❌ Video too big!`);
+              return;
+            }
             let titleYt = infoYt.videoDetails.title;
             let randomName = getRandom(".mp4");
 
@@ -1444,7 +1443,7 @@ const main = async () => {
             // Convert the file size to megabytes (optional)
             let fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
             console.log("Video downloaded ! Size: " + fileSizeInMegabytes);
-            if (fileSizeInMegabytes <= 30) {
+            if (fileSizeInMegabytes <= 40) {
               await conn.sendMessage(
                 from,
                 fs.readFileSync(`./${randomName}`),
