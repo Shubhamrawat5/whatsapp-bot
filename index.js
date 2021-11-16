@@ -141,6 +141,7 @@ const {
 } = require("./DB/blacklistDB");
 const { addDonation, getDonation } = require("./DB/donationDB");
 const { dropAuth } = require("./DB/dropauthDB");
+const { storeNews } = require("./DB/techDB");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
 const { getFbVideo } = require("./functions/fb");
@@ -237,6 +238,7 @@ const main = async () => {
   };
 
   const postNews = async () => {
+    console.log("NEWS POST");
     let url = "https://news-pvx.herokuapp.com/";
     let { data } = await axios.get(url);
     delete data.about;
@@ -252,11 +254,19 @@ const main = async () => {
       "techcrunch",
       "engadget",
     ];
+
     let randomWeb = newsWeb[Math.floor(Math.random() * newsWeb.length)]; //random website
     let index = Math.floor(Math.random() * data[randomWeb].length);
 
     let news = data[randomWeb][index];
-    conn.sendMessage(pvxtech, `📰 ${news}`, MessageType.text);
+    let techRes = await storeNews(news);
+    if (techRes) {
+      console.log("NEW NEWS!");
+      conn.sendMessage(pvxtech, `📰 ${news}`, MessageType.text);
+    } else {
+      console.log("OLD NEWS!");
+      postNews();
+    }
   };
 
   setInterval(() => {
