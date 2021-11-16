@@ -16,7 +16,7 @@ const createTechTable = async () => {
   );
 };
 
-module.exports.storeNews = async (news) => {
+module.exports.storeNewsTech = async (news) => {
   try {
     await createTechTable();
     await pool.query("INSERT INTO technews VALUES($1);", [news]);

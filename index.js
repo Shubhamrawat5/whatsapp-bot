@@ -141,7 +141,8 @@ const {
 } = require("./DB/blacklistDB");
 const { addDonation, getDonation } = require("./DB/donationDB");
 const { dropAuth } = require("./DB/dropauthDB");
-const { storeNews } = require("./DB/techDB");
+const { storeNewsTech } = require("./DB/postTechDB");
+const { storeNewsStudy } = require("./DB/postStudyDB");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
 const { getFbVideo } = require("./functions/fb");
@@ -153,6 +154,9 @@ const {
   setVotingData,
   stopVotingData,
 } = require("./DB/VotingDB");
+
+let Parser = require("rss-parser");
+let parser = new Parser();
 
 const ytdl = require("ytdl-core");
 const AdmZip = require("adm-zip");
@@ -186,6 +190,7 @@ const getRandom = (text) => {
 let pvxcommunity = "919557666582-1467533860@g.us";
 let pvxadmin = "919557666582-1498394056@g.us";
 let pvxtech = "919557666582-1551290369@g.us";
+let pvxstudy = "919557666582-1617595892@g.us";
 
 /* ------------------------------ MAIN FUNCTION ----------------------------- */
 const main = async () => {
@@ -237,8 +242,13 @@ const main = async () => {
     }
   };
 
-  const postNews = async () => {
-    console.log("NEWS POST");
+  const postTechNews = async (count) => {
+    if (count > 20) {
+      //20 times already posted news came
+      return;
+    }
+    console.log(`TECH NEWS FUNCTION ${count} times!`);
+
     let url = "https://news-pvx.herokuapp.com/";
     let { data } = await axios.get(url);
     delete data.about;
@@ -259,19 +269,73 @@ const main = async () => {
     let index = Math.floor(Math.random() * data[randomWeb].length);
 
     let news = data[randomWeb][index];
-    let techRes = await storeNews(news);
+    let techRes = await storeNewsTech(news);
     if (techRes) {
-      console.log("NEW NEWS!");
+      console.log("NEW TECH NEWS!");
       conn.sendMessage(pvxtech, `📰 ${news}`, MessageType.text);
     } else {
-      console.log("OLD NEWS!");
-      postNews();
+      console.log("OLD TECH NEWS!");
+      postTechNews(count + 1);
+    }
+  };
+
+  const postStudyInfo = async (count) => {
+    if (count > 20) {
+      //20 times already posted news came
+      return;
+    }
+    console.log(`STUDY NEWS FUNCTION ${count} times!`);
+    let feed;
+    let random = Math.floor(Math.random() * 2);
+    if (random === 0)
+      feed = await parser.parseURL(
+        "https://news.google.com/rss/topics/CAAqKggKIiRDQkFTRlFvSUwyMHZNRGx6TVdZU0JXVnVMVWRDR2dKSlRpZ0FQAQ?hl=en-IN&gl=IN&ceid=IN%3Aen"
+      );
+    else
+      feed = await parser.parseURL(
+        "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
+      );
+
+    let li = feed.items.map((item) => {
+      return { title: item.title, link: item.link };
+    });
+
+    let index = Math.floor(Math.random() * li.length);
+
+    let news = li[index];
+
+    let techRes = await storeNewsStudy(news.title);
+    if (techRes) {
+      console.log("NEW STUDY NEWS!");
+      conn.sendMessage(
+        pvxstudy,
+        `📰 ${news.title}\n\nLINK: ${news.link}`,
+        MessageType.text,
+        {
+          detectLinks: false,
+        }
+      );
+    } else {
+      console.log("OLD STUDY NEWS!");
+      postStudyInfo(count + 1);
     }
   };
 
   setInterval(() => {
     console.log("SET INTERVAL.");
-    postNews();
+
+    let hour = Number(
+      new Date()
+        .toLocaleTimeString("en-GB", {
+          timeZone: "Asia/kolkata",
+        })
+        .split(":")[0]
+    );
+    //8 to 24 ON
+    if (hour >= 8) {
+      postTechNews(0);
+      postStudyInfo(0);
+    }
 
     let todayDate = new Date().toLocaleDateString("en-GB", {
       timeZone: "Asia/kolkata",
