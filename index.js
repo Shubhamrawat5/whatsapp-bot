@@ -182,6 +182,10 @@ const getRandom = (text) => {
   return `${Math.floor(Math.random() * 10000)}${text}`;
 };
 
+let pvxcommunity = "919557666582-1467533860@g.us";
+let pvxadmin = "919557666582-1498394056@g.us";
+let pvxtech = "919557666582-1551290369@g.us";
+
 /* ------------------------------ MAIN FUNCTION ----------------------------- */
 const main = async () => {
   const { connectToWA } = clientId
@@ -205,7 +209,6 @@ const main = async () => {
     let url = "https://pvxgroup.herokuapp.com/api/bday";
     let { data } = await axios.get(url);
     let bday = [];
-    let pvxcommunity = "919557666582-1467533860@g.us";
 
     data.data.forEach((member) => {
       if (member.month == m && member.date == d) {
@@ -233,8 +236,33 @@ const main = async () => {
     }
   };
 
+  const postNews = async () => {
+    let url = "https://news-pvx.herokuapp.com/";
+    let { data } = await axios.get(url);
+    delete data.about;
+
+    let newsWeb = [
+      "gadgets-ndtv",
+      "gadgets-now",
+      "xda-developers",
+      "inshorts",
+      "beebom",
+      "india",
+      "mobile-reuters",
+      "techcrunch",
+      "engadget",
+    ];
+    let randomWeb = newsWeb[Math.floor(Math.random() * newsWeb.length)]; //random website
+    let index = Math.floor(Math.random() * data[randomWeb].length);
+
+    let news = data[randomWeb][index];
+    conn.sendMessage(pvxtech, `📰 ${news}`, MessageType.text);
+  };
+
   setInterval(() => {
-    console.log("SET INTERVAL FOR BIRTHDAY.");
+    console.log("SET INTERVAL.");
+    postNews();
+
     let todayDate = new Date().toLocaleDateString("en-GB", {
       timeZone: "Asia/kolkata",
     });
@@ -243,7 +271,7 @@ const main = async () => {
       usedDate = todayDate;
       checkTodayBday(todayDate);
     }
-  }, 1000 * 60 * 15); //15 min
+  }, 1000 * 60 * 20); //20 min
 
   // member left or join
   conn.on("group-participants-update", async (anu) => {
@@ -563,8 +591,7 @@ const main = async () => {
         return;
       }
 
-      let pvxadminjid = "919557666582-1498394056@g.us";
-      let pvxadminsGroup = await conn.groupMetadata(pvxadminjid);
+      let pvxadminsGroup = await conn.groupMetadata(pvxadmin);
       let pvxadminsMem = pvxadminsGroup.participants.map((mem) => mem.jid);
 
       /* ------------------------------------ - ----------------------------------- */
@@ -637,7 +664,7 @@ const main = async () => {
             return;
           }
           if (blacklistNumb1.startsWith("+")) {
-            blacklistNumb2 = blacklistNumb1.slice(1);
+            blacklistNumb1 = blacklistNumb1.slice(1);
           }
           if (
             blacklistNumb1.length === 10 &&
