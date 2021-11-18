@@ -370,6 +370,7 @@ const main = async () => {
           conn.groupRemove(from, anu.participants);
         }
 
+        //if number is blacklisted
         if (blacklistRes.includes(num_split)) {
           conn.sendMessage(
             from,
@@ -377,6 +378,19 @@ const main = async () => {
             MessageType.text
           );
           conn.groupRemove(from, anu.participants);
+        }
+
+        //for study group
+
+        if (from === pvxstudy) {
+          conn.sendMessage(
+            from,
+            `Hello, Welcome @${num_split} to PVX Study group. Kindly fill the Biodata form (mandatory for all)\n\n👇🏻👇🏻👇🏻👇🏻👇🏻\nhttps://forms.gle/uuvUwV5fTk8JAjoTA`,
+            MessageType.extendedText,
+            {
+              contextInfo: { mentionedJid: [numJid] },
+            }
+          );
         }
 
         if (numJid === botNumberJid) {
