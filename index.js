@@ -143,6 +143,7 @@ const { addDonation, getDonation } = require("./DB/donationDB");
 const { dropAuth } = require("./DB/dropauthDB");
 const { storeNewsTech } = require("./DB/postTechDB");
 const { storeNewsStudy } = require("./DB/postStudyDB");
+const { storeNewsSport } = require("./DB/postSportDB");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
 const { getFbVideo } = require("./functions/fb");
@@ -191,6 +192,7 @@ let pvxcommunity = "919557666582-1467533860@g.us";
 let pvxadmin = "919557666582-1498394056@g.us";
 let pvxtech = "919557666582-1551290369@g.us";
 let pvxstudy = "919557666582-1617595892@g.us";
+let pvxsport = "919557666582-1559476348@g.us";
 
 /* ------------------------------ MAIN FUNCTION ----------------------------- */
 const main = async () => {
@@ -311,6 +313,36 @@ const main = async () => {
     }
   };
 
+  const postSportInfo = async (count) => {
+    if (count > 20) {
+      //20 times already posted news came
+      return;
+    }
+    console.log(`SPORT NEWS FUNCTION ${count} times!`);
+    let feed;
+    // let random = Math.floor(Math.random() * 2);
+    feed = await parser.parseURL("https://www.news18.com/rss/sports.xml");
+
+    let li = feed.items.map((item) => {
+      return { title: item.title, link: item.link };
+    });
+
+    let index = Math.floor(Math.random() * li.length);
+
+    let news = li[index];
+
+    let techRes = await storeNewsSport(news.title);
+    if (techRes) {
+      console.log("NEW SPORT NEWS!");
+      conn.sendMessage(pvxsport, `📰 ${news.title}`, MessageType.text, {
+        detectLinks: false,
+      });
+    } else {
+      console.log("OLD SPORT NEWS!");
+      postSportInfo(count + 1);
+    }
+  };
+
   setInterval(() => {
     console.log("SET INTERVAL.");
 
@@ -324,7 +356,12 @@ const main = async () => {
     //8 to 24 ON
     if (hour >= 8) {
       postTechNews(0);
-      postStudyInfo(0);
+      setTimeout(() => {
+        postStudyInfo(0);
+      }, 1000);
+      setTimeout(() => {
+        postSportInfo(0);
+      }, 2000);
     }
 
     let todayDate = new Date().toLocaleDateString("en-GB", {
