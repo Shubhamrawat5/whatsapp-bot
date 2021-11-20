@@ -144,6 +144,7 @@ const { dropAuth } = require("./DB/dropauthDB");
 const { storeNewsTech } = require("./DB/postTechDB");
 const { storeNewsStudy } = require("./DB/postStudyDB");
 const { storeNewsSport } = require("./DB/postSportDB");
+const { storeNewsMovie } = require("./DB/postMovieDB");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
 const { getFbVideo } = require("./functions/fb");
@@ -193,6 +194,7 @@ let pvxadmin = "919557666582-1498394056@g.us";
 let pvxtech = "919557666582-1551290369@g.us";
 let pvxstudy = "919557666582-1617595892@g.us";
 let pvxsport = "919557666582-1559476348@g.us";
+let pvxmovies = "919557666582-1506690003@g.us";
 
 /* ------------------------------ MAIN FUNCTION ----------------------------- */
 const main = async () => {
@@ -343,6 +345,36 @@ const main = async () => {
     }
   };
 
+  const postMovieInfo = async (count) => {
+    if (count > 20) {
+      //20 times already posted news came
+      return;
+    }
+    console.log(`MOVIE NEWS FUNCTION ${count} times!`);
+    let feed;
+    // let random = Math.floor(Math.random() * 2);
+    feed = await parser.parseURL("https://www.news18.com/rss/movies.xml");
+
+    let li = feed.items.map((item) => {
+      return { title: item.title, link: item.link };
+    });
+
+    let index = Math.floor(Math.random() * li.length);
+
+    let news = li[index];
+
+    let techRes = await storeNewsMovie(news.title);
+    if (techRes) {
+      console.log("NEW MOVIE NEWS!");
+      conn.sendMessage(pvxmovies, `📰 ${news.title}`, MessageType.text, {
+        detectLinks: false,
+      });
+    } else {
+      console.log("OLD MOVIE NEWS!");
+      postMovieInfo(count + 1);
+    }
+  };
+
   setInterval(() => {
     console.log("SET INTERVAL.");
 
@@ -358,10 +390,13 @@ const main = async () => {
       postTechNews(0);
       setTimeout(() => {
         postStudyInfo(0);
-      }, 1000);
+      }, 1000 * 60 * 1);
       setTimeout(() => {
         postSportInfo(0);
-      }, 2000);
+      }, 1000 * 60 * 2);
+      setTimeout(() => {
+        postMovieInfo(0);
+      }, 1000 * 60 * 3);
     }
 
     let todayDate = new Date().toLocaleDateString("en-GB", {
