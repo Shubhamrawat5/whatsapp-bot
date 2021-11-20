@@ -11,7 +11,7 @@ let auth_obj = {
 module.exports.connectToWA = async (WAConnection) => {
   // LOADING SESSION
   const conn = new WAConnection();
-  conn.version = [3, 3234, 9];
+  // conn.version = [3, 3234, 9];
   conn.logger.level = "warn";
   conn.on("qr", () => {
     console.log("SCAN THE ABOVE QR CODE TO LOGIN!");

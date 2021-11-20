@@ -124,7 +124,7 @@ const {
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
 const WSF = require("wa-sticker-formatter");
-const tesseract = require("node-tesseract-ocr");
+const Tesseract = require("tesseract.js");
 const axios = require("axios");
 
 //importing function files
@@ -904,15 +904,21 @@ const main = async () => {
 
         /* ------------------------------- CASE: tagall ------------------------------ */
         case "tagall":
-          if (![myNumber + "@s.whatsapp.net", botNumberJid].includes(sender)) {
-            reply(`❌ Owner only command for avoiding spam!`);
-            return;
-          }
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
           }
-
+          if (
+            groupName.toUpperCase().includes("PVX") &&
+            ![myNumber + "@s.whatsapp.net", botNumberJid].includes(sender)
+          ) {
+            reply(`❌ Owner only command for avoiding spam in PVX Groups!`);
+            return;
+          }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
+            return;
+          }
           let jids = [];
           let mesaj = "ALL: ";
           if (
@@ -1374,8 +1380,13 @@ const main = async () => {
           }
           try {
             let urlYt = args[0];
+            if (!urlYt.startsWith("http")) {
+              reply(`❌ Give youtube link!`);
+              return;
+            }
             let infoYt = await ytdl.getInfo(urlYt);
-            if (infoYt.videoDetails.lengthSeconds >= 2400) {
+            //30 MIN
+            if (infoYt.videoDetails.lengthSeconds >= 1800) {
               reply(`❌ Video too big!`);
               return;
             }
@@ -1410,7 +1421,7 @@ const main = async () => {
                 }
               );
             } else {
-              reply(`❌ File size bigger than 30mb.`);
+              reply(`❌ File size bigger than 40mb.`);
             }
 
             fs.unlinkSync(`./${randomName}`);
@@ -1432,9 +1443,13 @@ const main = async () => {
           }
           try {
             let urlYt = args[0];
+            if (!urlYt.startsWith("http")) {
+              reply(`❌ Give youtube link!`);
+              return;
+            }
             let infoYt = await ytdl.getInfo(urlYt);
-            //40 MIN
-            if (infoYt.videoDetails.lengthSeconds >= 2400) {
+            //30 MIN
+            if (infoYt.videoDetails.lengthSeconds >= 1800) {
               reply(`❌ Video too big!`);
               return;
             }
@@ -1557,7 +1572,7 @@ const main = async () => {
 
               //  { caption: "hello there!", mimetype: Mimetype.mp4 }
               // quoted: mek for tagged
-              if (fileSizeInMegabytes <= 30) {
+              if (fileSizeInMegabytes <= 40) {
                 await conn.sendMessage(
                   from,
                   fs.readFileSync(`./${randomName}`), // can send mp3, mp4, & ogg
@@ -1568,7 +1583,7 @@ const main = async () => {
                   }
                 );
               } else {
-                reply(`❌ File size bigger than 30mb.`);
+                reply(`❌ File size bigger than 40mb.`);
               }
               fs.unlinkSync(`./${randomName}`);
             } else if (imgDirectLink) {
@@ -1638,13 +1653,11 @@ const main = async () => {
               ? JSON.parse(JSON.stringify(mek).replace("quotedM", "m")).message
                   .extendedTextMessage.contextInfo
               : mek;
-
+            reply("Processing image to text...");
             const media = await conn.downloadAndSaveMediaMessage(encmedia);
-            let message = await tesseract.recognize(`./${media}`, {
-              lang: "eng",
-              oem: 1,
-              psm: 3,
-            });
+            let dataText = await Tesseract.recognize(`./${media}`, "eng");
+            fs.unlinkSync(`./${media}`);
+            let message = dataText.data.text;
             message = message.replace(/\s{2,}/g, " ").trim(); //remove multiple spaces
             message = message.replace(/(\n){2,}/g, "\n").trim(); //remove multiple \n
 
@@ -1815,6 +1828,7 @@ const main = async () => {
               "",
               mediaSteal
             );
+            fs.unlinkSync(`./${mediaSteal}`);
             await conn.sendMessage(
               from,
               webpWithMetadata,
