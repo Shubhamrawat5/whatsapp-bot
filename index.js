@@ -638,13 +638,6 @@ const main = async () => {
       // send every command info to my whatsapp, won't work when i send something for bot
       if (myNumber && myNumber + "@s.whatsapp.net" !== sender) {
         let count = await countToday();
-        // await conn.sendMessage(
-        //   myNumber + "@s.whatsapp.net",
-        //   `${count}) [${prefix}${command}] by ${
-        //     sender.split("@")[0]
-        //   }\n      [${groupName}]`,
-        //   MessageType.text
-        // );
         await conn.sendMessage(
           myNumber + "@s.whatsapp.net",
           `${count}) [${prefix}${command}] [${groupName}]`,
@@ -757,6 +750,7 @@ const main = async () => {
       switch (command) {
         /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
+        case "h":
           const resHelp = await conn.sendMessage(
             from,
             commandList(prefix),
@@ -788,7 +782,7 @@ const main = async () => {
           let countMsg = "COMMAND USED STATS:\n";
 
           countRes.forEach((r) => {
-            countMsg += `\n${r.date} ${r.times} times`;
+            countMsg += `\n${r.to_char} - ${r.times} times`;
           });
           reply(countMsg);
           break;
@@ -893,7 +887,6 @@ const main = async () => {
           // console.log(donaResult);
           let totalDona = 0;
           let donaMsgTemp = "";
-          donaResult = donaResult.sort((x, y) => y.amount - x.amount);
           donaResult.forEach((dona, index) => {
             totalDona += dona.amount;
             donaMsgTemp += `\n❤️ Rs ${dona.amount} - ${dona.name}`;
@@ -922,9 +915,7 @@ const main = async () => {
           //   return;
           // }
           let resultCountGroup = await getCountGroup();
-          resultCountGroup = resultCountGroup.sort((x, y) => y.count - x.count); //sort
-          let countGroupMsg =
-            "*📛 PVX COUNTER 📛*\n_This is message counter of every member's message. Not your individual messages!_\n";
+          let countGroupMsg = "*📛 PVX COUNTER 📛*\n_From 23 Nov 2021_\n";
 
           let countGroupMsgTemp = "\n";
           let totalGrpCount = 0;
@@ -2084,8 +2075,12 @@ const main = async () => {
                   quoted: mek,
                 }
               );
-              fs.unlinkSync(media);
-              fs.unlinkSync(ran);
+              try {
+                fs.unlinkSync(ran);
+                fs.unlinkSync(media);
+              } catch (err) {
+                console.log(err);
+              }
             }
 
             const encmedia =

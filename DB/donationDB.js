@@ -18,7 +18,7 @@ const createDonationTable = async () => {
 
 module.exports.getDonation = async () => {
   await createDonationTable();
-  let result = await pool.query("select * from donation;");
+  let result = await pool.query("select * from donation ORDER BY amount DESC;");
   if (result.rowCount) {
     return result.rows;
   } else {

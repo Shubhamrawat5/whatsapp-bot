@@ -18,7 +18,9 @@ const createCountGroupTable = async () => {
 
 module.exports.getCountGroup = async () => {
   await createCountGroupTable();
-  let result = await pool.query("select * from countgroup;");
+  let result = await pool.query(
+    "SELECT * FROM countgroup ORDER BY(count) DESC;"
+  );
   if (result.rowCount) {
     return result.rows;
   } else {
