@@ -18,6 +18,9 @@
 
 📛 *${prefix}donation*
     - _Get donation details and help PVX community!_
+
+📛 *${prefix}pvxc*
+    - _Get message counter of PVX groups!_
     
 📛 *${prefix}ytv url*
     - _Youtube videos downloader!_
@@ -68,11 +71,11 @@
 📛 *${prefix}technews*
     - _Get latest Tech news from inshorts !_
 
-📛 *${prefix}source*
-    - _Get bot source code!_
-
 📛 *${prefix}pvxlink*
     - _Get links for all PVX groups!_
+
+📛 *${prefix}source*
+    - _Get bot source code!_
 
 📛 *${prefix}dev*
     - _Get dev contact to report bug or to add new feature!_

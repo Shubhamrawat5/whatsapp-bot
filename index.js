@@ -140,6 +140,7 @@ const {
   getBlacklist,
 } = require("./DB/blacklistDB");
 const { addDonation, getDonation } = require("./DB/donationDB");
+const { setCountGroup, getCountGroup } = require("./DB/countGroupDB");
 const { dropAuth } = require("./DB/dropauthDB");
 const { storeNewsTech } = require("./DB/postTechDB");
 const { storeNewsStudy } = require("./DB/postStudyDB");
@@ -162,6 +163,7 @@ let parser = new Parser();
 
 const ytdl = require("ytdl-core");
 const AdmZip = require("adm-zip");
+const { replicationStart } = require("pg-protocol/dist/messages");
 let stickertg = false;
 let setIntervaltg;
 
@@ -242,8 +244,8 @@ const main = async () => {
         `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nThere is no Birthday today!`,
         MessageType.text
       );
-      await conn.groupUpdateSubject(pvxcommunity, "<{PVX}> COMMUNITY ❤️");
     }
+    await conn.groupUpdateSubject(pvxcommunity, "<{PVX}> COMMUNITY ❤️");
   };
 
   const postTechNews = async (count) => {
@@ -388,15 +390,15 @@ const main = async () => {
     //8 to 24 ON
     if (hour >= 8) {
       postTechNews(0);
-      setTimeout(() => {
-        postStudyInfo(0);
-      }, 1000 * 60 * 1);
-      setTimeout(() => {
-        postSportInfo(0);
-      }, 1000 * 60 * 2);
-      setTimeout(() => {
-        postMovieInfo(0);
-      }, 1000 * 60 * 3);
+      postStudyInfo(0);
+      //postSportInfo(0);
+      //postMovieInfo(0);
+      // setTimeout(() => {
+      // }, 1000 * 60 * 1);
+      // setTimeout(() => {
+      // }, 1000 * 60 * 2);
+      // setTimeout(() => {
+      // }, 1000 * 60 * 3);
     }
 
     let todayDate = new Date().toLocaleDateString("en-GB", {
@@ -561,8 +563,6 @@ const main = async () => {
       //   console.log("Sticker Sent!");
       // }
 
-      if (!isCmd) return;
-
       /* [INFO] 
       1) quoted == tagged messages 
       
@@ -588,11 +588,17 @@ const main = async () => {
       };
 
       const isGroup = from.endsWith("@g.us");
+      const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
+      const groupName = isGroup ? groupMetadata.subject : "";
+
+      if (isGroup && groupName.toUpperCase().includes("<{PVX}>"))
+        await setCountGroup(from);
+      if (!isCmd) return;
+
       // console.log(mek);
       let sender = isGroup ? mek.participant : from;
       if (mek.key.fromMe) sender = botNumberJid;
-      const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
-      const groupName = isGroup ? groupMetadata.subject : "";
+
       const groupDesc = isGroup ? groupMetadata.desc : "";
       const groupMembers = isGroup ? groupMetadata.participants : "";
       const groupAdmins = isGroup ? getGroupAdmins(groupMembers) : "";
@@ -907,6 +913,34 @@ const main = async () => {
               detectLinks: false,
             }
           );
+          break;
+
+        /* --------------------------------- pvxc --------------------------------- */
+        case "pvxc":
+          // if (!pvxadminsMem.includes(sender)) {
+          //   reply(`❌ PVX admin only command!`);
+          //   return;
+          // }
+          let resultCountGroup = await getCountGroup();
+          resultCountGroup = resultCountGroup.sort((x, y) => y.count - x.count); //sort
+          let countGroupMsg =
+            "*📛 PVX COUNTER 📛*\n_This is message counter of every member's message. Not your individual messages!_\n";
+
+          let countGroupMsgTemp = "\n";
+          let totalGrpCount = 0;
+          for (let group of resultCountGroup) {
+            const mdpvx = await conn.groupMetadata(group.groupjid);
+            let grpName = mdpvx.subject;
+            if (!grpName || !grpName.toUpperCase().includes("<{PVX}>"))
+              continue; //not a pvx group
+            // grpName = grpName.split(" ")[1];
+            grpName = grpName.replace("<{PVX}> ", "");
+            totalGrpCount += group.count;
+            countGroupMsgTemp += `\n${group.count} - ${grpName}`;
+          }
+          countGroupMsg += `\n*Total Messages: ${totalGrpCount}*`;
+          countGroupMsg += countGroupMsgTemp;
+          reply(countGroupMsg);
           break;
 
         /* ------------------------------- CASE: PVXSTATS ------------------------------ */
@@ -1434,6 +1468,7 @@ const main = async () => {
                 quoted: mek,
               }
             );
+            fs.unlinkSync(`./${randomName}`);
           } catch (err) {
             console.log(err);
             reply(`❌ There is some problem.`);
@@ -1934,7 +1969,7 @@ const main = async () => {
               message:
                 mek.message.extendedTextMessage.contextInfo.quotedMessage,
             });
-            await ffmpeg(`./${mediaToImg}`)
+            ffmpeg(`./${mediaToImg}`)
               .fromFormat("webp_pipe")
               .save("result.png")
               .on("error", (err) => {
@@ -1953,6 +1988,7 @@ const main = async () => {
                     quoted: mek,
                   }
                 );
+                fs.unlinkSync("result.png");
               });
           } else {
             reply(
