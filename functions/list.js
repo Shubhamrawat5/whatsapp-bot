@@ -19,7 +19,7 @@
 📛 *${prefix}donation*
     - _Get donation details and help PVX community!_
 
-📛 *${prefix}pvxc*
+📛 *${prefix}pvxg*
     - _Get message counter of PVX groups!_
     
 📛 *${prefix}ytv url*

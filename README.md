@@ -77,7 +77,8 @@ Now Bot will start working!!
 |   `!checkvote`    |      Check status of current voting       |   !cv   |
 |    `!stotvote`    |        Stop voting and see result         |         |
 |    `!donation`    |           Get Donation details            |         |
-|      `!pvxc`      |     Get message counter of PVX groups     |         |
+|      `!pvxg`      |     Get message counter of PVX groups     |         |
+|      `!pvxm`      | Get message counter of PVX group members  |         |
 |     `!source`     |            Get the bot source             |         |
 |      `!dev`       |          Get the contact of dev           |         |
 

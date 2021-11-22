@@ -140,7 +140,11 @@ const {
   getBlacklist,
 } = require("./DB/blacklistDB");
 const { addDonation, getDonation } = require("./DB/donationDB");
-const { setCountGroup, getCountGroup } = require("./DB/countGroupDB");
+const {
+  setCountMember,
+  getCountMemberGroup,
+  getCountMemberIndividual,
+} = require("./DB/countMemberDB");
 const { dropAuth } = require("./DB/dropauthDB");
 const { storeNewsTech } = require("./DB/postTechDB");
 const { storeNewsStudy } = require("./DB/postStudyDB");
@@ -590,13 +594,15 @@ const main = async () => {
       const isGroup = from.endsWith("@g.us");
       const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
       const groupName = isGroup ? groupMetadata.subject : "";
+      let sender = isGroup ? mek.participant : from;
 
-      if (isGroup && groupName.toUpperCase().includes("<{PVX}>"))
-        await setCountGroup(from);
+      if (isGroup && groupName.toUpperCase().includes("<{PVX}>")) {
+        setCountMember(sender, from);
+        // setCountGroup(from);
+      }
       if (!isCmd) return;
 
       // console.log(mek);
-      let sender = isGroup ? mek.participant : from;
       if (mek.key.fromMe) sender = botNumberJid;
 
       const groupDesc = isGroup ? groupMetadata.desc : "";
@@ -908,13 +914,13 @@ const main = async () => {
           );
           break;
 
-        /* --------------------------------- pvxc --------------------------------- */
-        case "pvxc":
+        /* --------------------------------- pvxg --------------------------------- */
+        case "pvxg":
           // if (!pvxadminsMem.includes(sender)) {
           //   reply(`❌ PVX admin only command!`);
           //   return;
           // }
-          let resultCountGroup = await getCountGroup();
+          let resultCountGroup = await getCountMemberGroup();
           let countGroupMsg = "*📛 PVX COUNTER 📛*\n_From 23 Nov 2021_\n";
 
           let countGroupMsgTemp = "\n";
@@ -926,12 +932,40 @@ const main = async () => {
               continue; //not a pvx group
             // grpName = grpName.split(" ")[1];
             grpName = grpName.replace("<{PVX}> ", "");
-            totalGrpCount += group.count;
+            totalGrpCount += Number(group.count);
             countGroupMsgTemp += `\n${group.count} - ${grpName}`;
           }
           countGroupMsg += `\n*Total Messages: ${totalGrpCount}*`;
           countGroupMsg += countGroupMsgTemp;
           reply(countGroupMsg);
+          break;
+
+        /* --------------------------------- pvxm --------------------------------- */
+        case "pvxm":
+          // if (!pvxadminsMem.includes(sender)) {
+          //   reply(`❌ PVX admin only command!`);
+          //   return;
+          // }
+          // if (!grpName.toUpperCase().includes("<{PVX}>")) return; //not a pvx group
+
+          let resultCountGroupIndi = await getCountMemberIndividual(from);
+          let countGroupMsgIndi = `*${groupName}*\n_From 23 Nov 2021_\n`;
+
+          let countGroupMsgTempIndi = "\n";
+          let totalGrpCountIndi = 0;
+          for (let member of resultCountGroupIndi) {
+            totalGrpCountIndi += member.count;
+            let user = conn.contacts[member.memberjid];
+            let username =
+              user.notify ||
+              user.vname ||
+              user.name ||
+              member.memberjid.split("@")[0];
+            countGroupMsgTempIndi += `\n${member.count} - ${username}`;
+          }
+          countGroupMsgIndi += `\n*Total Messages: ${totalGrpCountIndi}*`;
+          countGroupMsgIndi += countGroupMsgTempIndi;
+          reply(countGroupMsgIndi);
           break;
 
         /* ------------------------------- CASE: PVXSTATS ------------------------------ */
@@ -1308,7 +1342,8 @@ const main = async () => {
           votingResult.count[voteNumber - 1] += 1; //increase vote
 
           let user = conn.contacts[sender];
-          let username = user.notify || user.vname || "unknown";
+          let username =
+            user.notify || user.vname || user.name || sender.split("@")[0];
           votingResult.members_voted_for[voteNumber - 1].push(username); // save who voted
 
           votingResult.voted_members.push(sender); //member voted

@@ -49,8 +49,7 @@ module.exports.countToday = async () => {
   if (result.rows.length) {
     let times = result.rows[0].times;
 
-    await pool.query("UPDATE count SET times = $1 WHERE day=$2;", [
-      result.rows[0].times + 1,
+    await pool.query("UPDATE count SET times = times+1 WHERE day=$1;", [
       todayDate,
     ]);
     await pool.query("commit;");
