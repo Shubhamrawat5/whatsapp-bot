@@ -142,8 +142,10 @@ const {
 const { addDonation, getDonation } = require("./DB/donationDB");
 const {
   setCountMember,
-  getCountMemberGroup,
-  getCountMemberIndividual,
+  getCountGroups,
+  getCountGroupMembers,
+  getCountIndividual,
+  getCountTop,
 } = require("./DB/countMemberDB");
 const { dropAuth } = require("./DB/dropauthDB");
 const { storeNewsTech } = require("./DB/postTechDB");
@@ -778,8 +780,8 @@ const main = async () => {
           reply(commandListOwner(prefix));
           break;
 
-        /* ------------------------------- CASE: count ------------------------------ */
-        case "count":
+        /* ------------------------------- CASE: countstats ------------------------------ */
+        case "countstats":
           if (myNumber + "@s.whatsapp.net" !== sender) {
             reply(`❌ Owner only command!`);
             return;
@@ -920,7 +922,7 @@ const main = async () => {
           //   reply(`❌ PVX admin only command!`);
           //   return;
           // }
-          let resultCountGroup = await getCountMemberGroup();
+          let resultCountGroup = await getCountGroups();
           let countGroupMsg = "*📛 PVX COUNTER 📛*\n_From 23 Nov 2021_\n";
 
           let countGroupMsgTemp = "\n";
@@ -940,15 +942,51 @@ const main = async () => {
           reply(countGroupMsg);
           break;
 
+        /* --------------------------------- count --------------------------------- */
+        case "count":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          let indiCount = await getCountIndividual(sender, from);
+          reply(`_${indiCount} messages from 23 NOV!_`);
+          break;
+
+        /* --------------------------------- pvxt --------------------------------- */
+        case "pvxt":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          let resultCountGroupTop = await getCountTop();
+          let countGroupMsgTop = `*📛 PVX TOP MEMBERS 📛*\n_From 23 Nov 2021_\n`;
+
+          let countGroupMsgTempTop = "\n";
+          let totalGrpCountTop = 0;
+          for (let member of resultCountGroupTop) {
+            totalGrpCountTop += Number(member.count);
+            let user = conn.contacts[member.memberjid];
+            let username =
+              user.notify ||
+              user.vname ||
+              user.name ||
+              member.memberjid.split("@")[0];
+            countGroupMsgTempTop += `\n${member.count} - ${username}`;
+          }
+          countGroupMsgTop += `\n*Total Messages: ${totalGrpCountTop}*`;
+          countGroupMsgTop += countGroupMsgTempTop;
+          reply(countGroupMsgTop);
+          break;
+
         /* --------------------------------- pvxm --------------------------------- */
         case "pvxm":
-          // if (!pvxadminsMem.includes(sender)) {
-          //   reply(`❌ PVX admin only command!`);
-          //   return;
-          // }
           // if (!grpName.toUpperCase().includes("<{PVX}>")) return; //not a pvx group
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
 
-          let resultCountGroupIndi = await getCountMemberIndividual(from);
+          let resultCountGroupIndi = await getCountGroupMembers(from);
           let countGroupMsgIndi = `*${groupName}*\n_From 23 Nov 2021_\n`;
 
           let countGroupMsgTempIndi = "\n";
