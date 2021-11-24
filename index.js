@@ -7,7 +7,7 @@ app.get("/", (req, res) => {
   res.send("Bot is running fine... no tension :)");
 });
 app.listen(port, () => {
-  console.clear();
+  // console.clear();
   console.log("\nWeb-server running!\n");
 });
 
@@ -199,8 +199,8 @@ const getRandom = (text) => {
 
 let pvxcommunity = "919557666582-1467533860@g.us";
 let pvxadmin = "919557666582-1498394056@g.us";
-let pvxtech = "919557666582-1551290369@g.us";
 let pvxstudy = "919557666582-1617595892@g.us";
+let pvxtech = "919557666582-1551290369@g.us";
 let pvxsport = "919557666582-1559476348@g.us";
 let pvxmovies = "919557666582-1506690003@g.us";
 
@@ -211,211 +211,6 @@ const main = async () => {
     : require("./DB/authDB");
   const conn = await connectToWA(WAConnection);
   let botNumberJid = conn.user.jid;
-
-  /* -------------------------------- BIRTHDAY -------------------------------- */
-  let usedDate = new Date()
-    .toLocaleString("en-GB", { timeZone: "Asia/kolkata" })
-    .split(",")[0];
-
-  const checkTodayBday = async (todayDate) => {
-    console.log("CHECKING TODAY BDAY...", todayDate);
-    todayDate = todayDate.split("/");
-    let d = todayDate[0];
-    d = d.startsWith("0") ? d[1] : d;
-    let m = todayDate[1];
-    m = m.startsWith("0") ? m[1] : m;
-    let url = "https://pvxgroup.herokuapp.com/api/bday";
-    let { data } = await axios.get(url);
-    let bday = [];
-
-    data.data.forEach((member) => {
-      if (member.month == m && member.date == d) {
-        bday.push(
-          `${member.name.toUpperCase()} (${member.username.toUpperCase()})`
-        );
-        console.log(`Today is ${member.name} Birthday!`);
-      }
-    });
-    if (bday.length) {
-      let bdayComb = bday.join(" & ");
-      conn.sendMessage(
-        pvxcommunity,
-        `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nToday is ${bdayComb} Birthday 🍰 🎉🎉`,
-        MessageType.text
-      );
-    } else {
-      console.log("NO BIRTHDAY!");
-      conn.sendMessage(
-        pvxcommunity,
-        `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nThere is no Birthday today!`,
-        MessageType.text
-      );
-    }
-    await conn.groupUpdateSubject(pvxcommunity, "<{PVX}> COMMUNITY ❤️");
-  };
-
-  const postTechNews = async (count) => {
-    if (count > 20) {
-      //20 times already posted news came
-      return;
-    }
-    console.log(`TECH NEWS FUNCTION ${count} times!`);
-
-    let url = "https://news-pvx.herokuapp.com/";
-    let { data } = await axios.get(url);
-    delete data.about;
-
-    let newsWeb = [
-      "gadgets-ndtv",
-      "gadgets-now",
-      "xda-developers",
-      "inshorts",
-      "beebom",
-      "india",
-      "mobile-reuters",
-      "techcrunch",
-      "engadget",
-    ];
-
-    let randomWeb = newsWeb[Math.floor(Math.random() * newsWeb.length)]; //random website
-    let index = Math.floor(Math.random() * data[randomWeb].length);
-
-    let news = data[randomWeb][index];
-    let techRes = await storeNewsTech(news);
-    if (techRes) {
-      console.log("NEW TECH NEWS!");
-      conn.sendMessage(pvxtech, `📰 ${news}`, MessageType.text);
-    } else {
-      console.log("OLD TECH NEWS!");
-      postTechNews(count + 1);
-    }
-  };
-
-  const postStudyInfo = async (count) => {
-    if (count > 20) {
-      //20 times already posted news came
-      return;
-    }
-    console.log(`STUDY NEWS FUNCTION ${count} times!`);
-    let feed;
-    // let random = Math.floor(Math.random() * 2);
-    feed = await parser.parseURL(
-      "https://www.thehindu.com/news/national/feeder/default.rss"
-    );
-
-    let li = feed.items.map((item) => {
-      return { title: item.title, link: item.link };
-    });
-
-    let index = Math.floor(Math.random() * li.length);
-
-    let news = li[index];
-
-    let techRes = await storeNewsStudy(news.title);
-    if (techRes) {
-      console.log("NEW STUDY NEWS!");
-      conn.sendMessage(pvxstudy, `📰 ${news.title}`, MessageType.text, {
-        detectLinks: false,
-      });
-    } else {
-      console.log("OLD STUDY NEWS!");
-      postStudyInfo(count + 1);
-    }
-  };
-
-  const postSportInfo = async (count) => {
-    if (count > 20) {
-      //20 times already posted news came
-      return;
-    }
-    console.log(`SPORT NEWS FUNCTION ${count} times!`);
-    let feed;
-    // let random = Math.floor(Math.random() * 2);
-    feed = await parser.parseURL("https://www.news18.com/rss/sports.xml");
-
-    let li = feed.items.map((item) => {
-      return { title: item.title, link: item.link };
-    });
-
-    let index = Math.floor(Math.random() * li.length);
-
-    let news = li[index];
-
-    let techRes = await storeNewsSport(news.title);
-    if (techRes) {
-      console.log("NEW SPORT NEWS!");
-      conn.sendMessage(pvxsport, `📰 ${news.title}`, MessageType.text, {
-        detectLinks: false,
-      });
-    } else {
-      console.log("OLD SPORT NEWS!");
-      postSportInfo(count + 1);
-    }
-  };
-
-  const postMovieInfo = async (count) => {
-    if (count > 20) {
-      //20 times already posted news came
-      return;
-    }
-    console.log(`MOVIE NEWS FUNCTION ${count} times!`);
-    let feed;
-    // let random = Math.floor(Math.random() * 2);
-    feed = await parser.parseURL("https://www.news18.com/rss/movies.xml");
-
-    let li = feed.items.map((item) => {
-      return { title: item.title, link: item.link };
-    });
-
-    let index = Math.floor(Math.random() * li.length);
-
-    let news = li[index];
-
-    let techRes = await storeNewsMovie(news.title);
-    if (techRes) {
-      console.log("NEW MOVIE NEWS!");
-      conn.sendMessage(pvxmovies, `📰 ${news.title}`, MessageType.text, {
-        detectLinks: false,
-      });
-    } else {
-      console.log("OLD MOVIE NEWS!");
-      postMovieInfo(count + 1);
-    }
-  };
-
-  setInterval(() => {
-    console.log("SET INTERVAL.");
-
-    let hour = Number(
-      new Date()
-        .toLocaleTimeString("en-GB", {
-          timeZone: "Asia/kolkata",
-        })
-        .split(":")[0]
-    );
-    //8 to 24 ON
-    if (hour >= 8) {
-      postTechNews(0);
-      postStudyInfo(0);
-      //postSportInfo(0);
-      //postMovieInfo(0);
-      // setTimeout(() => {
-      // }, 1000 * 60 * 1);
-      // setTimeout(() => {
-      // }, 1000 * 60 * 2);
-      // setTimeout(() => {
-      // }, 1000 * 60 * 3);
-    }
-
-    let todayDate = new Date().toLocaleDateString("en-GB", {
-      timeZone: "Asia/kolkata",
-    });
-
-    if (usedDate !== todayDate) {
-      usedDate = todayDate;
-      checkTodayBday(todayDate);
-    }
-  }, 1000 * 60 * 20); //20 min
 
   // member left or join
   conn.on("group-participants-update", async (anu) => {
@@ -461,17 +256,16 @@ const main = async () => {
         }
 
         //for study group
-
-        if (from === pvxstudy) {
-          conn.sendMessage(
-            from,
-            `Hello, Welcome @${num_split} to PVX Study group. Kindly fill the Biodata form (mandatory for all)\n\n👇🏻👇🏻👇🏻👇🏻👇🏻\nhttps://forms.gle/uuvUwV5fTk8JAjoTA`,
-            MessageType.extendedText,
-            {
-              contextInfo: { mentionedJid: [numJid] },
-            }
-          );
-        }
+        // if (from === pvxstudy) {
+        //   conn.sendMessage(
+        //     from,
+        //     `Hello, Welcome @${num_split} to PVX Study group. Kindly fill the Biodata form (mandatory for all)\n\n👇🏻👇🏻👇🏻👇🏻👇🏻\nhttps://forms.gle/uuvUwV5fTk8JAjoTA`,
+        //     MessageType.extendedText,
+        //     {
+        //       contextInfo: { mentionedJid: [numJid] },
+        //     }
+        //   );
+        // }
 
         if (numJid === botNumberJid) {
           console.log("Bot is added to new group!");
@@ -588,21 +382,20 @@ const main = async () => {
       3) type = "conversation" , "imageMessage" , "videoMessage" , "extendedTextMessage"
         -> extendedTextMessage are tagged messages
       */
-
+      if (!isCmd) return;
       errors = {
         admin_error: "❌ I'm not Admin here!",
       };
 
       const isGroup = from.endsWith("@g.us");
+      //if (!isGroup) return;
       const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
       const groupName = isGroup ? groupMetadata.subject : "";
       let sender = isGroup ? mek.participant : from;
 
-      if (isGroup && groupName.toUpperCase().includes("<{PVX}>")) {
-        setCountMember(sender, from);
-        // setCountGroup(from);
-      }
-      if (!isCmd) return;
+      // if (isGroup && groupName.toUpperCase().includes("<{PVX}>")) {
+      //   setCountMember(sender, from);
+      // }
 
       // console.log(mek);
       if (mek.key.fromMe) sender = botNumberJid;
@@ -748,8 +541,13 @@ const main = async () => {
         return;
       }
 
-      let pvxadminsGroup = await conn.groupMetadata(pvxadmin);
-      let pvxadminsMem = pvxadminsGroup.participants.map((mem) => mem.jid);
+      let pvxadminsMem;
+      try {
+        let pvxadminsGroup = await conn.groupMetadata(pvxadmin);
+        pvxadminsMem = pvxadminsGroup.participants.map((mem) => mem.jid);
+      } catch (err) {
+        pvxadminsMem = [];
+      }
 
       /* ------------------------------------ - ----------------------------------- */
       /* -------------------------------- COMMANDS -------------------------------- */
@@ -813,6 +611,10 @@ const main = async () => {
             reply(`❌ PVX admin only command!`);
             return;
           }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
+            return;
+          }
 
           let blacklistNumb1 = args[0];
           if (!Number(blacklistNumb1)) {
@@ -841,6 +643,10 @@ const main = async () => {
         case "bla":
           if (!pvxadminsMem.includes(sender)) {
             reply(`❌ PVX admin only command!`);
+            return;
+          }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
             return;
           }
 
@@ -916,145 +722,182 @@ const main = async () => {
           );
           break;
 
-        /* --------------------------------- pvxg --------------------------------- */
-        case "pvxg":
-          // if (!pvxadminsMem.includes(sender)) {
-          //   reply(`❌ PVX admin only command!`);
-          //   return;
-          // }
-          let resultCountGroup = await getCountGroups();
-          let countGroupMsg = "*📛 PVX COUNTER 📛*\n_From 23 Nov 2021_\n";
-
-          let countGroupMsgTemp = "\n";
-          let totalGrpCount = 0;
-          for (let group of resultCountGroup) {
-            const mdpvx = await conn.groupMetadata(group.groupjid);
-            let grpName = mdpvx.subject;
-            if (!grpName || !grpName.toUpperCase().includes("<{PVX}>"))
-              continue; //not a pvx group
-            // grpName = grpName.split(" ")[1];
-            grpName = grpName.replace("<{PVX}> ", "");
-            totalGrpCount += Number(group.count);
-            countGroupMsgTemp += `\n${group.count} - ${grpName}`;
-          }
-          countGroupMsg += `\n*Total Messages: ${totalGrpCount}*`;
-          countGroupMsg += countGroupMsgTemp;
-          reply(countGroupMsg);
-          break;
-
         /* --------------------------------- count --------------------------------- */
-        case "count":
-          if (!isGroup) {
-            reply("❌ Group command only!");
-            return;
-          }
-          let indiCount = await getCountIndividual(sender, from);
-          reply(`_${indiCount} messages from 23 NOV!_`);
-          break;
+        // case "count":
+        //   if (!isGroup) {
+        //     reply("❌ Group command only!");
+        //     return;
+        //   }
+        //   let indiCount = await getCountIndividual(sender, from);
+        //   reply(`_${indiCount} messages from 24 NOV!_`);
+        //   break;
 
-        /* --------------------------------- pvxt --------------------------------- */
-        case "pvxt":
-          if (!isGroup) {
-            reply("❌ Group command only!");
-            return;
-          }
-          let resultCountGroupTop = await getCountTop();
-          let countGroupMsgTop = `*📛 PVX TOP MEMBERS 📛*\n_From 23 Nov 2021_\n`;
+        // /* --------------------------------- pvxg --------------------------------- */
+        // case "pvxg":
+        //   if (!isGroup) {
+        //     reply("❌ Group command only!");
+        //     return;
+        //   }
+        //   if (myNumber + "@s.whatsapp.net" !== sender) {
+        //     reply(`❌ Owner only command!`);
+        //     return;
+        //   }
+        //   if (!isGroupAdmins) {
+        //     reply("❌ Admin command!");
+        //     return;
+        //   }
+        //   let resultCountGroup = await getCountGroups();
+        //   let countGroupMsg = "*📛 PVX COUNTER 📛*\n_From 24 Nov 2021_\n";
 
-          let countGroupMsgTempTop = "\n";
-          let totalGrpCountTop = 0;
-          for (let member of resultCountGroupTop) {
-            totalGrpCountTop += Number(member.count);
-            let user = conn.contacts[member.memberjid];
-            let username =
-              user.notify ||
-              user.vname ||
-              user.name ||
-              member.memberjid.split("@")[0];
-            countGroupMsgTempTop += `\n${member.count} - ${username}`;
-          }
-          countGroupMsgTop += `\n*Total Messages: ${totalGrpCountTop}*`;
-          countGroupMsgTop += countGroupMsgTempTop;
-          reply(countGroupMsgTop);
-          break;
+        //   let countGroupMsgTemp = "\n";
+        //   let totalGrpCount = 0;
+        //   for (let group of resultCountGroup) {
+        //     try {
+        //       let mdpvx = await conn.groupMetadata(group.groupjid);
+        //       let grpName = mdpvx.subject;
+        //       if (!grpName || !grpName.toUpperCase().includes("<{PVX}>"))
+        //         continue; //not a pvx group
+        //       // grpName = grpName.split(" ")[1];
+        //       grpName = grpName.replace("<{PVX}> ", "");
+        //       totalGrpCount += Number(group.count);
+        //       countGroupMsgTemp += `\n${group.count} - ${grpName}`;
+        //     } catch (err) {
+        //       console.log("Error in getting metadata of " + group.groupjid);
+        //     }
+        //   }
+        //   countGroupMsg += `\n*Total Messages: ${totalGrpCount}*`;
+        //   countGroupMsg += countGroupMsgTemp;
+        //   reply(countGroupMsg);
+        //   break;
 
-        /* --------------------------------- pvxm --------------------------------- */
-        case "pvxm":
-          // if (!grpName.toUpperCase().includes("<{PVX}>")) return; //not a pvx group
-          if (!isGroup) {
-            reply("❌ Group command only!");
-            return;
-          }
+        // /* --------------------------------- pvxt --------------------------------- */
+        // case "pvxt":
+        //   if (!isGroup) {
+        //     reply("❌ Group command only!");
+        //     return;
+        //   }
+        //   if (myNumber + "@s.whatsapp.net" !== sender) {
+        //     reply(`❌ Owner only command!`);
+        //     return;
+        //   }
+        //   if (!isGroupAdmins) {
+        //     reply("❌ Admin command!");
+        //     return;
+        //   }
+        //   let resultCountGroupTop = await getCountTop();
+        //   let countGroupMsgTop = `*📛 PVX TOP MEMBERS 📛*\n_From 24 Nov 2021_\n`;
 
-          let resultCountGroupIndi = await getCountGroupMembers(from);
-          let countGroupMsgIndi = `*${groupName}*\n_From 23 Nov 2021_\n`;
+        //   let countGroupMsgTempTop = "\n";
+        //   let totalGrpCountTop = 0;
+        //   for (let member of resultCountGroupTop) {
+        //     totalGrpCountTop += Number(member.count);
+        //     let user = conn.contacts[member.memberjid];
+        //     let username =
+        //       user.notify ||
+        //       user.vname ||
+        //       user.name ||
+        //       member.memberjid.split("@")[0];
+        //     countGroupMsgTempTop += `\n${member.count} - ${username}`;
+        //   }
+        //   countGroupMsgTop += `\n*Total Messages: ${totalGrpCountTop}*`;
+        //   countGroupMsgTop += countGroupMsgTempTop;
+        //   reply(countGroupMsgTop);
+        //   break;
 
-          let countGroupMsgTempIndi = "\n";
-          let totalGrpCountIndi = 0;
-          for (let member of resultCountGroupIndi) {
-            totalGrpCountIndi += member.count;
-            let user = conn.contacts[member.memberjid];
-            let username =
-              user.notify ||
-              user.vname ||
-              user.name ||
-              member.memberjid.split("@")[0];
-            countGroupMsgTempIndi += `\n${member.count} - ${username}`;
-          }
-          countGroupMsgIndi += `\n*Total Messages: ${totalGrpCountIndi}*`;
-          countGroupMsgIndi += countGroupMsgTempIndi;
-          reply(countGroupMsgIndi);
-          break;
+        // /* --------------------------------- pvxm --------------------------------- */
+        // case "pvxm":
+        //   // if (!grpName.toUpperCase().includes("<{PVX}>")) return; //not a pvx group
+        //   if (!isGroup) {
+        //     reply("❌ Group command only!");
+        //     return;
+        //   }
+        //   if (myNumber + "@s.whatsapp.net" !== sender) {
+        //     reply(`❌ Owner only command!`);
+        //     return;
+        //   }
+        //   if (!isGroupAdmins) {
+        //     reply("❌ Admin command!");
+        //     return;
+        //   }
 
-        /* ------------------------------- CASE: PVXSTATS ------------------------------ */
-        case "pvxstats":
-          if (!pvxadminsMem.includes(sender)) {
-            reply(`❌ PVX admin only command!`);
-            return;
-          }
-          let groups = conn.chats
-            .all()
-            .filter(
-              (v) =>
-                v.jid.endsWith("g.us") &&
-                !v.read_only &&
-                v.message &&
-                !v.announce &&
-                v.name.startsWith("<{PVX}>")
-            )
-            .map((v) => {
-              return { name: v.name, jid: v.jid };
-            });
-          // console.log(groups);
+        //   let resultCountGroupIndi = await getCountGroupMembers(from);
+        //   let countGroupMsgIndi = `*${groupName}*\n_From 24 Nov 2021_\n`;
 
-          let pvxMsg = "*📛 PVX STATS 📛*";
-          let totalMem = 0;
-          let uniqueMem = new Set();
-          let temppvxMsg = "";
-          let temppvxList = [];
-          for (let group of groups) {
-            const mdpvx = await conn.groupMetadata(group.jid);
-            // console.log(mdpvx);
-            totalMem += mdpvx.participants.length;
-            temppvxList.push({
-              subject: mdpvx.subject,
-              count: mdpvx.participants.length,
-            });
+        //   let countGroupMsgTempIndi = "\n";
+        //   let totalGrpCountIndi = 0;
+        //   for (let member of resultCountGroupIndi) {
+        //     totalGrpCountIndi += member.count;
+        //     let user = conn.contacts[member.memberjid];
+        //     let username =
+        //       user.notify ||
+        //       user.vname ||
+        //       user.name ||
+        //       member.memberjid.split("@")[0];
+        //     countGroupMsgTempIndi += `\n${member.count} - ${username}`;
+        //   }
+        //   countGroupMsgIndi += `\n*Total Messages: ${totalGrpCountIndi}*`;
+        //   countGroupMsgIndi += countGroupMsgTempIndi;
+        //   reply(countGroupMsgIndi);
+        //   break;
 
-            for (let parti of mdpvx.participants) {
-              uniqueMem.add(parti.jid);
-            }
-          }
-          temppvxList = temppvxList.sort((x, y) => y.count - x.count); //sort
+        // /* ------------------------------- CASE: PVXSTATS ------------------------------ */
+        // case "pvxstats":
+        //   if (!isGroup) {
+        //     reply("❌ Group command only!");
+        //     return;
+        //   }
+        //   if (!pvxadminsMem.includes(sender)) {
+        //     reply(`❌ PVX admin only command!`);
+        //     return;
+        //   }
+        //   if (!isGroupAdmins) {
+        //     reply("❌ Admin command!");
+        //     return;
+        //   }
 
-          temppvxList.forEach((grp) => {
-            temppvxMsg += `\n\n*${grp.subject}*\nMembers: ${grp.count}`;
-          });
+        //   let groups = conn.chats
+        //     .all()
+        //     .filter(
+        //       (v) =>
+        //         v.jid.endsWith("g.us") &&
+        //         !v.read_only &&
+        //         v.message &&
+        //         !v.announce &&
+        //         v.name.startsWith("<{PVX}>")
+        //     )
+        //     .map((v) => {
+        //       return { name: v.name, jid: v.jid };
+        //     });
+        //   // console.log(groups);
 
-          pvxMsg += `\nTotal Groups: ${groups.length}\nTotal Members: ${totalMem}\nUnique Members: ${uniqueMem.size}`;
-          pvxMsg += temppvxMsg;
-          reply(pvxMsg);
-          break;
+        //   let pvxMsg = "*📛 PVX STATS 📛*";
+        //   let totalMem = 0;
+        //   let uniqueMem = new Set();
+        //   let temppvxMsg = "";
+        //   let temppvxList = [];
+        //   for (let group of groups) {
+        //     const mdpvx = await conn.groupMetadata(group.jid);
+        //     // console.log(mdpvx);
+        //     totalMem += mdpvx.participants.length;
+        //     temppvxList.push({
+        //       subject: mdpvx.subject,
+        //       count: mdpvx.participants.length,
+        //     });
+
+        //     for (let parti of mdpvx.participants) {
+        //       uniqueMem.add(parti.jid);
+        //     }
+        //   }
+        //   temppvxList = temppvxList.sort((x, y) => y.count - x.count); //sort
+
+        //   temppvxList.forEach((grp) => {
+        //     temppvxMsg += `\n\n*${grp.subject}*\nMembers: ${grp.count}`;
+        //   });
+
+        //   pvxMsg += `\nTotal Groups: ${groups.length}\nTotal Members: ${totalMem}\nUnique Members: ${uniqueMem.size}`;
+        //   pvxMsg += temppvxMsg;
+        //   reply(pvxMsg);
+        //   break;
 
         /* ------------------------------- CASE: TEST ------------------------------ */
         case "test":
@@ -1494,6 +1337,8 @@ const main = async () => {
 
         /* ------------------------------- CASE: PVXLINK ------------------------------ */
         case "pvxlink":
+        case "pvxlinks":
+        case "pvx":
         case "link":
           reply(
             "*─「 🔥 JOIN <{PVX}> FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
@@ -2203,6 +2048,9 @@ const main = async () => {
 
         /* ------------------------------- CASE: ADD ------------------------------ */
         case "add":
+          reply("❌ Command Temperory Removed!");
+          return;
+
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
@@ -2234,7 +2082,7 @@ const main = async () => {
           }
           try {
             const response = await conn.groupAdd(from, [num]);
-            console.log("RES", response);
+            // console.log("RES", response);
 
             let number = `${num.split("@s.whatsapp.net")[0]}`;
             let get_status = response[`${number}@c.us`];
@@ -2369,7 +2217,7 @@ const main = async () => {
           break;
 
         default:
-          reply(`Send ${prefix}help for <{PVX}> BOT commands list!`);
+          reply(`Send ${prefix}help for <{PVX}> BOT commands!`);
           break;
       }
     } catch (err) {

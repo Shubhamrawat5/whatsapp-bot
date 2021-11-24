@@ -55,6 +55,7 @@ Now Bot will start working!!
 |    `!sticker`     | Create sticker from different media types |   !s    |
 |     `!block`      |  To block particular commands for group   |         |
 |     `!toimg`      |         Create image from sticker         |         |
+|     `!steal`      |      Change sticker name to PVX BOT       |         |
 |      `!text`      |        Get text extract from image        |         |
 |      `!song`      |       Get any song in good quality        |         |
 |     `!insta`      |      Get insta reels or post videos       |   !i    |
@@ -77,27 +78,28 @@ Now Bot will start working!!
 |   `!checkvote`    |      Check status of current voting       |   !cv   |
 |    `!stotvote`    |        Stop voting and see result         |         |
 |    `!donation`    |           Get Donation details            |         |
-|      `!pvxg`      |     Get message counter of PVX groups     |         |
-|      `!pvxm`      | Get message counter of PVX group members  |         |
 |     `!source`     |            Get the bot source             |         |
 |      `!dev`       |          Get the contact of dev           |         |
 
 <hr>
 
-|   Owner Commands   |             Description             | Alias |
-| :----------------: | :---------------------------------: | :---: |
-|      `!helpr`      |     Display restricted commands     |       |
-|      `!test`       | execute code with whatsapp directly |       |
-|     `!tagall`      |      Tag all members in group       |       |
-|    `!pvxstats`     |       Get stats of PVX groups       |       |
-|   `!groupbackup`   |       Take group backup in DB       |       |
-|   `!deleteauth`    |  Delete auth DB to get new qr scan  |       |
-|   `!countstats`    | Get stats of number of command used |       |
-|       `!tg`        |       Make TG to WA stickers        |       |
-|       `!stg`       |       Stop TG to WA stickers        |       |
-|    `!blacklist`    |        Get blacklist numbers        |       |
-|  `!blacklistadd`   |       Add number to blacklist       | !bla  |
-| `!blacklistremove` |    Remove number from blacklist     | !blr  |
+|   Owner Commands   |                     Description                      | Alias |
+| :----------------: | :--------------------------------------------------: | :---: |
+|      `!helpr`      |             Display restricted commands              |       |
+|      `!test`       |         execute code with whatsapp directly          |       |
+|     `!tagall`      |               Tag all members in group               |       |
+|    `!pvxstats`     |               Get stats of PVX groups                |       |
+|      `!pvxg`       |        Get message count stats of PVX groups         |       |
+|      `!pvxm`       | Get members message count stats of current PVX group |       |
+|      `!pvxt`       |  Get top members message count stats of PVX groups   |       |
+|   `!groupbackup`   |               Take group backup in DB                |       |
+|   `!deleteauth`    |          Delete auth DB to get new qr scan           |       |
+|   `!countstats`    |         Get stats of number of command used          |       |
+|       `!tg`        |                Make TG to WA stickers                |       |
+|       `!stg`       |                Stop TG to WA stickers                |       |
+|    `!blacklist`    |                Get blacklist numbers                 |       |
+|  `!blacklistadd`   |               Add number to blacklist                | !bla  |
+| `!blacklistremove` |             Remove number from blacklist             | !blr  |
 
 - CRICKET SCORES:
 

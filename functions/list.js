@@ -18,15 +18,15 @@
 
 📛 *${prefix}donation*
     - _Get donation details and help PVX community!_
-
-📛 *${prefix}pvxg*
-    - _Get message counter of PVX groups!_
     
 📛 *${prefix}ytv url*
     - _Youtube videos downloader!_
 
 📛 *${prefix}yta url*
     - _Youtube audio downloader!_
+
+📛 *${prefix}steal*
+    - _Change sticker name to PVX BOT!_
 
 📛 *${prefix}add <phone number>*
     - _Add new member!_
