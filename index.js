@@ -163,6 +163,7 @@ const {
   setVotingData,
   stopVotingData,
 } = require("./DB/VotingDB");
+const { setGroupName } = require("./DB/groupNameDB");
 
 let Parser = require("rss-parser");
 let parser = new Parser();
@@ -999,6 +1000,37 @@ const main = async () => {
           }
           break;
 
+        /* ------------------------------- CASE: gname ------------------------------ */
+        case "gname":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Command only for owner!`);
+            return;
+          }
+          try {
+            let groups = conn.chats
+              .all()
+              .filter(
+                (v) =>
+                  v.jid.endsWith("g.us") &&
+                  !v.read_only &&
+                  v.message &&
+                  !v.announce &&
+                  v.name.toUpperCase().includes("<{PVX}>")
+              )
+              .map((v) => {
+                return { name: v.name, jid: v.jid };
+              });
+            // console.log(groups);
+            for (let group of groups) {
+              await setGroupName(group.jid, group.name);
+            }
+            reply(`✔ Group name data inserted!`);
+          } catch (err) {
+            console.log(err);
+            reply(`❌ Error!`);
+          }
+          break;
+
         /* ------------------------------- CASE: TG sticker ------------------------------ */
         case "stg":
           if (myNumber + "@s.whatsapp.net" !== sender) {
@@ -1070,10 +1102,10 @@ const main = async () => {
                 filepath += `${zipEntries[itg].entryName}`;
 
                 //"<{PVX}> BOT 🤖"
-                //"www.pvxfamily.tech"
+                //"https://pvxcommunity.com"
                 const webpWithMetadatatg = await WSF.setMetadata(
                   "",
-                  "https://pvxfamily.tech",
+                  "https://pvxcommunity.com",
                   filepath
                 );
                 await conn.sendMessage(
@@ -1341,7 +1373,7 @@ const main = async () => {
         case "pvx":
         case "link":
           reply(
-            "*─「 🔥 JOIN <{PVX}> FAMILY 🔥 」─*\n\n>> https://pvxfamily.tech <<"
+            "*─「 🔥 JOIN <{PVX}> FAMILY 🔥 」─*\n\n>> https://pvxcommunity.com <<"
           );
           break;
 

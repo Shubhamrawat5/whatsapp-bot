@@ -156,4 +156,21 @@ You can use (http://kaffeine.herokuapp.com) to ping the heroku app every 30 minu
 - [@WA-STICKER-FORMATTER](https://github.com/Alensaito1/wa-sticker-formatter)
 - Initial code taken from [Karma](https://github.com/karmaisgreat/simple-whatsapp-bot).
 
+# Easy way to deploy:- :rocket:
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Shubhamrawat5/whatsapp-bot)
+
+Your bot will be deployed on heroku but still you need to install heroku locally to scan QR code
+
+1. Download Heroku CLI from [here](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
+2. Open terminal
+3. Type command `heroku login` and give access
+4. Type command `heroku logs -a <your-app-name> --tail`
+
+Now you'll see QR code, scan with your device and bot will start working!
+
+- To get owner commands
+
+  Go to heroku daskboard then settings then config vars
+  
+  Add KEY as `myNumber` and VALUE as `911234567890` (your number with country code and no + sign)
