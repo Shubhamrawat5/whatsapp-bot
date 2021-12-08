@@ -19,7 +19,7 @@ const createCountMemberTable = async () => {
 module.exports.getCountGroupMembers = async (groupJid) => {
   await createCountMemberTable();
   let result = await pool.query(
-    "SELECT memberJid,count FROM countmember WHERE groupJid=$1 ORDER BY count DESC;",
+    "SELECT DISTINCT memberJid,count FROM countmember WHERE groupJid=$1 ORDER BY count DESC;",
     [groupJid]
   );
   if (result.rowCount) {
@@ -45,7 +45,7 @@ module.exports.getCountIndividual = async (memberJid, groupJid) => {
 module.exports.getCountTop = async () => {
   await createCountMemberTable();
   let result = await pool.query(
-    "SELECT memberJid,SUM(count) as count FROM countmember GROUP BY memberJid ORDER BY count DESC LIMIT 10;"
+    "SELECT DISTINCT memberJid,SUM(count) as count FROM countmember GROUP BY memberJid ORDER BY count DESC LIMIT 15;"
   );
   if (result.rowCount) {
     return result.rows;

@@ -179,6 +179,7 @@ prefix = "!";
 require("dotenv").config();
 const myNumber = process.env.myNumber;
 const clientId = process.env.clientID;
+const pvx = process.env.pvx;
 
 //CRICKET variables
 let matchIdGroups = {}; //to store every group name with its match ID
@@ -199,8 +200,10 @@ const getRandom = (text) => {
 };
 
 let pvxcommunity = "919557666582-1467533860@g.us";
+let pvxprogrammer = "919557666582-1584193120@g.us";
 let pvxadmin = "919557666582-1498394056@g.us";
 let pvxstudy = "919557666582-1617595892@g.us";
+let pvxmano = "19016677357-1630334490@g.us";
 let pvxtech = "919557666582-1551290369@g.us";
 let pvxsport = "919557666582-1559476348@g.us";
 let pvxmovies = "919557666582-1506690003@g.us";
@@ -212,6 +215,148 @@ const main = async () => {
     : require("./DB/authDB");
   const conn = await connectToWA(WAConnection);
   let botNumberJid = conn.user.jid;
+
+  /* -------------------------------- BIRTHDAY -------------------------------- */
+  let usedDate = new Date()
+    .toLocaleString("en-GB", { timeZone: "Asia/kolkata" })
+    .split(",")[0];
+
+  const checkTodayBday = async (todayDate) => {
+    console.log("CHECKING TODAY BDAY...", todayDate);
+    todayDate = todayDate.split("/");
+    let d = todayDate[0];
+    d = d.startsWith("0") ? d[1] : d;
+    let m = todayDate[1];
+    m = m.startsWith("0") ? m[1] : m;
+    let url = "https://pvxgroup.herokuapp.com/api/bday";
+    let { data } = await axios.get(url);
+    let bday = [];
+
+    data.data.forEach((member) => {
+      if (member.month == m && member.date == d) {
+        bday.push(
+          `${member.name.toUpperCase()} (${member.username.toUpperCase()})`
+        );
+        console.log(`Today is ${member.name} Birthday!`);
+      }
+    });
+    if (bday.length) {
+      let bdayComb = bday.join(" & ");
+      conn.sendMessage(
+        pvxcommunity,
+        `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nToday is ${bdayComb} Birthday 🍰 🎉🎉`,
+        MessageType.text
+      );
+    } else {
+      console.log("NO BIRTHDAY!");
+      conn.sendMessage(
+        pvxcommunity,
+        `*─「 🔥 <{PVX}> BOT 🔥 」─* \n\nThere is no Birthday today!`,
+        MessageType.text
+      );
+    }
+    try {
+      await conn.groupUpdateSubject(pvxcommunity, "<{PVX}> COMMUNITY ❤️");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const postTechNews = async (count) => {
+    if (count > 20) {
+      //20 times already posted news came
+      return;
+    }
+    console.log(`TECH NEWS FUNCTION ${count} times!`);
+
+    let url = "https://news-pvx.herokuapp.com/";
+    let { data } = await axios.get(url);
+    delete data.about;
+
+    let newsWeb = [
+      "gadgets-ndtv",
+      "gadgets-now",
+      "xda-developers",
+      "inshorts",
+      "beebom",
+      "india",
+      "mobile-reuters",
+      "techcrunch",
+      "engadget",
+    ];
+
+    let randomWeb = newsWeb[Math.floor(Math.random() * newsWeb.length)]; //random website
+    let index = Math.floor(Math.random() * data[randomWeb].length);
+
+    let news = data[randomWeb][index];
+    let techRes = await storeNewsTech(news);
+    if (techRes) {
+      console.log("NEW TECH NEWS!");
+      conn.sendMessage(pvxtech, `📰 ${news}`, MessageType.text);
+    } else {
+      console.log("OLD TECH NEWS!");
+      postTechNews(count + 1);
+    }
+  };
+
+  const postStudyInfo = async (count) => {
+    if (count > 20) {
+      //20 times already posted news came
+      return;
+    }
+    console.log(`STUDY NEWS FUNCTION ${count} times!`);
+    let feed;
+    // let random = Math.floor(Math.random() * 2);
+    feed = await parser.parseURL(
+      "https://www.thehindu.com/news/national/feeder/default.rss"
+    );
+
+    let li = feed.items.map((item) => {
+      return { title: item.title, link: item.link };
+    });
+
+    let index = Math.floor(Math.random() * li.length);
+
+    let news = li[index];
+
+    let techRes = await storeNewsStudy(news.title);
+    if (techRes) {
+      console.log("NEW STUDY NEWS!");
+      conn.sendMessage(pvxstudy, `📰 ${news.title}`, MessageType.text, {
+        detectLinks: false,
+      });
+    } else {
+      console.log("OLD STUDY NEWS!");
+      postStudyInfo(count + 1);
+    }
+  };
+
+  if (pvx) {
+    setInterval(() => {
+      console.log("SET INTERVAL.");
+      let todayDate = new Date().toLocaleDateString("en-GB", {
+        timeZone: "Asia/kolkata",
+      });
+
+      let hour = Number(
+        new Date()
+          .toLocaleTimeString("en-GB", {
+            timeZone: "Asia/kolkata",
+          })
+          .split(":")[0]
+      );
+      //8 to 24 ON
+      if (hour >= 8) {
+        postTechNews(0);
+        postStudyInfo(0);
+      }
+
+      if (usedDate !== todayDate) {
+        usedDate = todayDate;
+        checkTodayBday(todayDate);
+      }
+    }, 1000 * 60 * 20); //20 min
+  }
 
   // member left or join
   conn.on("group-participants-update", async (anu) => {
@@ -257,16 +402,55 @@ const main = async () => {
         }
 
         //for study group
-        // if (from === pvxstudy) {
-        //   conn.sendMessage(
-        //     from,
-        //     `Hello, Welcome @${num_split} to PVX Study group. Kindly fill the Biodata form (mandatory for all)\n\n👇🏻👇🏻👇🏻👇🏻👇🏻\nhttps://forms.gle/uuvUwV5fTk8JAjoTA`,
-        //     MessageType.extendedText,
-        //     {
-        //       contextInfo: { mentionedJid: [numJid] },
-        //     }
-        //   );
-        // }
+        if (from === pvxstudy) {
+          conn.sendMessage(
+            from,
+            `Welcome @${num_split} to PVX Study group.\nhttps://pvxcommunity.com/\n\nKindly fill the Biodata form (mandatory for all)\n\n👇🏻👇🏻👇🏻👇🏻👇🏻\nhttps://forms.gle/uuvUwV5fTk8JAjoTA`,
+            MessageType.extendedText,
+            {
+              contextInfo: { mentionedJid: [numJid] },
+              detectLinks: false,
+            }
+          );
+        }
+
+        //for community group
+        if (from === pvxcommunity) {
+          conn.sendMessage(
+            from,
+            `Welcome @${num_split} to PVX COMMUNITY.\nhttps://pvxcommunity.com/\n\nPlease follow the rules.\nBe kind to members.\nBe active and Don't spam`,
+            MessageType.extendedText,
+            {
+              contextInfo: { mentionedJid: [numJid] },
+              detectLinks: false,
+            }
+          );
+        }
+
+        //for mano
+        if (from === pvxmano) {
+          conn.sendMessage(
+            from,
+            `Welcome  @${num_split} to PVX MANORANJAN 🔥\n\nFollow these rules else you'll be kicked -\n1) Send videos regularly.\n2) Don't Send CP or any other illegal videos.\n3) Spamming or any kind of fighting is prohibited.\n 4) A group bot will be counting the number of videos you've sent. Inactive members will be kicked time to time.`,
+            MessageType.extendedText,
+            {
+              contextInfo: { mentionedJid: [numJid] },
+            }
+          );
+        }
+
+        //for programmer group
+        if (from === pvxprogrammer) {
+          conn.sendMessage(
+            from,
+            `Welcome @${num_split} to PVX Programmers Group.\nhttps://pvxcommunity.com/\n\n*Kindly give your intro like*\nName:\nCollege/Degree:\nInterest:\nSkills:\nCompany(if working):`,
+            MessageType.extendedText,
+            {
+              contextInfo: { mentionedJid: [numJid] },
+              detectLinks: false,
+            }
+          );
+        }
 
         if (numJid === botNumberJid) {
           console.log("Bot is added to new group!");
@@ -793,11 +977,12 @@ const main = async () => {
         //   for (let member of resultCountGroupTop) {
         //     totalGrpCountTop += Number(member.count);
         //     let user = conn.contacts[member.memberjid];
-        //     let username =
-        //       user.notify ||
-        //       user.vname ||
-        //       user.name ||
-        //       member.memberjid.split("@")[0];
+        // let username = user
+        //   ? user.notify ||
+        //     user.vname ||
+        //     user.name ||
+        //     member.memberjid.split("@")[0]
+        //   : member.memberjid.split("@")[0];
         //     countGroupMsgTempTop += `\n${member.count} - ${username}`;
         //   }
         //   countGroupMsgTop += `\n*Total Messages: ${totalGrpCountTop}*`;
@@ -828,12 +1013,12 @@ const main = async () => {
         //   let totalGrpCountIndi = 0;
         //   for (let member of resultCountGroupIndi) {
         //     totalGrpCountIndi += member.count;
-        //     let user = conn.contacts[member.memberjid];
-        //     let username =
-        //       user.notify ||
-        //       user.vname ||
-        //       user.name ||
-        //       member.memberjid.split("@")[0];
+        // let username = user
+        //   ? user.notify ||
+        //     user.vname ||
+        //     user.name ||
+        //     member.memberjid.split("@")[0]
+        //   : member.memberjid.split("@")[0];
         //     countGroupMsgTempIndi += `\n${member.count} - ${username}`;
         //   }
         //   countGroupMsgIndi += `\n*Total Messages: ${totalGrpCountIndi}*`;
@@ -1148,6 +1333,36 @@ const main = async () => {
           reply(`*─「 <{PVX}> BOT 」 ─*\n\nYES! BOT IS ALIVE !!!`);
           break;
 
+        /* ------------------------------- CASE: ALIVE ------------------------------ */
+        case "rules":
+        case "r":
+          reply(`*─「 <{PVX}> RULES 」 ─*
+
+✔ Rule 01 -
+_Do not spam in the grp._
+
+✔ Rule 02 -
+_Do not send any inappropriate content in the grp._
+
+✔ Rule 03 -
+_Be Active. You should've sent atleast 100 messages in a month. [Your messages are being counted daily by the bot.]_
+
+✔ Rule 04 -
+_Do not swear on someone else's parents  just because they roasted you badly._
+
+✔ Rule 05 -
+_Only the admin who removed a member can add them back again._
+
+✔ Rule 06 -
+_Do not use someone else's real picture for any malicious purpose like making stickers and spreading it._
+
+✔ Rule 07 -
+_Do not post other group's link without group admin's permission._
+
+✔ Rule 08 -
+_Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
+          break;
+
         /* ------------------------------- CASE: 91only ------------------------------ */
         case "91only":
           if (!isGroup) {
@@ -1255,8 +1470,12 @@ const main = async () => {
           votingResult.count[voteNumber - 1] += 1; //increase vote
 
           let user = conn.contacts[sender];
-          let username =
-            user.notify || user.vname || user.name || sender.split("@")[0];
+          let username = user
+            ? user.notify ||
+              user.vname ||
+              user.name ||
+              member.memberjid.split("@")[0]
+            : member.memberjid.split("@")[0];
           votingResult.members_voted_for[voteNumber - 1].push(username); // save who voted
 
           votingResult.voted_members.push(sender); //member voted
@@ -1590,18 +1809,18 @@ const main = async () => {
           }
           let urlInsta = args[0];
 
-          if (
-            !(
-              urlInsta.includes("instagram.com/p/") ||
-              urlInsta.includes("instagram.com/reel/") ||
-              urlInsta.includes("instagram.com/tv/")
-            )
-          ) {
-            reply(
-              `❌ Wrong URL! Only Instagram posted videos, tv and reels can be downloaded.`
-            );
-            return;
-          }
+          // if (
+          //   !(
+          //     urlInsta.includes("instagram.com/p/") ||
+          //     urlInsta.includes("instagram.com/reel/") ||
+          //     urlInsta.includes("instagram.com/tv/")
+          //   )
+          // ) {
+          //   reply(
+          //     `❌ Wrong URL! Only Instagram posted videos, tv and reels can be downloaded.`
+          //   );
+          //   return;
+          // }
 
           try {
             console.log("Video downloading ->", urlInsta);
@@ -1642,11 +1861,15 @@ const main = async () => {
                 { quoted: mek }
               );
             } else {
-              reply(`❌ There is some problem!`);
+              reply(
+                `❌ There is some problem. Also stories and private account media can't be downloaded!`
+              );
             }
           } catch (err) {
             console.log(err);
-            reply(`❌ There is some problem.`);
+            reply(
+              `❌ There is some problem. Also stories and private account media can't be downloaded.`
+            );
           }
           break;
 
@@ -1872,8 +2095,8 @@ const main = async () => {
                 mek.message.extendedTextMessage.contextInfo.quotedMessage,
             });
             const webpWithMetadata = await WSF.setMetadata(
-              "<{PVX}> BOT 🤖",
-              "",
+              "BOT 🤖",
+              "pvxcommunity.com",
               mediaSteal
             );
             fs.unlinkSync(`./${mediaSteal}`);
@@ -1946,8 +2169,8 @@ const main = async () => {
             return;
           }
           if (isMedia || isTaggedImage || isTaggedVideo) {
-            let packName = "<{PVX}> BOT 🤖";
-            let authorName = "";
+            let packName = "BOT 🤖";
+            let authorName = "pvxcommunity.com";
             let ran = getRandom(".webp");
 
             let outputOptions = [

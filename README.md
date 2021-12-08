@@ -1,5 +1,7 @@
 ## Whatsapp Bot - Node Js - Heroku - Baileys
 
+Easy deploy your bot, steps in the bottom.
+
 **_Requirements :_**
 
 - Heroku account
@@ -27,13 +29,12 @@
 1. After downloading and installing Heroku CLI in your system login to heroku cli using `heroku login` in command prompt or powershell.
 2. Add ffmpeg (_for sticker support_) in your heroku app using `heroku buildpacks:add https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git -a <your-app-name>`
 3. After adding ffmpeg now add 'Heroku Buildpack for Node.js' using `heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nodejs.git -a <your-app-name>`
-4. Now add 'Heroku Buildpack for tesseract' using `heroku buildpacks:add https://github.com/pathwaysmedical/heroku-buildpack-tesseract`
-5. Now download or clone the whatsapp-bot repo by `git clone https://github.com/Shubhamrawat5/whatsapp-bot.git`
-6. Now enter in whatsapp-bot directory using `cd whatsapp-bot` in command prompt or terminal.
-7. Create the remote region using `heroku git:remote -a <your-app-name>`
-8. Now push the local repo in your heroku app using `git push heroku master`
-9. Now after the deploy process is completed use `heroku logs -a <your-app-name> --tail` to get real time logs from heroku app.
-10. In real time logs it will automatically ask you for login using qr code just simple scan the qr code using your whatsapp web section, and you are done.
+4. Now download or clone the whatsapp-bot repo by `git clone https://github.com/Shubhamrawat5/whatsapp-bot.git`
+5. Now enter in whatsapp-bot directory using `cd whatsapp-bot` in command prompt or terminal.
+6. Create the remote region using `heroku git:remote -a <your-app-name>`
+7. Now push the local repo in your heroku app using `git push heroku master`
+8. Now after the deploy process is completed use `heroku logs -a <your-app-name> --tail` to get real time logs from heroku app.
+9. In real time logs it will automatically ask you for login using qr code just simple scan the qr code using your whatsapp web section, and you are done.
 
 Now Bot will start working!!
 
@@ -79,6 +80,7 @@ Now Bot will start working!!
 |    `!stotvote`    |        Stop voting and see result         |         |
 |    `!donation`    |           Get Donation details            |         |
 |     `!source`     |            Get the bot source             |         |
+|     `!rules`      |           Get PVX groups rules            |   !r    |
 |      `!dev`       |          Get the contact of dev           |         |
 
 <hr>
@@ -172,5 +174,5 @@ Now you'll see QR code, scan with your device and bot will start working!
 - To get owner commands
 
   Go to heroku daskboard then settings then config vars
-  
+
   Add KEY as `myNumber` and VALUE as `911234567890` (your number with country code and no + sign)

@@ -18,6 +18,10 @@
 
 📛 *${prefix}donation*
     - _Get donation details and help PVX community!_
+
+📛 *${prefix}rules*
+    - _Get PVX groups rules!_
+    Alias: *${prefix}r*
     
 📛 *${prefix}ytv url*
     - _Youtube videos downloader!_
