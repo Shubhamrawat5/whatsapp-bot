@@ -29,7 +29,9 @@
     "ytdl-core": "github:fent/node-ytdl-core#pull/1022/head"
   },
   "homepage": "https://github.com/Shubhamrawat5/whatsapp-bot#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Shubhamrawat5/whatsapp-bot.git"

@@ -1,6 +1,9 @@
 module.exports.commandListOwner = (prefix) => {
-  return `*─「 🔥 <{PVX}> BOT 🔥 」─*
+  const more = String.fromCharCode(8206);
+  const readMore = more.repeat(4001);
 
+  return `*─「 🔥 <{PVX}> BOT 🔥 」─*
+  ${readMore}
   _Restricted command for owner only!_
     
   📛 *${prefix}test query*

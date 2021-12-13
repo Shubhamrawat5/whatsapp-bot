@@ -1,6 +1,9 @@
 ﻿module.exports.commandList = (prefix) => {
-  return `*─「 🔥 <{PVX}> BOT 🔥 」─*
+  const more = String.fromCharCode(8206);
+  const readMore = more.repeat(4001);
 
+  return `*─「 🔥 <{PVX}> BOT 🔥 」─*
+  ${readMore}
 📛 *${prefix}sticker*
     - _Create sticker from media!_
     Alias: *${prefix}s*
@@ -8,6 +11,21 @@
 📛 *${prefix}sticker crop*
     - _Create full size sticker from media!_
     Alias: *${prefix}s c*
+
+📛 *${prefix}slist*
+    - Get list of stickers command!_
+📛 ${prefix}wall text
+📛 ${prefix}matrix text
+📛 ${prefix}flame text
+📛 ${prefix}fire text
+📛 ${prefix}city text
+📛 ${prefix}3d text
+📛 ${prefix}logo text
+📛 ${prefix}light text
+📛 ${prefix}ff text
+📛 ${prefix}neon text
+📛 ${prefix}flower text
+📛 ${prefix}sand text
 
 📛 *${prefix}toimg*
     - _Create image from sticker!_
@@ -96,7 +114,6 @@
 📛 *${prefix}helpr*
     - _To get list of restricted commands!_
 
- _To add this bot in your group, simply send group link in my inbox!_
  ✔️ more cool commands coming...`;
 };
 

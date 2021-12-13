@@ -180,6 +180,7 @@ require("dotenv").config();
 const myNumber = process.env.myNumber;
 const clientId = process.env.clientID;
 const pvx = process.env.pvx;
+const zeksapi = process.env.zeksapi;
 
 //CRICKET variables
 let matchIdGroups = {}; //to store every group name with its match ID
@@ -194,6 +195,9 @@ const getGroupAdmins = (participants) => {
   }
   return admins;
 };
+
+const more = String.fromCharCode(8206);
+const readMore = more.repeat(4001);
 
 const getRandom = (text) => {
   return `${Math.floor(Math.random() * 10000)}${text}`;
@@ -770,7 +774,7 @@ const main = async () => {
             return;
           }
           let countRes = await getcount();
-          let countMsg = "COMMAND USED STATS:\n";
+          let countMsg = `COMMAND USED STATS:\n${readMore}`;
 
           countRes.forEach((r) => {
             countMsg += `\n${r.to_char} - ${r.times} times`;
@@ -917,173 +921,209 @@ const main = async () => {
         //   reply(`_${indiCount} messages from 24 NOV!_`);
         //   break;
 
-        // /* --------------------------------- pvxg --------------------------------- */
-        // case "pvxg":
-        //   if (!isGroup) {
-        //     reply("❌ Group command only!");
-        //     return;
-        //   }
-        //   if (myNumber + "@s.whatsapp.net" !== sender) {
-        //     reply(`❌ Owner only command!`);
-        //     return;
-        //   }
-        //   if (!isGroupAdmins) {
-        //     reply("❌ Admin command!");
-        //     return;
-        //   }
-        //   let resultCountGroup = await getCountGroups();
-        //   let countGroupMsg = "*📛 PVX COUNTER 📛*\n_From 24 Nov 2021_\n";
+        /* --------------------------------- zero --------------------------------- */
+        case "zero":
+          try {
+            if (!isGroup) {
+              reply("❌ Group command only!");
+              return;
+            }
+            if (!pvxadminsMem.includes(sender)) {
+              reply(`❌ PVX admin only command!`);
+              return;
+            }
+            let resultCountGroupIndi = await getCountGroupMembers(from);
+            let memWithMsg = new Set();
+            for (let member of resultCountGroupIndi) {
+              memWithMsg.add(member.memberjid);
+            }
+            let zeroMsg = `${groupName}\nMembers with 0 message this month:${readMore}\n`;
+            groupMembers.forEach((mem) => {
+              if (!memWithMsg.has(mem.jid)) {
+                zeroMsg += `\n${mem.jid.split("@")[0]}`;
+              }
+            });
+            reply(zeroMsg);
+          } catch (err) {
+            console.log(err);
+          }
 
-        //   let countGroupMsgTemp = "\n";
-        //   let totalGrpCount = 0;
-        //   for (let group of resultCountGroup) {
-        //     try {
-        //       let mdpvx = await conn.groupMetadata(group.groupjid);
-        //       let grpName = mdpvx.subject;
-        //       if (!grpName || !grpName.toUpperCase().includes("<{PVX}>"))
-        //         continue; //not a pvx group
-        //       // grpName = grpName.split(" ")[1];
-        //       grpName = grpName.replace("<{PVX}> ", "");
-        //       totalGrpCount += Number(group.count);
-        //       countGroupMsgTemp += `\n${group.count} - ${grpName}`;
-        //     } catch (err) {
-        //       console.log("Error in getting metadata of " + group.groupjid);
-        //     }
-        //   }
-        //   countGroupMsg += `\n*Total Messages: ${totalGrpCount}*`;
-        //   countGroupMsg += countGroupMsgTemp;
-        //   reply(countGroupMsg);
-        //   break;
+          break;
 
-        // /* --------------------------------- pvxt --------------------------------- */
-        // case "pvxt":
-        //   if (!isGroup) {
-        //     reply("❌ Group command only!");
-        //     return;
-        //   }
-        //   if (myNumber + "@s.whatsapp.net" !== sender) {
-        //     reply(`❌ Owner only command!`);
-        //     return;
-        //   }
-        //   if (!isGroupAdmins) {
-        //     reply("❌ Admin command!");
-        //     return;
-        //   }
-        //   let resultCountGroupTop = await getCountTop();
-        //   let countGroupMsgTop = `*📛 PVX TOP MEMBERS 📛*\n_From 24 Nov 2021_\n`;
+        /* --------------------------------- pvxg --------------------------------- */
+        case "pvxg":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (!pvxadminsMem.includes(sender)) {
+            reply(`❌ PVX admin only command!`);
+            return;
+          }
+          let resultCountGroup = await getCountGroups();
+          let countGroupMsg = `*📛 PVX GROUP STATS 📛*\n_From 24 Nov 2021_${readMore}\n`;
 
-        //   let countGroupMsgTempTop = "\n";
-        //   let totalGrpCountTop = 0;
-        //   for (let member of resultCountGroupTop) {
-        //     totalGrpCountTop += Number(member.count);
-        //     let user = conn.contacts[member.memberjid];
-        // let username = user
-        //   ? user.notify ||
-        //     user.vname ||
-        //     user.name ||
-        //     member.memberjid.split("@")[0]
-        //   : member.memberjid.split("@")[0];
-        //     countGroupMsgTempTop += `\n${member.count} - ${username}`;
-        //   }
-        //   countGroupMsgTop += `\n*Total Messages: ${totalGrpCountTop}*`;
-        //   countGroupMsgTop += countGroupMsgTempTop;
-        //   reply(countGroupMsgTop);
-        //   break;
+          let countGroupMsgTemp = "\n";
+          let totalGrpCount = 0;
+          for (let group of resultCountGroup) {
+            try {
+              let mdpvx = await conn.groupMetadata(group.groupjid);
+              let grpName = mdpvx.subject;
+              if (!grpName || !grpName.toUpperCase().includes("<{PVX}>"))
+                continue; //not a pvx group
+              // grpName = grpName.split(" ")[1];
+              grpName = grpName.replace("<{PVX}> ", "");
+              totalGrpCount += Number(group.count);
+              countGroupMsgTemp += `\n${group.count} - ${grpName}`;
+            } catch (err) {
+              console.log("Error in getting metadata of " + group.groupjid);
+            }
+          }
+          countGroupMsg += `\n*Total Messages: ${totalGrpCount}*`;
+          countGroupMsg += countGroupMsgTemp;
+          reply(countGroupMsg);
+          break;
 
-        // /* --------------------------------- pvxm --------------------------------- */
-        // case "pvxm":
-        //   // if (!grpName.toUpperCase().includes("<{PVX}>")) return; //not a pvx group
-        //   if (!isGroup) {
-        //     reply("❌ Group command only!");
-        //     return;
-        //   }
-        //   if (myNumber + "@s.whatsapp.net" !== sender) {
-        //     reply(`❌ Owner only command!`);
-        //     return;
-        //   }
-        //   if (!isGroupAdmins) {
-        //     reply("❌ Admin command!");
-        //     return;
-        //   }
+        /* --------------------------------- pvxt --------------------------------- */
+        case "pvxt":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (!pvxadminsMem.includes(sender)) {
+            reply(`❌ PVX admin only command!`);
+            return;
+          }
+          let resultCountGroupTop = await getCountTop();
+          let countGroupMsgTop = `*📛 PVX TOP MEMBERS 📛*\n_From 24 Nov 2021_${readMore}\n`;
 
-        //   let resultCountGroupIndi = await getCountGroupMembers(from);
-        //   let countGroupMsgIndi = `*${groupName}*\n_From 24 Nov 2021_\n`;
+          let countGroupMsgTempTop = "\n";
+          let totalGrpCountTop = 0;
+          for (let member of resultCountGroupTop) {
+            totalGrpCountTop += Number(member.count);
+            let user = conn.contacts[member.memberjid];
+            let username = user
+              ? user.notify ||
+                user.vname ||
+                user.name ||
+                member.memberjid.split("@")[0]
+              : member.memberjid.split("@")[0];
+            countGroupMsgTempTop += `\n${member.count} - ${username}`;
+          }
+          countGroupMsgTop += `\n*Total Messages: ${totalGrpCountTop}*`;
+          countGroupMsgTop += countGroupMsgTempTop;
+          reply(countGroupMsgTop);
+          break;
 
-        //   let countGroupMsgTempIndi = "\n";
-        //   let totalGrpCountIndi = 0;
-        //   for (let member of resultCountGroupIndi) {
-        //     totalGrpCountIndi += member.count;
-        // let username = user
-        //   ? user.notify ||
-        //     user.vname ||
-        //     user.name ||
-        //     member.memberjid.split("@")[0]
-        //   : member.memberjid.split("@")[0];
-        //     countGroupMsgTempIndi += `\n${member.count} - ${username}`;
-        //   }
-        //   countGroupMsgIndi += `\n*Total Messages: ${totalGrpCountIndi}*`;
-        //   countGroupMsgIndi += countGroupMsgTempIndi;
-        //   reply(countGroupMsgIndi);
-        //   break;
+        /* --------------------------------- pvxm --------------------------------- */
+        case "pvxm":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (!pvxadminsMem.includes(sender)) {
+            reply(`❌ PVX admin only command!`);
+            return;
+          }
 
-        // /* ------------------------------- CASE: PVXSTATS ------------------------------ */
-        // case "pvxstats":
-        //   if (!isGroup) {
-        //     reply("❌ Group command only!");
-        //     return;
-        //   }
-        //   if (!pvxadminsMem.includes(sender)) {
-        //     reply(`❌ PVX admin only command!`);
-        //     return;
-        //   }
-        //   if (!isGroupAdmins) {
-        //     reply("❌ Admin command!");
-        //     return;
-        //   }
+          let resultCountGroupIndi = await getCountGroupMembers(from);
 
-        //   let groups = conn.chats
-        //     .all()
-        //     .filter(
-        //       (v) =>
-        //         v.jid.endsWith("g.us") &&
-        //         !v.read_only &&
-        //         v.message &&
-        //         !v.announce &&
-        //         v.name.startsWith("<{PVX}>")
-        //     )
-        //     .map((v) => {
-        //       return { name: v.name, jid: v.jid };
-        //     });
-        //   // console.log(groups);
+          let memWithMsg = new Set();
+          for (let member of resultCountGroupIndi) {
+            memWithMsg.add(member.memberjid);
+          }
 
-        //   let pvxMsg = "*📛 PVX STATS 📛*";
-        //   let totalMem = 0;
-        //   let uniqueMem = new Set();
-        //   let temppvxMsg = "";
-        //   let temppvxList = [];
-        //   for (let group of groups) {
-        //     const mdpvx = await conn.groupMetadata(group.jid);
-        //     // console.log(mdpvx);
-        //     totalMem += mdpvx.participants.length;
-        //     temppvxList.push({
-        //       subject: mdpvx.subject,
-        //       count: mdpvx.participants.length,
-        //     });
+          let countGroupMsgIndi = `*${groupName}*\n_From 24 Nov 2021_${readMore}\n`;
 
-        //     for (let parti of mdpvx.participants) {
-        //       uniqueMem.add(parti.jid);
-        //     }
-        //   }
-        //   temppvxList = temppvxList.sort((x, y) => y.count - x.count); //sort
+          let countGroupMsgTempIndi = "\n";
+          let totalGrpCountIndi = 0;
+          for (let member of resultCountGroupIndi) {
+            totalGrpCountIndi += member.count;
+            let user = conn.contacts[member.memberjid];
+            let username = user
+              ? user.notify ||
+                user.vname ||
+                user.name ||
+                member.memberjid.split("@")[0]
+              : member.memberjid.split("@")[0];
+            countGroupMsgTempIndi += `\n${member.count} - ${username}`;
+          }
 
-        //   temppvxList.forEach((grp) => {
-        //     temppvxMsg += `\n\n*${grp.subject}*\nMembers: ${grp.count}`;
-        //   });
+          groupMembers.forEach((mem) => {
+            if (!memWithMsg.has(mem.jid)) {
+              let user = conn.contacts[mem.jid];
+              let username = user
+                ? user.notify ||
+                  user.vname ||
+                  user.name ||
+                  mem.jid.split("@")[0]
+                : mem.jid.split("@")[0];
+              countGroupMsgTempIndi += `\n${0} - ${username}`;
+            }
+          });
 
-        //   pvxMsg += `\nTotal Groups: ${groups.length}\nTotal Members: ${totalMem}\nUnique Members: ${uniqueMem.size}`;
-        //   pvxMsg += temppvxMsg;
-        //   reply(pvxMsg);
-        //   break;
+          countGroupMsgIndi += `\n*Total Messages: ${totalGrpCountIndi}*`;
+          countGroupMsgIndi += countGroupMsgTempIndi;
+          reply(countGroupMsgIndi);
+          break;
+        /* ------------------------------- CASE: PVXSTATS ------------------------------ */
+        case "pvxstats":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (!pvxadminsMem.includes(sender)) {
+            reply(`❌ PVX admin only command!`);
+            return;
+          }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
+            return;
+          }
+
+          let groups = conn.chats
+            .all()
+            .filter(
+              (v) =>
+                v.jid.endsWith("g.us") &&
+                !v.read_only &&
+                v.message &&
+                !v.announce &&
+                v.name.startsWith("<{PVX}>")
+            )
+            .map((v) => {
+              return { name: v.name, jid: v.jid };
+            });
+          // console.log(groups);
+
+          let pvxMsg = `*📛 PVX STATS 📛*${readMore}`;
+          let totalMem = 0;
+          let uniqueMem = new Set();
+          let temppvxMsg = "";
+          let temppvxList = [];
+          for (let group of groups) {
+            const mdpvx = await conn.groupMetadata(group.jid);
+            // console.log(mdpvx);
+            totalMem += mdpvx.participants.length;
+            temppvxList.push({
+              subject: mdpvx.subject,
+              count: mdpvx.participants.length,
+            });
+
+            for (let parti of mdpvx.participants) {
+              uniqueMem.add(parti.jid);
+            }
+          }
+          temppvxList = temppvxList.sort((x, y) => y.count - x.count); //sort
+
+          temppvxList.forEach((grp) => {
+            temppvxMsg += `\n\n*${grp.subject}*\nMembers: ${grp.count}`;
+          });
+
+          pvxMsg += `\nTotal Groups: ${groups.length}\nTotal Members: ${totalMem}\nUnique Members: ${uniqueMem.size}`;
+          pvxMsg += temppvxMsg;
+          reply(pvxMsg);
+          break;
 
         /* ------------------------------- CASE: TEST ------------------------------ */
         case "test":
@@ -1317,14 +1357,35 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
+          try {
+            let groups = conn.chats
+              .all()
+              .filter(
+                (v) =>
+                  v.jid.endsWith("g.us") &&
+                  !v.read_only &&
+                  v.message &&
+                  !v.announce &&
+                  v.name.startsWith("<{PVX}>")
+              )
+              .map((v) => {
+                return { name: v.name, jid: v.jid };
+              });
 
-          let responseGB = await takeGroupbackup(
-            groupName,
-            groupDesc,
-            groupMetadata.participants
-          );
-          if (responseGB) reply(`✔ Group backup taken!`);
-          else reply(`❌ There is some problem!`);
+            for (let group of groups) {
+              const mdpvx = await conn.groupMetadata(group.jid);
+              await takeGroupbackup(
+                mdpvx.subject,
+                mdpvx.desc,
+                mdpvx.participants
+              );
+            }
+
+            reply(`✔ Group backup taken!`);
+          } catch (err) {
+            console.log(err);
+            reply(`❌ Error!`);
+          }
           break;
 
         /* ------------------------------- CASE: ALIVE ------------------------------ */
@@ -1336,7 +1397,7 @@ const main = async () => {
         /* ------------------------------- CASE: ALIVE ------------------------------ */
         case "rules":
         case "r":
-          reply(`*─「 <{PVX}> RULES 」 ─*
+          reply(`*─「 <{PVX}> RULES 」 ─*${readMore}
 
 ✔ Rule 01 -
 _Do not spam in the grp._
@@ -2159,6 +2220,116 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
               "❌ There is some problem!\nOnly non-animated stickers can be convert to image!"
             );
           }
+          break;
+
+        case "slist":
+          reply(
+            `📛 MAKE COOL STICKERS FROM TEXT\n\n ${prefix}wall text\n ${prefix}matrix text\n ${prefix}flame text\n ${prefix}fire text\n ${prefix}city text\n ${prefix}3d text\n ${prefix} text\n ${prefix}light text\n ${prefix}ff text\n ${prefix}neon text\n ${prefix}flower text\n${prefix}sand text`
+          );
+          break;
+
+        /* -------------------------------- CASE: WALL ------------------------------- */
+        case "wall":
+        case "matrix":
+        case "flame":
+        case "fire":
+        case "city":
+        case "3d":
+        case "logo":
+        case "light":
+        case "ff":
+        case "neon":
+        case "flower":
+        case "sand":
+          let zeksType;
+          if (command === "wall") zeksType = "breakwall";
+          else if (command === "matrix") zeksType = "matrix";
+          else if (command === "flame") zeksType = "flametext";
+          else if (command === "fire") zeksType = "tfire";
+          else if (command === "city") zeksType = "lithgtext";
+          else if (command === "3d") zeksType = "text3dbox";
+          else if (command === "logo") zeksType = "logobp";
+          else if (command === "light") zeksType = "tlight";
+          else if (command === "ff") zeksType = "epep";
+          else if (command === "neon") zeksType = "bneon";
+          else if (command === "flower") zeksType = "flowertext";
+          else if (command === "sand") zeksType = "sandw";
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          if (args.length === 0) {
+            reply(`❌ Give some text.`);
+            return;
+          }
+          try {
+            let msg = body.trim().replace(/ +/, ",").split(",")[1];
+            let url = encodeURI(
+              "https://api.zeks.me/api/" +
+                zeksType +
+                "?apikey=" +
+                zeksapi +
+                "&text=" +
+                msg
+            );
+
+            let packName = "BOT 🤖";
+            let authorName = "pvxcommunity.com";
+            let ran = getRandom(".webp");
+
+            let outputOptions = [
+              `-vcodec`,
+              `libwebp`,
+              `-vf`,
+              `scale=600:600:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=600:600:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1`,
+              `-loop`,
+              `0`,
+              `-ss`,
+              `00:00:00.0`,
+              `-t`,
+              `00:00:10.0`,
+              `-preset`,
+              `default`,
+              `-an`,
+              `-vsync`,
+              `0`,
+              `-s`,
+              `512:512`,
+            ];
+
+            ffmpeg(url)
+              .addOutputOptions(outputOptions)
+              .on("error", (err) => {
+                console.log(err);
+                reply("❌ ERROR!\nOnly english and No emoji.");
+              })
+              .on("end", async () => {
+                const webpWithMetadata = await WSF.setMetadata(
+                  packName,
+                  authorName,
+                  ran
+                );
+                await conn.sendMessage(
+                  from,
+                  webpWithMetadata,
+                  MessageType.sticker,
+                  {
+                    quoted: mek,
+                  }
+                );
+                try {
+                  fs.unlinkSync(ran);
+                } catch (err) {
+                  console.log(err);
+                }
+              })
+              .toFormat("webp")
+              .save(ran);
+          } catch (err) {
+            console.log(err);
+            reply("❌ ERROR!");
+          }
+
           break;
 
         /* ------------------------------- CASE: STICKER ------------------------------ */
