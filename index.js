@@ -152,6 +152,7 @@ const { storeNewsTech } = require("./DB/postTechDB");
 const { storeNewsStudy } = require("./DB/postStudyDB");
 const { storeNewsSport } = require("./DB/postSportDB");
 const { storeNewsMovie } = require("./DB/postMovieDB");
+const { setCountVideo, getCountVideo } = require("./DB/countVideoDB");
 const { getNews } = require("./functions/news");
 const { getInstaVideo } = require("./functions/insta");
 const { getFbVideo } = require("./functions/fb");
@@ -528,6 +529,11 @@ const main = async () => {
       const args = body.trim().split(/ +/).slice(1);
       const isCmd = body.startsWith(prefix);
 
+      //count video
+      //  if (isGroup && mek.message.videoMessage && from == pvxmano) {
+      //   setCountVideo(sender, from);
+      // }
+
       //send all sticker message to given group
       // if (
       //   mek.message.stickerMessage &&
@@ -543,7 +549,7 @@ const main = async () => {
       //     "",
       //     mediaSticker
       //   );
-      //   //sticker 1.0 -> "919557666582-1580308963@g.us"
+      //   //sticker only 1.0 -> "919557666582-1580308963@g.us"
       //   await conn.sendMessage(
       //     "919557666582-1628610549@g.us",
       //     webpWithMetadataSticker,
@@ -949,6 +955,59 @@ const main = async () => {
           }
 
           break;
+
+        /* --------------------------------- pvxv --------------------------------- */
+        // case "pvxv":
+        //   try {
+        //     if (!isGroup) {
+        //       reply("❌ Group command only!");
+        //       return;
+        //     }
+
+        //     let resultCountGroupIndi = await getCountVideo(pvxmano);
+        //     let countGroupMsgIndi = `*📛 MANO VIDEO COUNT*\n_From 13 DEC 2021_${readMore}\n`;
+        //     let memWithMsg = new Set();
+        //     for (let member of resultCountGroupIndi) {
+        //       memWithMsg.add(member.memberjid);
+        //     }
+
+        //     let countGroupMsgTempIndi = "\n";
+        //     let totalGrpCountIndi = 0;
+        //     for (let member of resultCountGroupIndi) {
+        //       totalGrpCountIndi += member.count;
+        //       let user = conn.contacts[member.memberjid];
+        //       let username = user
+        //         ? user.notify ||
+        //           user.vname ||
+        //           user.name ||
+        //           member.memberjid.split("@")[0]
+        //         : member.memberjid.split("@")[0];
+        //       countGroupMsgTempIndi += `\n${member.count} - ${username}`;
+        //     }
+
+        //     let md = await conn.groupMetadata(mano);
+
+        //     md.participants.forEach((mem) => {
+        //       if (!memWithMsg.has(mem.jid)) {
+        //         let user = conn.contacts[mem.jid];
+        //         let username = user
+        //           ? user.notify ||
+        //             user.vname ||
+        //             user.name ||
+        //             mem.jid.split("@")[0]
+        //           : mem.jid.split("@")[0];
+        //         countGroupMsgTempIndi += `\n${0} - ${username}`;
+        //       }
+        //     });
+
+        //     countGroupMsgIndi += `\n*Total Messages: ${totalGrpCountIndi}*`;
+        //     countGroupMsgIndi += countGroupMsgTempIndi;
+        //     reply(countGroupMsgIndi);
+        //   } catch (err) {
+        //     console.log(err);
+        //     reply(`❌ Error!`);
+        //   }
+        //   break;
 
         /* --------------------------------- pvxg --------------------------------- */
         case "pvxg":
