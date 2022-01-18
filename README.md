@@ -56,7 +56,7 @@ Now Bot will start working!!
 |     `!delete`     |           Delete message of bot           |   !d    |
 |    `!sticker`     | Create sticker from different media types |   !s    |
 |     `!block`      |  To block particular commands for group   |         |
-|     `!toimg`      |         Create image from sticker         |         |
+|     `!image`      |         Create image from sticker         |         |
 |     `!steal`      |      Change sticker name to PVX BOT       |         |
 |      `!text`      |        Get text extract from image        |         |
 |      `!song`      |       Get any song in good quality        |         |

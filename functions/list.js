@@ -27,7 +27,7 @@
 📛 ${prefix}flower text
 📛 ${prefix}sand text
 
-📛 *${prefix}toimg*
+📛 *${prefix}image*
     - _Create image from sticker!_
 
 📛 *${prefix}insta url*

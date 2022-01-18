@@ -870,6 +870,7 @@ const main = async () => {
 
         /* ------------------------------- CASE: warning ------------------------------ */
         case "warning":
+        case "warn":
           // if (!pvxadminsMem.includes(sender)) {
           //   reply(`❌ PVX admin only command!`);
           //   return;
@@ -2315,6 +2316,7 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
 
         /* ------------------------------- CASE: TOIMG ------------------------------ */
         case "toimg":
+        case "image":
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
