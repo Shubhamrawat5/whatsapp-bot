@@ -2533,8 +2533,8 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
 
         /* ------------------------------- CASE: ADD ------------------------------ */
         case "add":
-          reply("❌ Command Temperory Removed!");
-          return;
+          //reply("❌ Command Temperory Removed!");
+          //return;
 
           if (!isGroup) {
             reply("❌ Group command only!");
