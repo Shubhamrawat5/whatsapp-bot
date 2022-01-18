@@ -61,6 +61,9 @@
 📛 *${prefix}mute | ${prefix}unmute*
     - _Mute and Unmute the group!_
 
+📛 *${prefix}warning*
+    - _Give warning to user!_
+
 📛 *${prefix}delete*
     - _Delete message of bot!_
     Alias: *${prefix}d*

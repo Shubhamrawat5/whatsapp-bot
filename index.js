@@ -148,6 +148,7 @@ const {
   getCountTop,
 } = require("./DB/countMemberDB");
 const { dropAuth } = require("./DB/dropauthDB");
+const { setCountWarning, getCountWarning } = require("./DB/warningDB");
 const { storeNewsTech } = require("./DB/postTechDB");
 const { storeNewsStudy } = require("./DB/postStudyDB");
 const { storeNewsSport } = require("./DB/postSportDB");
@@ -865,6 +866,84 @@ const main = async () => {
           if (blacklistRes2) reply("✔️ Added to blacklist!");
           else reply("❌ Error!");
 
+          break;
+
+        /* ------------------------------- CASE: warning ------------------------------ */
+        case "warning":
+          // if (!pvxadminsMem.includes(sender)) {
+          //   reply(`❌ PVX admin only command!`);
+          //   return;
+          // }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
+            return;
+          }
+          if (!mek.message.extendedTextMessage) {
+            reply("❌ Tag someone!");
+            return;
+          }
+          try {
+            let mentioned =
+              mek.message.extendedTextMessage.contextInfo.mentionedJid;
+            if (mentioned) {
+              //when member are mentioned with command
+              if (mentioned.length === 1) {
+                let warnCount = await getCountWarning(mentioned[0], from);
+                let num_split = mentioned[0].split("@s.whatsapp.net")[0];
+                let warnMsg = `@${num_split} ,You have been warned. Warning status (${
+                  warnCount + 1
+                }/3). Don't repeat this type of behaviour again or you'll be banned from the group!`;
+                conn.sendMessage(from, warnMsg, MessageType.extendedText, {
+                  contextInfo: { mentionedJid: mentioned },
+                });
+                await setCountWarning(mentioned[0], from);
+                if (warnCount >= 2) {
+                  if (!isBotGroupAdmins) {
+                    reply("❌ I'm not Admin here!");
+                    return;
+                  }
+                  if (groupAdmins.includes(mentioned[0])) {
+                    reply("❌ Cannot remove admin!");
+                    return;
+                  }
+                  conn.groupRemove(from, mentioned);
+                  reply("_✔ Number removed from group!_");
+                }
+              } else {
+                //if multiple members are tagged
+                reply("❌ Mention only 1 member!");
+              }
+            } else {
+              //when message is tagged with command
+              let taggedMessageUser = [
+                mek.message.extendedTextMessage.contextInfo.participant,
+              ];
+              let warnCount = await getCountWarning(taggedMessageUser[0], from);
+              let num_split = taggedMessageUser[0].split("@s.whatsapp.net")[0];
+              let warnMsg = `@${num_split} ,Your have been warned. Warning status (${
+                warnCount + 1
+              }/3). Don't repeat this type of behaviour again or you'll be banned from group!`;
+              conn.sendMessage(from, warnMsg, MessageType.extendedText, {
+                contextInfo: { mentionedJid: taggedMessageUser },
+              });
+              await setCountWarning(taggedMessageUser[0], from);
+              if (warnCount >= 2) {
+                if (!isBotGroupAdmins) {
+                  reply("❌ I'm not Admin here!");
+                  return;
+                }
+                if (groupAdmins.includes(taggedMessageUser[0])) {
+                  reply("❌ Cannot remove admin!");
+                  return;
+                }
+                conn.groupRemove(from, taggedMessageUser);
+                reply("_✔ Number removed from group!_");
+              }
+            }
+          } catch (err) {
+            console.log(err);
+            reply(`❌ Error!`);
+          }
           break;
 
         /* ------------------------------- CASE: donationadd ------------------------------ */

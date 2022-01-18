@@ -52,6 +52,7 @@ Now Bot will start working!!
 |      `!kick`      |          kick member from group           |         |
 |      `!mute`      |              Mute the group               |         |
 |     `!unmute`     |             Unmute the group              |         |
+|    `!warning`     |           Give warning to user            |         |
 |     `!delete`     |           Delete message of bot           |   !d    |
 |    `!sticker`     | Create sticker from different media types |   !s    |
 |     `!block`      |  To block particular commands for group   |         |
