@@ -1,0 +1,132 @@
+﻿heroku git:remote -a wa-bot-pvx
+
+heroku buildpacks:set heroku/nodejs
+heroku buildpacks:add https://github.com/pathwaysmedical/heroku-buildpack-tesseract
+
+taskkill /F /IM node.exe
+
+testing
+"919478205112-1598720728@g.us"
+
+# ------------------------------- DROP TABLE ------------------------------- #
+begin;
+set transaction read write;
+DROP table count;
+COMMIT;
+
+SELECT * FROM countmember WHERE memberjid='919503442316@s.whatsapp.net' and groupjid='919557666582-1584193120@g.us';
+SELECT *,count(*) FROM countmember GROUP BY memberjid, groupjid, count HAVING count(*) > 1;
+
+begin;
+set transaction read write;
+ALTER TABLE countmember ADD COLUMN day text;
+COMMIT;
+
+//delete row
+begin;
+set transaction read write;
+delete from countmember WHERE groupjid='919557666582-1582555632@g.us';
+COMMIT;
+
+begin;
+set transaction read write;
+UPDATE countmember SET day='11-2021';
+COMMIT;
+
+begin;
+set transaction read write;
+UPDATE donation SET amount=100 WHERE name='Kumar';
+COMMIT;
+
+# ------------------------------------- - ------------------------------------ #
+
+mek =  {
+key: {
+remoteJid: '919557666582-1559476348@g.us',
+fromMe: false,
+id: 'B98FBDD5A762D4B6577EE3EA9F4DD733'
+},
+message: { conversation: '!score' },
+messageTimestamp: '1632654425',
+participant: '919836042914@s.whatsapp.net',
+ephemeralOutOfSync: false
+}
+}
+
+ /* ------------------------------- CASE: ATTP ------------------------------ */
+        case "attpp":
+          if (!isGroup) {
+            reply("❌ ERROR: Group command only!");
+            return;
+          }
+          let text = "Shubham";
+          let uri = encodeURI(text);
+          let ttinullimage = await axios.get(
+            "https://api.xteam.xyz/attp?file&text=" + uri,
+            { responseType: "arraybuffer" }
+          );
+          await conn.sendMessage(
+            from,
+            Buffer.from(ttinullimage.data),
+            MessageType.sticker,
+            { mimetype: Mimetype.webp }
+          );
+          break;
+
+
+
+  /* ------------------------------- CASE: ATTP ------------------------------ */
+  case "attp":
+    if (!isGroup) {
+      reply("❌ ERROR: Group command only!");
+      return;
+    }
+    let text = "Yes";
+    let uri = encodeURI(text);
+    let dataAttp = await axios.get(
+      "https://api.xteam.xyz/attp?file&text=" + uri,
+      { responseType: "stream" }
+    );
+    console.log("getting data");
+    data = dataAttp.data;
+    let randomNameAttp = getRandom(".gif");
+    const path = `./${randomNameAttp}`;
+    const writer = fs.createWriteStream(path);
+    data.pipe(writer);
+    console.log("got");
+    await new Promise((resolve, reject) => {
+      writer.on("finish", () => resolve);
+      writer.on("error", () => reject);
+    });
+
+    console.log("sending");
+    reply("done");
+    // await conn.sendMessage(
+    //   from,
+    //   `./${randomNameAttp}`,
+    //   MessageType.sticker
+    // );
+
+    // const webpWithMetadata = await WSF.setMetadata(
+    //   packName,
+    //   authorName,
+    //   randomNameAttp
+    // );
+    // await conn.sendMessage(from, webpWithMetadata, MessageType.sticker);
+    // await ffmpeg(`./${randomNameAttp}`)
+    //   .input(randomNameAttp)
+    //   .on("error", function (err) {
+    //     fs.unlinkSync(media);
+    //     //unlinkSync remove the given file
+    //     console.log(`Error : ${err}`);
+    //     reply("_❌ ERROR: Failed to convert image into sticker!_");
+    //   })
+    //   .on("end", function () {
+    //     buildSticker(media, ran);
+    //   })
+    //   .addOutputOptions(outputOptions)
+    //   .toFormat("webp")
+    //   .save(randomNameAttp);
+
+    break;
+

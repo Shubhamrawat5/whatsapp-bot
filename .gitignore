@@ -1,7 +1,5 @@
 node_modules/
 .idea
-test.js
-test.txt
 .env
 stickerbot.js
 stickerbotcount.js
