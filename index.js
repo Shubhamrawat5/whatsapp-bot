@@ -981,7 +981,7 @@ const main = async () => {
             donaMsgTemp += `\n❤️ Rs ${dona.amount} - ${dona.name}`;
           });
 
-          let donaMsg = `Helping PVX COMMUNITY to grow and provide good stuff for all members.\nUse cases: buy new domain name for PVX website, for tournaments in future, for maybe buy a server for all bots and website, etc etc.\n\n*Any amount is appreciated.*\n\nUPI: shubhamraw123@okhdfcbank\n\nAfter sending donation, take a screenshot and send to https://wa.me/919557666582 with your name. [Your name will be shown here after that]\n\n*Total Donations: Rs ${totalDona}*`;
+          let donaMsg = `Helping PVX COMMUNITY${readMore} to grow and provide good stuff for all members.\nUse cases: domain name for PVX website, tournaments in future, server for all bots and website, etc etc.\n\n*Any amount is appreciated.*\n\nUPI: shubhamraw123@okhdfcbank\n\nAfter sending donation, take a screenshot and send to https://wa.me/919557666582 with your name. [Your name will be shown here after that]\n\n*Total Donations: Rs ${totalDona}*`;
 
           donaMsg += donaMsgTemp;
           conn.sendMessage(
@@ -1560,6 +1560,12 @@ _Do not use someone else's real picture for any malicious purpose like making st
 _Do not post other group's link without group admin's permission._
 
 ✔ Rule 08 -
+_Do not give spoilers of new series/movies._
+
+✔ Rule 09 -
+_Better do any deal via PVX group admin otherwise PVX won't be responsible for any loss._
+
+✔ Rule 10 -
 _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
           break;
 
