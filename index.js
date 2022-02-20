@@ -1533,7 +1533,14 @@ const main = async () => {
           reply(`*─「 <{PVX}> BOT 」 ─*\n\nYES! BOT IS ALIVE !!!`);
           break;
 
-        /* ------------------------------- CASE: ALIVE ------------------------------ */
+        /* ------------------------------- CASE: FEEDBACK ------------------------------ */
+        case "feedback":
+          reply(
+            `✔ Give any Feedback related to PVX\nhttps://forms.gle/WEQ33xzHpYAQvArd6`
+          );
+          break;
+
+        /* ------------------------------- CASE: RULES ------------------------------ */
         case "rules":
         case "r":
           reply(`*─「 <{PVX}> RULES 」 ─*${readMore}

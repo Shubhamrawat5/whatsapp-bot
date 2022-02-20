@@ -37,6 +37,9 @@
 📛 *${prefix}donation*
     - _Get donation details and help PVX community!_
 
+📛 *${prefix}feedback*
+    - _Get feedback form!_
+
 📛 *${prefix}rules*
     - _Get PVX groups rules!_
     Alias: *${prefix}r*

@@ -54,6 +54,7 @@ Now Bot will start working!!
 |     `!unmute`     |             Unmute the group              |         |
 |    `!warning`     |           Give warning to user            |         |
 |     `!delete`     |           Delete message of bot           |   !d    |
+|    `!feedback`    |             Get feedback form             |         |
 |    `!sticker`     | Create sticker from different media types |   !s    |
 |     `!block`      |  To block particular commands for group   |         |
 |     `!image`      |         Create image from sticker         |         |
