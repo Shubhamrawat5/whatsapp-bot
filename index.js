@@ -395,6 +395,7 @@ const main = async () => {
             MessageType.text
           );
           conn.groupRemove(from, anu.participants);
+          return;
         }
 
         //if number is blacklisted
@@ -405,6 +406,7 @@ const main = async () => {
             MessageType.text
           );
           conn.groupRemove(from, anu.participants);
+          return;
         }
 
         //for study group
@@ -420,11 +422,24 @@ const main = async () => {
           );
         }
 
+        //for movies group
+        if (from === pvxmovies) {
+          conn.sendMessage(
+            from,
+            `Welcome @${num_split} to PVX Movies.\nhttps://pvxcommunity.com/\n\nWhat are your currently watching..?`,
+            MessageType.extendedText,
+            {
+              contextInfo: { mentionedJid: [numJid] },
+              detectLinks: false,
+            }
+          );
+        }
+
         //for community group
         if (from === pvxcommunity) {
           conn.sendMessage(
             from,
-            `Welcome @${num_split} to PVX COMMUNITY.\nhttps://pvxcommunity.com/\n\nPlease follow the rules.\nBe kind to members.\nBe active and Don't spam`,
+            `Welcome @${num_split} to PVX COMMUNITY.\nhttps://pvxcommunity.com/\n\nPlease follow the rules. Send ${prefix}rules to know all rules of PVX\nBe active and Don't spam`,
             MessageType.extendedText,
             {
               contextInfo: { mentionedJid: [numJid] },
@@ -437,7 +452,7 @@ const main = async () => {
         if (from === pvxmano) {
           conn.sendMessage(
             from,
-            `Welcome  @${num_split} to PVX MANORANJAN 🔥\n\nFollow these rules else you'll be kicked -\n1) Send videos regularly.\n2) Don't Send CP or any other illegal videos.\n3) Spamming or any kind of fighting is prohibited.\n 4) A group bot will be counting the number of videos you've sent. Inactive members will be kicked time to time.`,
+            `Welcome  @${num_split} to PVX MANORANJAN 🔥\n\n1) Send videos regularly especially new members.\n2) Don't Send CP or any other illegal videos.\n 3) A group bot will be counting the number of videos you've sent. \nSend ?pvxv to know video count.\nInactive members will be kicked time to time.`,
             MessageType.extendedText,
             {
               contextInfo: { mentionedJid: [numJid] },
