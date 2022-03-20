@@ -53,6 +53,8 @@ Now Bot will start working!!
 |      `!mute`      |              Mute the group               |         |
 |     `!unmute`     |             Unmute the group              |         |
 |    `!warning`     |           Give warning to user            |         |
+|     `!count`      |    Know message count in current group    |         |
+|     `!total`      |   Know message count in all PVX groups    |         |
 |     `!delete`     |           Delete message of bot           |   !d    |
 |    `!feedback`    |             Get feedback form             |         |
 |    `!sticker`     | Create sticker from different media types |   !s    |

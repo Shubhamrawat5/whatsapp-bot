@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 const { Pool } = require("pg");
 
 const proConfig = {
@@ -35,6 +35,19 @@ module.exports.getCountIndividual = async (memberJid, groupJid) => {
   let result = await pool.query(
     "SELECT count FROM countmember WHERE memberJid=$1 AND groupJid=$2;",
     [memberJid, groupJid]
+  );
+  if (result.rowCount) {
+    return result.rows[0].count;
+  } else {
+    return 0;
+  }
+};
+
+module.exports.getCountIndividualAllGroup = async (memberJid) => {
+  await createCountMemberTable();
+  let result = await pool.query(
+    "SELECT SUM(count) as count FROM countmember WHERE memberJid=$1;",
+    [memberJid]
   );
   if (result.rowCount) {
     return result.rows[0].count;

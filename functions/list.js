@@ -29,6 +29,12 @@
 
 📛 *${prefix}image*
     - _Create image from sticker!_
+    
+📛 *${prefix}count*
+    - _Know your message count in current group!_
+
+📛 *${prefix}total*
+    - _Know your message count in all PVX groups!_
 
 📛 *${prefix}insta url*
     - _Instagram videos downloader!_

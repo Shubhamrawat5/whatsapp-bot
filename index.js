@@ -145,6 +145,7 @@ const {
   getCountGroups,
   getCountGroupMembers,
   getCountIndividual,
+  getCountIndividualAllGroup,
   getCountTop,
 } = require("./DB/countMemberDB");
 const { dropAuth } = require("./DB/dropauthDB");
@@ -1019,7 +1020,19 @@ const main = async () => {
             return;
           }
           let indiCount = await getCountIndividual(sender, from);
-          reply(`You've _${indiCount} messages from 24 NOV in this group!_`);
+          reply(`You've _${indiCount} messages from 24 NOV_ in this group!`);
+          break;
+
+        /* --------------------------------- total --------------------------------- */
+        case "total":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          let indTotalCount = await getCountIndividualAllGroup(sender);
+          reply(
+            `You've _${indTotalCount} messages from 24 NOV_ in all PVX groups!`
+          );
           break;
 
         /* --------------------------------- zero --------------------------------- */
