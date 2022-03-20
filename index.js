@@ -1013,14 +1013,14 @@ const main = async () => {
           break;
 
         /* --------------------------------- count --------------------------------- */
-        // case "count":
-        //   if (!isGroup) {
-        //     reply("❌ Group command only!");
-        //     return;
-        //   }
-        //   let indiCount = await getCountIndividual(sender, from);
-        //   reply(`_${indiCount} messages from 24 NOV!_`);
-        //   break;
+        case "count":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          let indiCount = await getCountIndividual(sender, from);
+          reply(`You've _${indiCount} messages from 24 NOV in this group!_`);
+          break;
 
         /* --------------------------------- zero --------------------------------- */
         case "zero":
