@@ -133,23 +133,14 @@ Now Bot will start working!!
 
 # Run locally:- :rocket:
 
-Run atleast one time in heroku to letall dataCreate a `.env` file for enviromental variables in directory with variables
+Create a `.env` file for enviromental variables in local directory with following values without quote
 
     myNumber = "your-number-to-receive-all-updates"
-    clientID = ""
-    serverToken =""
-    clientToken = ""
-    encKey = ""
-    macKey = ""
+    DATABASE_URL = "get-from-heroku-dashboard"
 
-Get values from Heroku database
+Get value of database_url from Heroku dashboard > settings > reveal config vars
 
-1. Go to heroku dashboard resources
-2. Click Heroku Postgres
-3. Click dataclips
-4. Give any name and run command `SELECT * FROM auth`
-
-   There you'll see all data and set the enviromental variables
+Run the index file by `node index.js`
 
 # Note:- :rocket:
 

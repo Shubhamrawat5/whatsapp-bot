@@ -181,7 +181,6 @@ let setIntervaltg;
 prefix = "!";
 require("dotenv").config();
 const myNumber = process.env.myNumber;
-const clientId = process.env.clientID;
 const pvx = process.env.pvx;
 const zeksapi = process.env.zeksapi;
 
@@ -217,9 +216,7 @@ let pvxmovies = "919557666582-1506690003@g.us";
 
 /* ------------------------------ MAIN FUNCTION ----------------------------- */
 const main = async () => {
-  const { connectToWA } = clientId
-    ? require("./DB/localdatabase")
-    : require("./DB/authDB");
+  const { connectToWA } = require("./DB/authDB");
   const conn = await connectToWA(WAConnection);
   let botNumberJid = conn.user.jid;
 
