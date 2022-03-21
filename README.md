@@ -64,6 +64,7 @@ Now Bot will start working!!
 |      `!text`      |        Get text extract from image        |         |
 |      `!song`      |       Get any song in good quality        |         |
 |     `!insta`      |      Get insta reels or post videos       |   !i    |
+|       `!fb`       |            Get facebook videos            |         |
 |      `!ytv`       |          Download youtube videos          |         |
 |      `!yta`       |          Download youtube audio           |         |
 |    `!technews`    |           Get latest Tech news            |         |
@@ -98,6 +99,7 @@ Now Bot will start working!!
 |      `!pvxg`       |        Get message count stats of PVX groups         |       |
 |      `!pvxm`       | Get members message count stats of current PVX group |       |
 |      `!pvxt`       |  Get top members message count stats of PVX groups   |       |
+|      `!zero`       |        Get members list with 0 message count         |       |
 |   `!groupbackup`   |               Take group backup in DB                |       |
 |   `!deleteauth`    |          Delete auth DB to get new qr scan           |       |
 |   `!countstats`    |         Get stats of number of command used          |       |

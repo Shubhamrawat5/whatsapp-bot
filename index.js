@@ -1049,8 +1049,12 @@ const main = async () => {
               reply("❌ Group command only!");
               return;
             }
-            if (!pvxadminsMem.includes(sender)) {
-              reply(`❌ PVX admin only command!`);
+            // if (!pvxadminsMem.includes(sender)) {
+            //   reply(`❌ PVX admin only command!`);
+            //   return;
+            // }
+            if (!isGroupAdmins) {
+              reply("❌ Admin command!");
               return;
             }
             let resultCountGroupIndi = await getCountGroupMembers(from);
@@ -1058,7 +1062,7 @@ const main = async () => {
             for (let member of resultCountGroupIndi) {
               memWithMsg.add(member.memberjid);
             }
-            let zeroMsg = `${groupName}\nMembers with 0 message this month:${readMore}\n`;
+            let zeroMsg = `${groupName}\nMembers with 0 message from 24 NOV:${readMore}\n`;
             groupMembers.forEach((mem) => {
               if (!memWithMsg.has(mem.jid)) {
                 zeroMsg += `\n${mem.jid.split("@")[0]}`;
@@ -1130,8 +1134,12 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          if (!pvxadminsMem.includes(sender)) {
-            reply(`❌ PVX admin only command!`);
+          // if (!pvxadminsMem.includes(sender)) {
+          //   reply(`❌ PVX admin only command!`);
+          //   return;
+          // }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
             return;
           }
           let resultCountGroup = await getCountGroups();
@@ -1164,8 +1172,12 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          if (!pvxadminsMem.includes(sender)) {
-            reply(`❌ PVX admin only command!`);
+          // if (!pvxadminsMem.includes(sender)) {
+          // reply(`❌ PVX admin only command!`);
+          // return;
+          // }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
             return;
           }
           let resultCountGroupTop = await getCountTop();
@@ -1195,8 +1207,12 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          if (!pvxadminsMem.includes(sender)) {
-            reply(`❌ PVX admin only command!`);
+          // if (!pvxadminsMem.includes(sender)) {
+          //   reply(`❌ PVX admin only command!`);
+          //   return;
+          // }
+          if (!isGroupAdmins) {
+            reply("❌ Admin command!");
             return;
           }
 
@@ -1246,10 +1262,10 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          if (!pvxadminsMem.includes(sender)) {
-            reply(`❌ PVX admin only command!`);
-            return;
-          }
+          // if (!pvxadminsMem.includes(sender)) {
+          //   reply(`❌ PVX admin only command!`);
+          //   return;
+          // }
           if (!isGroupAdmins) {
             reply("❌ Admin command!");
             return;

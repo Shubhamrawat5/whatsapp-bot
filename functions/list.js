@@ -38,7 +38,10 @@
 
 📛 *${prefix}insta url*
     - _Instagram videos downloader!_
-    Alias: *${prefix}i url*
+    Alias: *${prefix}i url*📛 
+
+*${prefix}fb url*
+    - _Facebook videos downloader!_
 
 📛 *${prefix}donation*
     - _Get donation details and help PVX community!_
