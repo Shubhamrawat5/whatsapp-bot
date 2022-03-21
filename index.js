@@ -393,6 +393,11 @@ const main = async () => {
             MessageType.text
           );
           conn.groupRemove(from, anu.participants);
+          conn.sendMessage(
+            myNumber + "@s.whatsapp.net",
+            `${num_split} is removed from ${groupSubject}. Not 91!`,
+            MessageType.text
+          );
           return;
         }
 
@@ -404,6 +409,11 @@ const main = async () => {
             MessageType.text
           );
           conn.groupRemove(from, anu.participants);
+          conn.sendMessage(
+            myNumber + "@s.whatsapp.net",
+            `${num_split} is removed from ${groupSubject}. Blacklisted!`,
+            MessageType.text
+          );
           return;
         }
 
