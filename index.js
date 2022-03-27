@@ -166,6 +166,11 @@ const {
   setVotingData,
   stopVotingData,
 } = require("./DB/VotingDB");
+const {
+  getVotingAllData,
+  setVotingAllData,
+  stopVotingAllData,
+} = require("./DB/votingAllDB");
 const { setGroupName } = require("./DB/groupNameDB");
 
 let Parser = require("rss-parser");
@@ -771,7 +776,6 @@ const main = async () => {
       /* ------------------------------------ - ----------------------------------- */
       /* -------------------------------- COMMANDS -------------------------------- */
       /* ------------------------------------ - ----------------------------------- */
-      let votingResult;
       switch (command) {
         /* ------------------------------- CASE: HELP ------------------------------ */
         case "help":
@@ -1027,6 +1031,7 @@ const main = async () => {
             return;
           }
           let indiCount = await getCountIndividual(sender, from);
+          if (!indiCount) indiCount = 0;
           reply(`You've _${indiCount} messages from 24 NOV_ in this group!`);
           break;
 
@@ -1037,6 +1042,7 @@ const main = async () => {
             return;
           }
           let indTotalCount = await getCountIndividualAllGroup(sender);
+          if (!indTotalCount) indTotalCount = 0;
           reply(
             `You've _${indTotalCount} messages from 24 NOV_ in all PVX groups!`
           );
@@ -1627,6 +1633,194 @@ _Better do any deal via PVX group admin otherwise PVX won't be responsible for a
 _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
           break;
 
+        /* ------------------------------- CASE: VOTEPVX ------------------------------ */
+        case "startvotepvx":
+          if (myNumber + "@s.whatsapp.net" !== sender) {
+            reply(`❌ Command only for owner!`);
+            return;
+          }
+          if (args.length === 0) {
+            reply(
+              `❌ Give some values seperated with # to vote on like ${prefix}startvotepvx #title #name1 #name2 #name3`
+            );
+            return;
+          }
+          try {
+            let votingResult = await getVotingAllData(
+              myNumber + "@s.whatsapp.net"
+            );
+            if (votingResult.is_started) {
+              reply(
+                `❌ Voting already going on, Stop by ${prefix}stopvotepvx command`
+              );
+              return;
+            }
+            // let voteChoices = body.trim().replace(/ +/, ",").split(/,/).slice(1);
+            let voteList = body
+              .trim()
+              .replace(/ +/, ",")
+              .split(",")[1]
+              .split("#");
+            let voteTitle = voteList[1].trim();
+            let voteChoices = voteList.slice(2);
+
+            if (voteChoices.length < 2) {
+              reply("❌ Give more than 1 voting choices!");
+              return;
+            }
+
+            let voteListCount = new Array(voteChoices.length).fill(0); //[0,0,0]
+            let voteListMember = [];
+            for (let i = 0; i < voteChoices.length; ++i)
+              voteListMember.push([]);
+
+            await setVotingAllData(
+              myNumber + "@s.whatsapp.net",
+              true,
+              sender,
+              voteTitle,
+              voteChoices,
+              voteListCount,
+              voteListMember,
+              []
+            );
+            votingResult = await getVotingAllData(myNumber + "@s.whatsapp.net");
+
+            let voteMsg = `*Voting started!*\nsend "${prefix}votepvx number" to vote\n\n*🗣️ ${voteTitle}*`;
+
+            votingResult.choices.forEach((name, index) => {
+              voteMsg += `\n${index + 1} for [${name.trim()}]`;
+            });
+
+            voteMsg += `\n\n_send ${prefix}checkvotepvx or ${prefix}cvpvx to see current status and ${prefix}stopvotepvx to stop voting and see the result._`;
+            reply(voteMsg);
+          } catch (err) {
+            console.log(err);
+          }
+          break;
+
+        case "votepvx":
+          try {
+            let votingResult = await getVotingAllData(
+              myNumber + "@s.whatsapp.net"
+            );
+            if (!votingResult.is_started) {
+              reply(
+                `❌ Voting is not started here, Start by \n${prefix}startvotepvx #title #name1 #name2 #name3`
+              );
+              return;
+            }
+            let indTotalCount = await getCountIndividualAllGroup(sender);
+            if (indTotalCount < 1) {
+              reply(
+                "❌ You can't vote as you've total 0 message in all PVX groups."
+              );
+              return;
+            }
+            if (votingResult.voted_members.includes(sender)) {
+              reply("❌ You already voted.");
+              return;
+            }
+            if (args.length === 0) {
+              reply("❌ Give value to vote on!");
+              return;
+            }
+
+            let voteNumber = Math.floor(Number(args[0]));
+            if (isNaN(voteNumber)) {
+              reply("❌ Give a number!");
+              return;
+            }
+
+            if (voteNumber > votingResult.count.length || voteNumber < 1) {
+              reply("❌ Number out of range!");
+              return;
+            }
+
+            votingResult.count[voteNumber - 1] += 1; //increase vote
+
+            let user = conn.contacts[sender];
+            let username = user
+              ? user.notify ||
+                user.vname ||
+                user.name ||
+                member.memberjid.split("@")[0]
+              : member.memberjid.split("@")[0];
+            votingResult.members_voted_for[voteNumber - 1].push(username); // save who voted
+
+            votingResult.voted_members.push(sender); //member voted
+
+            await setVotingAllData(
+              myNumber + "@s.whatsapp.net",
+              true,
+              votingResult.started_by,
+              votingResult.title,
+              votingResult.choices,
+              votingResult.count,
+              votingResult.members_voted_for,
+              votingResult.voted_members
+            );
+
+            reply(
+              `_✔ Voted for [${votingResult.choices[voteNumber - 1].trim()}]_`
+            );
+          } catch (err) {
+            console.log(err);
+          }
+          break;
+
+        case "stopvotepvx":
+        case "checkvotepvx":
+        case "cvpvx":
+          try {
+            let votingResult = await getVotingAllData(
+              myNumber + "@s.whatsapp.net"
+            );
+            if (!votingResult.is_started) {
+              reply(
+                `❌ Voting is not started here, Start by \n${prefix}startvotepvx #title #name1 #name2 #name3`
+              );
+              return;
+            }
+
+            let resultVoteMsg = "";
+            if (command === "stopvotepvx") {
+              if (myNumber + "@s.whatsapp.net" === sender) {
+                await stopVotingAllData(myNumber + "@s.whatsapp.net");
+                resultVoteMsg += `*Voting Result:*\n🗣️ ${votingResult.title}`;
+              } else {
+                reply("❌ Only owner can stop current voting!");
+                return;
+              }
+            } else {
+              resultVoteMsg += `send "${prefix}votepvx number" to vote\n\n*🗣️ ${votingResult.title}*`;
+              votingResult.choices.forEach((name, index) => {
+                resultVoteMsg += `\n${index + 1} for [${name.trim()}]`;
+              });
+              resultVoteMsg += `\n\n*Voting Current Status:*`;
+            }
+
+            let totalVoted = votingResult.voted_members.length;
+
+            votingResult.choices.forEach((name, index) => {
+              resultVoteMsg += `\n======= ${(
+                (votingResult.count[index] / totalVoted) *
+                100
+              ).toFixed()}% =======\n📛 *[${name.trim()}] : ${
+                votingResult.count[index]
+              }*\n`;
+
+              //add voted members username
+              votingResult.members_voted_for[index].forEach((mem) => {
+                resultVoteMsg += `_${mem},_ `;
+              });
+            });
+            sendText(resultVoteMsg);
+          } catch (err) {
+            console.log(err);
+          }
+          break;
+
         /* ------------------------------- CASE: 91only ------------------------------ */
         case "91only":
           if (!isGroup) {
@@ -1651,52 +1845,56 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
             );
             return;
           }
-          votingResult = await getVotingData(from);
-          if (votingResult.is_started) {
-            reply(
-              `❌ Voting already going on, Stop by ${prefix}stopvote command`
+          try {
+            let votingResult = await getVotingData(from);
+            if (votingResult.is_started) {
+              reply(
+                `❌ Voting already going on, Stop by ${prefix}stopvote command`
+              );
+              return;
+            }
+            // let voteChoices = body.trim().replace(/ +/, ",").split(/,/).slice(1);
+            let voteList = body
+              .trim()
+              .replace(/ +/, ",")
+              .split(",")[1]
+              .split("#");
+            let voteTitle = voteList[1].trim();
+            let voteChoices = voteList.slice(2);
+
+            if (voteChoices.length < 2) {
+              reply("❌ Give more than 1 voting choices!");
+              return;
+            }
+
+            let voteListCount = new Array(voteChoices.length).fill(0); //[0,0,0]
+            let voteListMember = [];
+            for (let i = 0; i < voteChoices.length; ++i)
+              voteListMember.push([]);
+
+            await setVotingData(
+              from,
+              true,
+              sender,
+              voteTitle,
+              voteChoices,
+              voteListCount,
+              voteListMember,
+              []
             );
-            return;
+            votingResult = await getVotingData(from);
+
+            let voteMsg = `*Voting started!*\nsend "${prefix}vote number" to vote\n\n*🗣️ ${voteTitle}*`;
+
+            votingResult.choices.forEach((name, index) => {
+              voteMsg += `\n${index + 1} for [${name.trim()}]`;
+            });
+
+            voteMsg += `\n\n_send ${prefix}checkvote or ${prefix}cv to see current status and ${prefix}stopvote to stop voting and see the result._`;
+            reply(voteMsg);
+          } catch (err) {
+            console.log(err);
           }
-          // let voteChoices = body.trim().replace(/ +/, ",").split(/,/).slice(1);
-          let voteList = body
-            .trim()
-            .replace(/ +/, ",")
-            .split(",")[1]
-            .split("#");
-          let voteTitle = voteList[1].trim();
-          let voteChoices = voteList.slice(2);
-
-          if (voteChoices.length < 2) {
-            reply("❌ Give more than 1 voting choices!");
-            return;
-          }
-
-          let voteListCount = new Array(voteChoices.length).fill(0); //[0,0,0]
-          let voteListMember = [];
-          for (let i = 0; i < voteChoices.length; ++i) voteListMember.push([]);
-
-          await setVotingData(
-            from,
-            true,
-            sender,
-            voteTitle,
-            voteChoices,
-            voteListCount,
-            voteListMember,
-            []
-          );
-          votingResult = await getVotingData(from);
-
-          let voteMsg = `*Voting started!*\nsend "${prefix}vote number" to vote\n\n*🗣️ ${voteTitle}*`;
-
-          votingResult.choices.forEach((name, index) => {
-            voteMsg += `\n${index + 1} for [${name.trim()}]`;
-          });
-
-          voteMsg += `\n\n_send ${prefix}checkvote or ${prefix}cv to see current status and ${prefix}stopvote to stop voting and see the result._`;
-          reply(voteMsg);
-
           break;
 
         case "vote":
@@ -1704,60 +1902,64 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
             reply("❌ Group command only!");
             return;
           }
-          votingResult = await getVotingData(from);
-          if (!votingResult.is_started) {
-            reply(
-              `❌ Voting is not started here, Start by \n${prefix}startvote #title #name1 #name2 #name3`
+          try {
+            let votingResult = await getVotingData(from);
+            if (!votingResult.is_started) {
+              reply(
+                `❌ Voting is not started here, Start by \n${prefix}startvote #title #name1 #name2 #name3`
+              );
+              return;
+            }
+            if (votingResult.voted_members.includes(sender)) {
+              reply("❌ You already voted.");
+              return;
+            }
+            if (args.length === 0) {
+              reply("❌ Give value to vote on!");
+              return;
+            }
+
+            let voteNumber = Math.floor(Number(args[0]));
+            if (isNaN(voteNumber)) {
+              reply("❌ Give a number!");
+              return;
+            }
+
+            if (voteNumber > votingResult.count.length || voteNumber < 1) {
+              reply("❌ Number out of range!");
+              return;
+            }
+
+            votingResult.count[voteNumber - 1] += 1; //increase vote
+
+            let user = conn.contacts[sender];
+            let username = user
+              ? user.notify ||
+                user.vname ||
+                user.name ||
+                member.memberjid.split("@")[0]
+              : member.memberjid.split("@")[0];
+            votingResult.members_voted_for[voteNumber - 1].push(username); // save who voted
+
+            votingResult.voted_members.push(sender); //member voted
+
+            await setVotingData(
+              from,
+              true,
+              votingResult.started_by,
+              votingResult.title,
+              votingResult.choices,
+              votingResult.count,
+              votingResult.members_voted_for,
+              votingResult.voted_members
             );
-            return;
+
+            reply(
+              `_✔ Voted for [${votingResult.choices[voteNumber - 1].trim()}]_`
+            );
+          } catch (err) {
+            console.log(err);
           }
-          if (votingResult.voted_members.includes(sender)) {
-            reply("❌ You already voted.");
-            return;
-          }
-          if (args.length === 0) {
-            reply("❌ Give value to vote on!");
-            return;
-          }
-
-          let voteNumber = Math.floor(Number(args[0]));
-          if (isNaN(voteNumber)) {
-            reply("❌ Give a number!");
-            return;
-          }
-
-          if (voteNumber > votingResult.count.length || voteNumber < 1) {
-            reply("❌ Number out of range!");
-            return;
-          }
-
-          votingResult.count[voteNumber - 1] += 1; //increase vote
-
-          let user = conn.contacts[sender];
-          let username = user
-            ? user.notify ||
-              user.vname ||
-              user.name ||
-              member.memberjid.split("@")[0]
-            : member.memberjid.split("@")[0];
-          votingResult.members_voted_for[voteNumber - 1].push(username); // save who voted
-
-          votingResult.voted_members.push(sender); //member voted
-
-          await setVotingData(
-            from,
-            true,
-            votingResult.started_by,
-            votingResult.title,
-            votingResult.choices,
-            votingResult.count,
-            votingResult.members_voted_for,
-            votingResult.voted_members
-          );
-
-          reply(
-            `_✔ Voted for [${votingResult.choices[voteNumber - 1].trim()}]_`
-          );
           break;
 
         case "stopvote":
@@ -1767,50 +1969,53 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
             reply("❌ Group command only!");
             return;
           }
-
-          votingResult = await getVotingData(from);
-          if (!votingResult.is_started) {
-            reply(
-              `❌ Voting is not started here, Start by \n${prefix}startvote #title #name1 #name2 #name3`
-            );
-            return;
-          }
-
-          let resultVoteMsg = "";
-          if (command === "stopvote") {
-            if (votingResult.started_by === sender || isGroupAdmins) {
-              await stopVotingData(from);
-              resultVoteMsg += `*Voting Result:*\n🗣️ ${votingResult.title}`;
-            } else {
+          try {
+            let votingResult = await getVotingData(from);
+            if (!votingResult.is_started) {
               reply(
-                "❌ Only admin or that member who started the voting, can stop current voting!"
+                `❌ Voting is not started here, Start by \n${prefix}startvote #title #name1 #name2 #name3`
               );
               return;
             }
-          } else {
-            resultVoteMsg += `send "${prefix}vote number" to vote\n\n*🗣️ ${votingResult.title}*`;
+
+            let resultVoteMsg = "";
+            if (command === "stopvote") {
+              if (votingResult.started_by === sender || isGroupAdmins) {
+                await stopVotingData(from);
+                resultVoteMsg += `*Voting Result:*\n🗣️ ${votingResult.title}`;
+              } else {
+                reply(
+                  "❌ Only admin or that member who started the voting, can stop current voting!"
+                );
+                return;
+              }
+            } else {
+              resultVoteMsg += `send "${prefix}vote number" to vote\n\n*🗣️ ${votingResult.title}*`;
+              votingResult.choices.forEach((name, index) => {
+                resultVoteMsg += `\n${index + 1} for [${name.trim()}]`;
+              });
+              resultVoteMsg += `\n\n*Voting Current Status:*`;
+            }
+
+            let totalVoted = votingResult.voted_members.length;
+
             votingResult.choices.forEach((name, index) => {
-              resultVoteMsg += `\n${index + 1} for [${name.trim()}]`;
+              resultVoteMsg += `\n======= ${(
+                (votingResult.count[index] / totalVoted) *
+                100
+              ).toFixed()}% =======\n📛 *[${name.trim()}] : ${
+                votingResult.count[index]
+              }*\n`;
+
+              //add voted members username
+              votingResult.members_voted_for[index].forEach((mem) => {
+                resultVoteMsg += `_${mem},_ `;
+              });
             });
-            resultVoteMsg += `\n\n*Voting Current Status:*`;
+            sendText(resultVoteMsg);
+          } catch (err) {
+            console.log(err);
           }
-
-          let totalVoted = votingResult.voted_members.length;
-
-          votingResult.choices.forEach((name, index) => {
-            resultVoteMsg += `\n======= ${(
-              (votingResult.count[index] / totalVoted) *
-              100
-            ).toFixed()}% =======\n📛 *[${name.trim()}] : ${
-              votingResult.count[index]
-            }*\n`;
-
-            //add voted members username
-            votingResult.members_voted_for[index].forEach((mem) => {
-              resultVoteMsg += `_${mem},_ `;
-            });
-          });
-          sendText(resultVoteMsg);
           break;
 
         /* ------------------------------- CASE: VOTECOMMAND ------------------------------ */
@@ -2227,7 +2432,7 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
           cricSetIntervalGroups[groupName] = setInterval(async () => {
             respCric = await startcHelper("startc", true);
             if (!respCric) return;
-          }, 1000 * 60); //1 min
+          }, 1000 * 90); //1 min
           break;
 
         /* ------------------------------- CASE: SCORE ------------------------------ */
