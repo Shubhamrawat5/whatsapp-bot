@@ -56,6 +56,19 @@ module.exports.getCountIndividualAllGroup = async (memberJid) => {
   }
 };
 
+module.exports.getCountIndividualAllGroupWithName = async (memberJid) => {
+  await createCountMemberTable();
+  let result = await pool.query(
+    "SELECT countmember.memberjid,groupname.gname,countmember.count FROM countmember,groupname WHERE countmember.groupjid=groupname.groupjid and memberjid=$1 ORDER BY count DESC;",
+    [memberJid]
+  );
+  if (result.rowCount) {
+    return result.rows;
+  } else {
+    return [];
+  }
+};
+
 module.exports.getCountTop = async () => {
   await createCountMemberTable();
   let result = await pool.query(

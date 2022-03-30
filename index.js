@@ -146,6 +146,7 @@ const {
   getCountGroupMembers,
   getCountIndividual,
   getCountIndividualAllGroup,
+  getCountIndividualAllGroupWithName,
   getCountTop,
 } = require("./DB/countMemberDB");
 const { dropAuth } = require("./DB/dropauthDB");
@@ -1048,6 +1049,34 @@ const main = async () => {
           );
           break;
 
+        /* --------------------------------- totalg --------------------------------- */
+        case "totalg":
+          if (!isGroup) {
+            reply("❌ Group command only!");
+            return;
+          }
+          try {
+            let resultCountGroup = await getCountIndividualAllGroupWithName(
+              sender
+            );
+            let countGroupMsg = `*📛 YOUR PVX STATS 📛*\n_From 24 Nov 2021_${readMore}\n`;
+            let countGroupMsgTemp = "\n";
+            let totalGrpCount = 0;
+            for (let group of resultCountGroup) {
+              let grpName = group.gname;
+              grpName = grpName.replace("<{PVX}> ", "");
+              totalGrpCount += Number(group.count);
+              countGroupMsgTemp += `\n${group.count} - ${grpName}`;
+            }
+            countGroupMsg += `\n*Your Messages: ${totalGrpCount}*`;
+            countGroupMsg += countGroupMsgTemp;
+            reply(countGroupMsg);
+          } catch (err) {
+            console.log(err);
+            reply("❌ Error");
+          }
+          break;
+
         /* --------------------------------- zero --------------------------------- */
         case "zero":
           try {
@@ -1525,8 +1554,8 @@ const main = async () => {
                 //"<{PVX}> BOT 🤖"
                 //"https://pvxcommunity.com"
                 const webpWithMetadatatg = await WSF.setMetadata(
-                  "",
-                  "https://pvxcommunity.com",
+                  "BOT 🤖",
+                  "pvxcommunity.com",
                   filepath
                 );
                 await conn.sendMessage(
