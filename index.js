@@ -624,8 +624,8 @@ const main = async () => {
       //     ? user.notify ||
       //       user.vname ||
       //       user.name ||
-      //       member.memberjid.split("@")[0]
-      //     : member.memberjid.split("@")[0];
+      //       sender.split("@")[0]
+      //     : sender.split("@")[0];
       //   setCountMember(sender, from, username);
       // }
 
@@ -1050,11 +1050,8 @@ const main = async () => {
             if (!indiCount) indiCount = 0;
             let user = conn.contacts[sender];
             let username = user
-              ? user.notify ||
-                user.vname ||
-                user.name ||
-                member.memberjid.split("@")[0]
-              : member.memberjid.split("@")[0];
+              ? user.notify || user.vname || user.name || sender.split("@")[0]
+              : sender.split("@")[0];
             reply(
               `${username} have _${indiCount} messages from 24 NOV_ in this group!`
             );
@@ -1082,11 +1079,8 @@ const main = async () => {
             if (!indTotalCount) indTotalCount = 0;
             let user = conn.contacts[sender];
             let username = user
-              ? user.notify ||
-                user.vname ||
-                user.name ||
-                member.memberjid.split("@")[0]
-              : member.memberjid.split("@")[0];
+              ? user.notify || user.vname || user.name || sender.split("@")[0]
+              : sender.split("@")[0];
             reply(
               `${username} have _${indTotalCount} messages from 24 NOV_ in all PVX groups!`
             );
@@ -1114,11 +1108,8 @@ const main = async () => {
             );
             let user = conn.contacts[sender];
             let username = user
-              ? user.notify ||
-                user.vname ||
-                user.name ||
-                member.memberjid.split("@")[0]
-              : member.memberjid.split("@")[0];
+              ? user.notify || user.vname || user.name || sender.split("@")[0]
+              : sender.split("@")[0];
             let countGroupMsg = `*📛 ${username} PVX STATS 📛*\n_From 24 Nov 2021_${readMore}\n`;
             let countGroupMsgTemp = "\n";
             let totalGrpCount = 0;
@@ -1830,11 +1821,8 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
 
             let user = conn.contacts[sender];
             let username = user
-              ? user.notify ||
-                user.vname ||
-                user.name ||
-                member.memberjid.split("@")[0]
-              : member.memberjid.split("@")[0];
+              ? user.notify || user.vname || user.name || sender.split("@")[0]
+              : sender.split("@")[0];
             votingResult.members_voted_for[voteNumber - 1].push(username); // save who voted
 
             votingResult.voted_members.push(sender); //member voted
@@ -2023,11 +2011,8 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
 
             let user = conn.contacts[sender];
             let username = user
-              ? user.notify ||
-                user.vname ||
-                user.name ||
-                member.memberjid.split("@")[0]
-              : member.memberjid.split("@")[0];
+              ? user.notify || user.vname || user.name || sender.split("@")[0]
+              : sender.split("@")[0];
             votingResult.members_voted_for[voteNumber - 1].push(username); // save who voted
 
             votingResult.voted_members.push(sender); //member voted
@@ -2799,7 +2784,9 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
               .addOutputOptions(outputOptions)
               .on("error", (err) => {
                 console.log(err);
-                reply("❌ ERROR!\nOnly english and No emoji.");
+                reply(
+                  "❌ ERROR!\nOnly english and No emoji.\nMaybe the api/website is down."
+                );
               })
               .on("end", async () => {
                 const webpWithMetadata = await WSF.setMetadata(
