@@ -619,7 +619,14 @@ const main = async () => {
       let sender = isGroup ? mek.participant : from;
 
       // if (isGroup && groupName.toUpperCase().includes("<{PVX}>")) {
-      //   setCountMember(sender, from);
+      //   let user = conn.contacts[sender];
+      //   let username = user
+      //     ? user.notify ||
+      //       user.vname ||
+      //       user.name ||
+      //       member.memberjid.split("@")[0]
+      //     : member.memberjid.split("@")[0];
+      //   setCountMember(sender, from, username);
       // }
 
       // console.log(mek);
@@ -1031,9 +1038,29 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          let indiCount = await getCountIndividual(sender, from);
-          if (!indiCount) indiCount = 0;
-          reply(`You've _${indiCount} messages from 24 NOV_ in this group!`);
+          if (
+            mek.message.extendedTextMessage &&
+            mek.message.extendedTextMessage.contextInfo &&
+            mek.message.extendedTextMessage.contextInfo.participant
+          ) {
+            sender = mek.message.extendedTextMessage.contextInfo.participant;
+          }
+          try {
+            let indiCount = await getCountIndividual(sender, from);
+            if (!indiCount) indiCount = 0;
+            let user = conn.contacts[sender];
+            let username = user
+              ? user.notify ||
+                user.vname ||
+                user.name ||
+                member.memberjid.split("@")[0]
+              : member.memberjid.split("@")[0];
+            reply(
+              `${username} have _${indiCount} messages from 24 NOV_ in this group!`
+            );
+          } catch (err) {
+            console.log(err);
+          }
           break;
 
         /* --------------------------------- total --------------------------------- */
@@ -1042,11 +1069,30 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
-          let indTotalCount = await getCountIndividualAllGroup(sender);
-          if (!indTotalCount) indTotalCount = 0;
-          reply(
-            `You've _${indTotalCount} messages from 24 NOV_ in all PVX groups!`
-          );
+          if (
+            mek.message.extendedTextMessage &&
+            mek.message.extendedTextMessage.contextInfo &&
+            mek.message.extendedTextMessage.contextInfo.participant
+          ) {
+            sender = mek.message.extendedTextMessage.contextInfo.participant;
+          }
+
+          try {
+            let indTotalCount = await getCountIndividualAllGroup(sender);
+            if (!indTotalCount) indTotalCount = 0;
+            let user = conn.contacts[sender];
+            let username = user
+              ? user.notify ||
+                user.vname ||
+                user.name ||
+                member.memberjid.split("@")[0]
+              : member.memberjid.split("@")[0];
+            reply(
+              `${username} have _${indTotalCount} messages from 24 NOV_ in all PVX groups!`
+            );
+          } catch (err) {
+            console.log(err);
+          }
           break;
 
         /* --------------------------------- totalg --------------------------------- */
@@ -1056,10 +1102,24 @@ const main = async () => {
             return;
           }
           try {
+            if (
+              mek.message.extendedTextMessage &&
+              mek.message.extendedTextMessage.contextInfo &&
+              mek.message.extendedTextMessage.contextInfo.participant
+            ) {
+              sender = mek.message.extendedTextMessage.contextInfo.participant;
+            }
             let resultCountGroup = await getCountIndividualAllGroupWithName(
               sender
             );
-            let countGroupMsg = `*📛 YOUR PVX STATS 📛*\n_From 24 Nov 2021_${readMore}\n`;
+            let user = conn.contacts[sender];
+            let username = user
+              ? user.notify ||
+                user.vname ||
+                user.name ||
+                member.memberjid.split("@")[0]
+              : member.memberjid.split("@")[0];
+            let countGroupMsg = `*📛 ${username} PVX STATS 📛*\n_From 24 Nov 2021_${readMore}\n`;
             let countGroupMsgTemp = "\n";
             let totalGrpCount = 0;
             for (let group of resultCountGroup) {
@@ -1068,7 +1128,7 @@ const main = async () => {
               totalGrpCount += Number(group.count);
               countGroupMsgTemp += `\n${group.count} - ${grpName}`;
             }
-            countGroupMsg += `\n*Your Messages: ${totalGrpCount}*`;
+            countGroupMsg += `\n*TotaL Messages: ${totalGrpCount}*`;
             countGroupMsg += countGroupMsgTemp;
             reply(countGroupMsg);
           } catch (err) {
