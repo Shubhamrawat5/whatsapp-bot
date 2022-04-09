@@ -44,49 +44,50 @@ Now Bot will start working!!
 
 ## Commands :
 
-|  Public Commands  |                Description                |  Alias  |
-| :---------------: | :---------------------------------------: | :-----: |
-|      `!help`      |          Display public commands          |         |
-|     `!helpr`      |        Display restricted commands        |         |
-|      `!add`       |            Add member to group            |         |
-|      `!kick`      |          kick member from group           |         |
-|      `!mute`      |              Mute the group               |         |
-|     `!unmute`     |             Unmute the group              |         |
-|    `!warning`     |           Give warning to user            |         |
-|     `!count`      |    Know message count in current group    |         |
-|     `!total`      |   Know message count in all PVX groups    |         |
-|     `!delete`     |           Delete message of bot           |   !d    |
-|    `!feedback`    |             Get feedback form             |         |
-|    `!sticker`     | Create sticker from different media types |   !s    |
-|     `!block`      |  To block particular commands for group   |         |
-|     `!image`      |         Create image from sticker         |         |
-|     `!steal`      |      Change sticker name to PVX BOT       |         |
-|      `!text`      |        Get text extract from image        |         |
-|      `!song`      |       Get any song in good quality        |         |
-|     `!insta`      |      Get insta reels or post videos       |   !i    |
-|       `!fb`       |            Get facebook videos            |         |
-|      `!ytv`       |          Download youtube videos          |         |
-|      `!yta`       |          Download youtube audio           |         |
-|    `!technews`    |           Get latest Tech news            |         |
-|    `!pvxlink`     |          Get group links of PVX           |         |
-|     `!drive`      |       Get GDrive files direct link        |         |
-|     `!quote`      |            Give a random quote            |         |
-|     `!gender`     |        Get gender from first name         |         |
-|     `!alive`      |          Check bot is ON or OFF           |   !a    |
-| `!cricketcommand` |       Get list of cricket commands        |   !cc   |
-|     `!score`      |            Give Cricket score             |         |
-|   `!scorecard`    |          Give Cricket scorecard           | !sc !sb |
-|     `!startc`     |        Start Cricket score updated        |         |
-|     `!stopc`      |        Stop Cricket score updated         |         |
-|  `!votecommand`   |         Get list of vote commands         |   !vc   |
-|   `!startvote`    |           Start voting in group           |         |
-|      `!vote`      |             Vote for a choice             |         |
-|   `!checkvote`    |      Check status of current voting       |   !cv   |
-|    `!stotvote`    |        Stop voting and see result         |         |
-|    `!donation`    |           Get Donation details            |         |
-|     `!source`     |            Get the bot source             |         |
-|     `!rules`      |           Get PVX groups rules            |   !r    |
-|      `!dev`       |          Get the contact of dev           |         |
+|  Public Commands  |                 Description                 |  Alias  |
+| :---------------: | :-----------------------------------------: | :-----: |
+|      `!help`      |           Display public commands           |         |
+|     `!helpr`      |         Display restricted commands         |         |
+|      `!add`       |             Add member to group             |         |
+|      `!kick`      |           kick member from group            |         |
+|      `!mute`      |               Mute the group                |         |
+|     `!unmute`     |              Unmute the group               |         |
+|    `!warning`     |            Give warning to user             |         |
+|     `!count`      |     Know message count in current group     |         |
+|     `!total`      |    Know message count in all PVX groups     |         |
+|     `!totalg`     | Know message count group wise in PVX groups |         |
+|     `!delete`     |            Delete message of bot            |   !d    |
+|    `!feedback`    |              Get feedback form              |         |
+|    `!sticker`     |  Create sticker from different media types  |   !s    |
+|     `!block`      |   To block particular commands for group    |         |
+|     `!image`      |          Create image from sticker          |         |
+|     `!steal`      |       Change sticker name to PVX BOT        |         |
+|      `!text`      |         Get text extract from image         |         |
+|      `!song`      |        Get any song in good quality         |         |
+|     `!insta`      |       Get insta reels or post videos        |   !i    |
+|       `!fb`       |             Get facebook videos             |         |
+|      `!ytv`       |           Download youtube videos           |         |
+|      `!yta`       |           Download youtube audio            |         |
+|    `!technews`    |            Get latest Tech news             |         |
+|    `!pvxlink`     |           Get group links of PVX            |         |
+|     `!drive`      |        Get GDrive files direct link         |         |
+|     `!quote`      |             Give a random quote             |         |
+|     `!gender`     |         Get gender from first name          |         |
+|     `!alive`      |           Check bot is ON or OFF            |   !a    |
+| `!cricketcommand` |        Get list of cricket commands         |   !cc   |
+|     `!score`      |             Give Cricket score              |         |
+|   `!scorecard`    |           Give Cricket scorecard            | !sc !sb |
+|     `!startc`     |         Start Cricket score updated         |         |
+|     `!stopc`      |         Stop Cricket score updated          |         |
+|  `!votecommand`   |          Get list of vote commands          |   !vc   |
+|   `!startvote`    |            Start voting in group            |         |
+|      `!vote`      |              Vote for a choice              |         |
+|   `!checkvote`    |       Check status of current voting        |   !cv   |
+|    `!stotvote`    |         Stop voting and see result          |         |
+|    `!donation`    |            Get Donation details             |         |
+|     `!source`     |             Get the bot source              |         |
+|     `!rules`      |            Get PVX groups rules             |   !r    |
+|      `!dev`       |           Get the contact of dev            |         |
 
 <hr>
 

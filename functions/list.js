@@ -12,21 +12,6 @@
     - _Create full size sticker from media!_
     Alias: *${prefix}s c*
 
-📛 *${prefix}slist*
-    - Get list of stickers command!_
-📛 ${prefix}wall text
-📛 ${prefix}matrix text
-📛 ${prefix}flame text
-📛 ${prefix}fire text
-📛 ${prefix}city text
-📛 ${prefix}3d text
-📛 ${prefix}logo text
-📛 ${prefix}light text
-📛 ${prefix}ff text
-📛 ${prefix}neon text
-📛 ${prefix}flower text
-📛 ${prefix}sand text
-
 📛 *${prefix}image*
     - _Create image from sticker!_
     
@@ -35,6 +20,9 @@
 
 📛 *${prefix}total*
     - _Know your message count in all PVX groups!_
+    
+📛 *${prefix}totalg*
+    - _Know your message count group wise in PVX groups!_
 
 📛 *${prefix}insta url*
     - _Instagram videos downloader!_
@@ -61,6 +49,21 @@
 
 📛 *${prefix}steal*
     - _Change sticker name to PVX BOT!_
+
+📛 *${prefix}slist*
+    - Get list of stickers command!_
+📛 ${prefix}wall text
+📛 ${prefix}matrix text
+📛 ${prefix}flame text
+📛 ${prefix}fire text
+📛 ${prefix}city text
+📛 ${prefix}3d text
+📛 ${prefix}logo text
+📛 ${prefix}light text
+📛 ${prefix}ff text
+📛 ${prefix}neon text
+📛 ${prefix}flower text
+📛 ${prefix}sand text
 
 📛 *${prefix}add <phone number>*
     - _Add new member!_

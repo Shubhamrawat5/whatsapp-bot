@@ -1,4 +1,5 @@
 const axios = require("axios");
+require("dotenv").config();
 
 module.exports.getInstaVideo = async (url) => {
   // const getInstaVideo = async (url) => {
@@ -34,14 +35,26 @@ module.exports.getInstaVideo = async (url) => {
     //   mode: "cors",
     // });
     // console.log(res.data.items[0]);
-    const res = await axios.get(
-      `https://api.neoxr.eu.org/api/ig?url=${url}&apikey=yourkey`
-    );
+    // const res = await axios.get(
+    //   `https://api.neoxr.eu.org/api/ig?url=${url}&apikey=yourkey`
+    // );
+    // if (res.data.data[0].type === "mp4") {
+    //   videoDirectLink = res.data.data[0].url;
+    // } else if (res.data.data[0].type === "jpg") {
+    //   imgDirectLink = res.data.data[0].url;
+    // }
 
-    if (res.data.data[0].type === "mp4") {
-      videoDirectLink = res.data.data[0].url;
-    } else if (res.data.data[0].type === "jpg") {
-      imgDirectLink = res.data.data[0].url;
+    let instakey = process.env.instakey;
+    console.log(
+      `https://api-xcoders.xyz/api/download/ig?url=${url}&apikey=${instakey}`
+    );
+    const res = await axios.get(
+      `https://api-xcoders.xyz/api/download/ig?url=${url}&apikey=${instakey}`
+    );
+    if (res.data.result.type === "video") {
+      videoDirectLink = res.data.result.url;
+    } else if (res.data.result.type === "image") {
+      imgDirectLink = res.data.result.url;
     }
 
     // if (res.status == 200 && res.data.items[0].video_versions) {
@@ -61,5 +74,5 @@ module.exports.getInstaVideo = async (url) => {
 };
 
 // getInstaVideo("https://www.instagram.com/p/CV7guhtM1R2/");
-// getInstaVideo("https://www.instagram.com/reel/CK-c9q-gD-M/");
+// getInstaVideo(  "https://www.instagram.com/reel/CbIOewkJXFB/?igshid=YmMyMTA2M2Y=");
 // getInstaVideo("https://www.instagram.com/reel/CaUqEQal22W/");

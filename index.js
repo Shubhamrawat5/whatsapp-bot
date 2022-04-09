@@ -2633,10 +2633,10 @@ _Only numbers starting with the code +91 (i.e. Indians) are allowed to join._`);
 
         /* ------------------------------- CASE: steal ------------------------------ */
         case "steal":
-          if (!isGroup) {
-            reply("❌ Group command only!");
-            return;
-          }
+          // if (!isGroup) {
+          //   reply("❌ Group command only!");
+          //   return;
+          // }
           if (!isTaggedSticker) {
             reply(`❌ Tag a sticker with ${prefix}steal command!`);
             return;
