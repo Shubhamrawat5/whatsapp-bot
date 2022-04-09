@@ -1038,6 +1038,9 @@ const main = async () => {
             reply("❌ Group command only!");
             return;
           }
+          if (args[0]) {
+            sender = args[0] + "@s.whatsapp.net";
+          }
           if (
             mek.message.extendedTextMessage &&
             mek.message.extendedTextMessage.contextInfo &&
@@ -1065,6 +1068,9 @@ const main = async () => {
           if (!isGroup) {
             reply("❌ Group command only!");
             return;
+          }
+          if (args[0]) {
+            sender = args[0] + "@s.whatsapp.net";
           }
           if (
             mek.message.extendedTextMessage &&
@@ -1096,6 +1102,9 @@ const main = async () => {
             return;
           }
           try {
+            if (args[0]) {
+              sender = args[0] + "@s.whatsapp.net";
+            }
             if (
               mek.message.extendedTextMessage &&
               mek.message.extendedTextMessage.contextInfo &&
