@@ -45,9 +45,6 @@ module.exports.getInstaVideo = async (url) => {
     // }
 
     let instakey = process.env.instakey;
-    console.log(
-      `https://api-xcoders.xyz/api/download/ig?url=${url}&apikey=${instakey}`
-    );
     const res = await axios.get(
       `https://api-xcoders.xyz/api/download/ig?url=${url}&apikey=${instakey}`
     );

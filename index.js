@@ -11,6 +11,15 @@ app.listen(port, () => {
   console.log("\nWeb-server running!\n");
 });
 
+/* -------------------------- delete auth from url -------------------------- */
+const authHiddenPath = process.env.authHiddenPath; //to have a hidden path for auth db deletion
+const { dropAuth } = require("./DB/dropauthDB");
+app.get("/" + authHiddenPath, async (req, res) => {
+  let response = await dropAuth();
+  if (response) res.send("Auth DB deleted!");
+  else res.send("There is some error!");
+});
+
 /* ---------------------------------- SONG ---------------------------------- */
 const downloadSong = async (randomName, query) => {
   try {
@@ -149,7 +158,7 @@ const {
   getCountIndividualAllGroupWithName,
   getCountTop,
 } = require("./DB/countMemberDB");
-const { dropAuth } = require("./DB/dropauthDB");
+
 const { setCountWarning, getCountWarning } = require("./DB/warningDB");
 const { storeNewsTech } = require("./DB/postTechDB");
 const { storeNewsStudy } = require("./DB/postStudyDB");
