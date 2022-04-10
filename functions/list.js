@@ -114,6 +114,18 @@
 📛 *${prefix}pvxlink*
     - _Get links for all PVX groups!_
 
+📛 *${prefix}pvxg*
+    - _Get stats of all PVX groups message!_
+    
+📛 *${prefix}pvxm*
+    - _Get stats of member messages for currnet group!_
+    
+📛 *${prefix}pvxt*
+    - _Get stats of top members message of all PVX groups!_
+    
+📛 *${prefix}pvxstats*
+    - _Get stats of PVX groups!_
+
 📛 *${prefix}source*
     - _Get bot source code!_
 
