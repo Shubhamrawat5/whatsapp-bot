@@ -230,7 +230,9 @@ let pvxsport = "919557666582-1559476348@g.us";
 let pvxmovies = "919557666582-1506690003@g.us";
 let pvxstickeronly1 = "919557666582-1628610549@g.us";
 let pvxstickeronly2 = "919557666582-1586018947@g.us";
+let pvxstickeronly3 = "919557666582-1608216809@g.us";
 let mano = "19016677357-1630334490@g.us";
+let pvxdeals = "919557666582-1582555632@g.us";
 
 let countSent = 1;
 
@@ -633,7 +635,9 @@ const main = async () => {
         isGroup &&
         groupName.toUpperCase().includes("<{PVX}>") &&
         from !== pvxstickeronly1 &&
-        from != pvxstickeronly2
+        from != pvxstickeronly2 &&
+        from != pvxstickeronly3 &&
+        from != pvxdeals
       ) {
         let user = conn.contacts[sender];
         let username = user
@@ -649,6 +653,7 @@ const main = async () => {
         groupName.startsWith("<{PVX}>") &&
         from !== pvxstickeronly1 &&
         from != pvxstickeronly2 &&
+        from != pvxstickeronly3 &&
         from !== mano
       ) {
         // mek.key.fromMe == false &&
