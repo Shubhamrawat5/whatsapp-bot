@@ -228,6 +228,11 @@ let pvxmano = "19016677357-1630334490@g.us";
 let pvxtech = "919557666582-1551290369@g.us";
 let pvxsport = "919557666582-1559476348@g.us";
 let pvxmovies = "919557666582-1506690003@g.us";
+let pvxstickeronly1 = "919557666582-1628610549@g.us";
+let pvxstickeronly2 = "919557666582-1586018947@g.us";
+let mano = "19016677357-1630334490@g.us";
+
+let countSent = 1;
 
 /* ------------------------------ MAIN FUNCTION ----------------------------- */
 const main = async () => {
@@ -616,16 +621,65 @@ const main = async () => {
       3) type = "conversation" , "imageMessage" , "videoMessage" , "extendedTextMessage"
         -> extendedTextMessage are tagged messages
       */
-      if (!isCmd) return;
-      errors = {
-        admin_error: "❌ I'm not Admin here!",
-      };
 
       const isGroup = from.endsWith("@g.us");
       //if (!isGroup) return;
       const groupMetadata = isGroup ? await conn.groupMetadata(from) : "";
       const groupName = isGroup ? groupMetadata.subject : "";
       let sender = isGroup ? mek.participant : from;
+
+      //count message
+      if (
+        isGroup &&
+        groupName.toUpperCase().includes("<{PVX}>") &&
+        from !== pvxstickeronly1 &&
+        from != pvxstickeronly2
+      ) {
+        let user = conn.contacts[sender];
+        let username = user
+          ? user.notify || user.vname || user.name || sender.split("@")[0]
+          : sender.split("@")[0];
+        setCountMember(sender, from, username);
+      }
+
+      //send sticker
+      if (
+        isGroup &&
+        mek.message.stickerMessage &&
+        groupName.startsWith("<{PVX}>") &&
+        from !== pvxstickeronly1 &&
+        from != pvxstickeronly2 &&
+        from !== mano
+      ) {
+        // mek.key.fromMe == false &&
+        // SEND STICKER
+        const mediaSticker = await conn.downloadAndSaveMediaMessage({
+          message: mek.message,
+        });
+        // "<{PVX}> BOT 🤖"
+        const webpWithMetadataSticker = await WSF.setMetadata(
+          "BOT 🤖",
+          "pvxcommunity.com",
+          mediaSticker
+        );
+        await conn.sendMessage(
+          pvxstickeronly1,
+          webpWithMetadataSticker,
+          MessageType.sticker
+        );
+        await conn.sendMessage(
+          pvxstickeronly2,
+          webpWithMetadataSticker,
+          MessageType.sticker
+        );
+        console.log(`${countSent} sticker sent!`);
+        countSent += 1;
+      }
+
+      if (!isCmd) return;
+      errors = {
+        admin_error: "❌ I'm not Admin here!",
+      };
 
       // if (isGroup && groupName.toUpperCase().includes("<{PVX}>")) {
       //   let user = conn.contacts[sender];

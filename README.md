@@ -2,6 +2,8 @@
 
 Easy deploy your bot, steps in the bottom.
 
+[NOTE: This code is for non multi device whatsapp. If your whatsapp is now having multi device enabled then this bot won't work. For multi device bot, code is different.]
+
 **_Requirements :_**
 
 - Heroku account
