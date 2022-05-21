@@ -290,14 +290,14 @@ const main = async () => {
 
   const postTechNews = async (count) => {
     if (count > 20) {
-      //20 times already posted news came
+      //20 times, already posted news comes up
       return;
     }
     console.log(`TECH NEWS FUNCTION ${count} times!`);
 
-    let url = "https://news-pvx.herokuapp.com/";
+    let url = "https://pvx-api-vercel.vercel.app/api/news";
     let { data } = await axios.get(url);
-    delete data.about;
+    delete data["about"];
 
     let newsWeb = [
       "gadgets-ndtv",
